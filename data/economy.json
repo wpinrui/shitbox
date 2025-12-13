@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+
+  "resources": {
+    "maxEnergy": 100,
+    "startingMoney": 0,
+    "startingStatPoints": 25
+  },
+
+  "survival": {
+    "dailyFoodCost": 25,
+    "daysWithoutFoodUntilDeath": 2
+  },
+
+  "rest": {
+    "shitboxEnergyPerHour": 4,
+    "basicApartmentEnergyPerHour": 8,
+    "niceApartmentEnergyPerHour": 10,
+    "ownedHomeEnergyPerHour": 10,
+    "lightRestEnergyPerHour": 2
+  },
+
+  "housing": {
+    "basicApartmentRent": 1200,
+    "niceApartmentRent": 2400,
+    "basicApartmentBuyPrice": { "min": 150000, "max": 250000 },
+    "niceApartmentBuyPrice": { "min": 300000, "max": 500000 },
+    "houseBuyPrice": { "min": 400000, "max": 800000 }
+  },
+
+  "parking": {
+    "seasonParkingMonthly": { "min": 100, "max": 300 }
+  },
+
+  "newspaper": {
+    "dailyCost": 2
+  },
+
+  "ads": {
+    "freeAdResponseChancePerDay": 0.05,
+    "paidAdCost": { "min": 20, "max": 100 },
+    "paidAdResponseChancePerDay": { "min": 0.20, "max": 0.40 }
+  },
+
+  "bank": {
+    "savingsInterestMonthly": 0.005,
+    "indexFund": {
+      "averageAnnualReturn": 0.07,
+      "dailyVolatility": 0.02,
+      "withdrawalDelayDays": 1
+    },
+    "loans": {
+      "personal": { "aprMin": 0.08, "aprMax": 0.15 },
+      "auto": { "aprMin": 0.06, "aprMax": 0.12 },
+      "mortgage": { "aprMin": 0.04, "aprMax": 0.08 },
+      "business": { "aprMin": 0.07, "aprMax": 0.12 }
+    },
+    "missedPaymentLateFeePercent": 0.05,
+    "missedPaymentsUntilRateIncrease": 2,
+    "missedPaymentsUntilRepo": 3
+  },
+
+  "fines": {
+    "speedingTicket": { "min": 150, "max": 400 }
+  },
+
+  "commissions": {
+    "auctionHouseFee": 0.05,
+    "consignmentCommission": 0.10,
+    "realEstateAgentFee": { "min": 0.03, "max": 0.06 },
+    "dealerTradeInPercent": 0.75
+  },
+
+  "statEffects": {
+    "charisma": {
+      "traitVisibilityPerPoint": 0.02,
+      "adResponseBonusPerPoint": 0.005
+    },
+    "mechanical": {
+      "repairQualityBonusPerPoint": 0.01,
+      "partFindBonusPerPoint": 0.02,
+      "valueSpotAccuracyPerPoint": 0.015
+    },
+    "fitness": {
+      "energyDrainReductionPerPoint": 0.01,
+      "laborOutputBonusPerPoint": 0.008
+    },
+    "knowledge": {
+      "researchAccuracyPerPoint": 0.02,
+      "hiddenListingChancePerPoint": 0.01
+    },
+    "racing": {
+      "powerBonusPerPoint": 0.015
+    }
+  }
+}
