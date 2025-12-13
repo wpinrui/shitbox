@@ -4,18 +4,21 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   background-color: #1a1a2e;
   color: #eee;
-  min-height: 100vh;
 }
 
 .app {
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
 }
 
 .app.loading,
@@ -84,10 +87,11 @@ body {
 
 /* Screen base */
 .screen {
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  overflow: hidden;
 }
 
 /* Main Menu */
