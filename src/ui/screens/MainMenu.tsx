@@ -26,7 +26,7 @@ export function MainMenu() {
         </button>
         <button
           className="menu-button"
-          onClick={() => window.close()}
+          onClick={() => window.electronAPI.quitApp()}
         >
           Quit
         </button>

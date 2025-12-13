@@ -66,7 +66,11 @@ app.on('activate', () => {
   }
 });
 
-// IPC handlers for file system operations
+// IPC handlers
+ipcMain.on('quit-app', () => {
+  app.quit();
+});
+
 ipcMain.handle('load-data', async (_event, filePath: string) => {
   try {
     const dataPath = isDev

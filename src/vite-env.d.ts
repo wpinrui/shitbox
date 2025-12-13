@@ -15,6 +15,7 @@ interface ElectronAPI {
   loadGame: (saveId: string) => Promise<unknown>;
   listSaves: () => Promise<string[]>;
   deleteSave: (saveId: string) => Promise<boolean>;
+  quitApp: () => void;
 }
 
 declare global {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame } from '@ui/screens';
+import { MAX_ENERGY } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
@@ -79,7 +80,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
         </div>
         <div className="resource energy">
           <span className="label">Energy</span>
-          <span className="value">{gameState.player.energy}/100</span>
+          <span className="value">{gameState.player.energy}/{MAX_ENERGY}</span>
         </div>
       </div>
 

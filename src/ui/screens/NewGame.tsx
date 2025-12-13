@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useGameStore } from '@store/index';
-import { StatAllocation, StatName } from '@engine/index';
+import { StatAllocation, StatName, STARTING_STAT_POINTS, MAX_PLAYER_NAME_LENGTH } from '@engine/index';
 
-const TOTAL_POINTS = 25;
 const MIN_STAT = 0;
 const MAX_STAT = 20;
 
@@ -45,7 +44,7 @@ export function NewGame() {
   });
 
   const pointsUsed = Object.values(stats).reduce((sum, val) => sum + val, 0);
-  const pointsRemaining = TOTAL_POINTS - pointsUsed;
+  const pointsRemaining = STARTING_STAT_POINTS - pointsUsed;
 
   const adjustStat = (stat: StatName, delta: number) => {
     const newValue = stats[stat] + delta;
@@ -84,7 +83,7 @@ export function NewGame() {
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
             placeholder="Enter your name..."
-            maxLength={20}
+            maxLength={MAX_PLAYER_NAME_LENGTH}
             autoFocus
           />
         </section>
