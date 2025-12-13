@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
+import { MainMenu, NewGame } from '@ui/screens';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
 function App() {
   const [dataStatus, setDataStatus] = useState<DataStatus>('loading');
-  const [economyData, setEconomyData] = useState<unknown>(null);
-  const gameState = useGameStore(state => state.gameState);
+  const currentScreen = useGameStore((state) => state.currentScreen);
+  const gameState = useGameStore((state) => state.gameState);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const economy = await window.electronAPI.loadData('economy.json');
-        setEconomyData(economy);
+        await window.electronAPI.loadData('economy.json');
         setDataStatus('loaded');
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -39,31 +39,80 @@ function App() {
     );
   }
 
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'main_menu':
+        return <MainMenu />;
+      case 'new_game':
+        return <NewGame />;
+      case 'game':
+        return <GameScreen gameState={gameState!} />;
+      case 'game_over':
+        return <PlaceholderScreen title="Game Over" />;
+      case 'victory':
+        return <PlaceholderScreen title="Victory!" />;
+      default:
+        return <MainMenu />;
+    }
+  };
+
+  return <div className="app">{renderScreen()}</div>;
+}
+
+function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof useGameStore.getState>['gameState']> }) {
+  const resetGame = useGameStore((state) => state.resetGame);
+
   return (
-    <div className="app">
-      <header className="header">
-        <h1>Shitbox</h1>
-        <p className="tagline">From scrapyard to showroom</p>
+    <div className="screen game-screen">
+      <header className="game-header">
+        <h1>Day {gameState.time.currentDay}</h1>
+        <span className="time">
+          {String(gameState.time.currentHour).padStart(2, '0')}:
+          {String(gameState.time.currentMinute).padStart(2, '0')}
+        </span>
       </header>
 
-      <main className="main">
-        <div className="status-panel">
-          <h2>Data Status</h2>
-          <p>Economy data loaded: {economyData ? '✓' : '✗'}</p>
-          <p>Game state: {gameState ? 'Active' : 'None'}</p>
+      <div className="game-hud">
+        <div className="resource money">
+          <span className="label">Money</span>
+          <span className="value">${gameState.player.money}</span>
         </div>
+        <div className="resource energy">
+          <span className="label">Energy</span>
+          <span className="value">{gameState.player.energy}/100</span>
+        </div>
+      </div>
 
-        <div className="info-panel">
-          <h2>Hello Shitbox!</h2>
-          <p>Phase 0 Foundation Complete</p>
-          <ul>
-            <li>Electron + React + TypeScript ✓</li>
-            <li>Data loading system ✓</li>
-            <li>Zustand store ✓</li>
-            <li>Seeded RNG ✓</li>
-          </ul>
+      <div className="player-info">
+        <h2>{gameState.player.name}</h2>
+        <div className="stats-display">
+          <div className="stat">CHA: {gameState.player.stats.charisma}</div>
+          <div className="stat">MEC: {gameState.player.stats.mechanical}</div>
+          <div className="stat">FIT: {gameState.player.stats.fitness}</div>
+          <div className="stat">KNO: {gameState.player.stats.knowledge}</div>
+          <div className="stat">RAC: {gameState.player.stats.racing}</div>
         </div>
-      </main>
+      </div>
+
+      <div className="placeholder-content">
+        <p>Game screen placeholder - Phase 1 in progress</p>
+        <p>Activities, time advancement, and HUD coming soon.</p>
+      </div>
+
+      <button className="quit-button" onClick={resetGame}>
+        Quit to Menu
+      </button>
+    </div>
+  );
+}
+
+function PlaceholderScreen({ title }: { title: string }) {
+  const resetGame = useGameStore((state) => state.resetGame);
+
+  return (
+    <div className="screen placeholder-screen">
+      <h1>{title}</h1>
+      <button onClick={resetGame}>Return to Menu</button>
     </div>
   );
 }
