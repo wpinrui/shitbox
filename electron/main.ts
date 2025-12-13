@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import path from 'path';
 import fs from 'fs';
 
@@ -34,12 +34,12 @@ function createWindow() {
   });
 
   mainWindow.once('ready-to-show', () => {
+    mainWindow?.setFullScreen(true);
     mainWindow?.show();
   });
 
   if (isDev) {
     mainWindow.loadURL(DEV_SERVER_URL);
-    mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
@@ -49,7 +49,10 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  Menu.setApplicationMenu(null);
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -63,7 +66,11 @@ app.on('activate', () => {
   }
 });
 
-// IPC handlers for file system operations
+// IPC handlers
+ipcMain.on('quit-app', () => {
+  app.quit();
+});
+
 ipcMain.handle('load-data', async (_event, filePath: string) => {
   try {
     const dataPath = isDev
