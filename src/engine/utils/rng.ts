@@ -102,7 +102,8 @@ export class RNG {
    * @param stdDev Standard deviation
    */
   gaussian(mean: number = 0, stdDev: number = 1): number {
-    const u1 = this.random();
+    // Clamp u1 to avoid log(0) = -Infinity which causes NaN
+    const u1 = Math.max(Number.EPSILON, this.random());
     const u2 = this.random();
     const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
     return z * stdDev + mean;

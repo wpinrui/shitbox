@@ -4,14 +4,27 @@ import fs from 'fs';
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
+// Window configuration
+const WINDOW_CONFIG = {
+  width: 1280,
+  height: 720,
+  minWidth: 1024,
+  minHeight: 600,
+} as const;
+
+const DEV_SERVER_URL = 'http://localhost:5173';
+
 let mainWindow: BrowserWindow | null = null;
+
+function getSavesDir(): string {
+  return isDev
+    ? path.join(process.cwd(), 'saves')
+    : path.join(app.getPath('userData'), 'saves');
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 1024,
-    minHeight: 600,
+    ...WINDOW_CONFIG,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -25,7 +38,7 @@ function createWindow() {
   });
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.loadURL(DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
@@ -67,10 +80,7 @@ ipcMain.handle('load-data', async (_event, filePath: string) => {
 
 ipcMain.handle('save-game', async (_event, saveId: string, data: string) => {
   try {
-    const savesDir = isDev
-      ? path.join(process.cwd(), 'saves')
-      : path.join(app.getPath('userData'), 'saves');
-
+    const savesDir = getSavesDir();
     await fs.promises.mkdir(savesDir, { recursive: true });
     await fs.promises.writeFile(path.join(savesDir, `${saveId}.json`), data, 'utf-8');
     return true;
@@ -82,10 +92,7 @@ ipcMain.handle('save-game', async (_event, saveId: string, data: string) => {
 
 ipcMain.handle('load-game', async (_event, saveId: string) => {
   try {
-    const savesDir = isDev
-      ? path.join(process.cwd(), 'saves')
-      : path.join(app.getPath('userData'), 'saves');
-
+    const savesDir = getSavesDir();
     const content = await fs.promises.readFile(path.join(savesDir, `${saveId}.json`), 'utf-8');
     return JSON.parse(content);
   } catch (error) {
@@ -96,10 +103,7 @@ ipcMain.handle('load-game', async (_event, saveId: string) => {
 
 ipcMain.handle('list-saves', async () => {
   try {
-    const savesDir = isDev
-      ? path.join(process.cwd(), 'saves')
-      : path.join(app.getPath('userData'), 'saves');
-
+    const savesDir = getSavesDir();
     await fs.promises.mkdir(savesDir, { recursive: true });
     const files = await fs.promises.readdir(savesDir);
     return files.filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''));
@@ -111,10 +115,7 @@ ipcMain.handle('list-saves', async () => {
 
 ipcMain.handle('delete-save', async (_event, saveId: string) => {
   try {
-    const savesDir = isDev
-      ? path.join(process.cwd(), 'saves')
-      : path.join(app.getPath('userData'), 'saves');
-
+    const savesDir = getSavesDir();
     await fs.promises.unlink(path.join(savesDir, `${saveId}.json`));
     return true;
   } catch (error) {
