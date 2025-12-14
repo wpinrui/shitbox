@@ -1,37 +1,13 @@
 {
-  "version": "1.0.0",
-  "tileSize": 16,
-  "tileSpacing": 1,
-  "tilesetWidth": 37,
-  "tilesetHeight": 28,
-  "tileset": "modern-city/Tilemap/tilemap_packed.png",
-  "width": 40,
-  "height": 30,
+  "version": "2.0.0",
+  "townName": "Greymont",
+  "gridSize": 50,
   "metersPerTile": 25,
+  "walkSpeed": 5,
+  "driveSpeed": 30,
+  "towCost": 50,
 
-  "tileTypes": {
-    "grass": 111,
-    "pavement": 74,
-    "road_h": 673,
-    "road_v": 710,
-    "road_intersection": 711,
-    "road_corner_tl": 672,
-    "road_corner_tr": 674,
-    "road_corner_bl": 746,
-    "road_corner_br": 748,
-    "brick_red": 0,
-    "brick_grey": 37,
-    "concrete": 148,
-    "wood_floor": 185,
-    "fence_h": 481,
-    "fence_v": 518
-  },
-
-  "layers": {
-    "ground": "SEE_BELOW",
-    "buildings": "SEE_BELOW",
-    "objects": "SEE_BELOW"
-  },
+  "regions": ["Central", "North", "South", "East", "West"],
 
   "locations": [
     {
@@ -39,123 +15,132 @@
       "name": "Scrapyard",
       "description": "A sprawling junkyard full of old cars and salvage parts.",
       "summary": ["Work for cash", "Scavenge parts", "Buy junkers"],
-      "bounds": { "x": 2, "y": 2, "w": 8, "h": 6 },
-      "entryPoint": { "x": 5, "y": 8 },
-      "activitiesFile": "scrapyard",
-      "tileStyle": "industrial"
-    },
-    {
-      "id": "parking_lot",
-      "name": "Parking Lot",
-      "description": "Public parking. Tow trucks bring stranded cars here.",
-      "summary": ["Park your car", "Retrieve towed vehicles"],
-      "bounds": { "x": 12, "y": 2, "w": 5, "h": 4 },
-      "entryPoint": { "x": 14, "y": 6 },
-      "activitiesFile": null,
-      "tileStyle": "parking"
-    },
-    {
-      "id": "gas_station",
-      "name": "Gas Station",
-      "description": "Fill up your tank. Pay at the pump.",
-      "summary": ["Refuel your car"],
-      "bounds": { "x": 20, "y": 2, "w": 4, "h": 3 },
-      "entryPoint": { "x": 22, "y": 5 },
-      "activitiesFile": "gas_station",
-      "tileStyle": "commercial"
-    },
-    {
-      "id": "garage",
-      "name": "Garage",
-      "description": "Store and work on your cars. Basic repairs available.",
-      "summary": ["Store cars", "Basic repairs", "DIY work"],
-      "bounds": { "x": 2, "y": 12, "w": 6, "h": 5 },
-      "entryPoint": { "x": 5, "y": 17 },
-      "activitiesFile": "garage",
-      "tileStyle": "industrial"
-    },
-    {
-      "id": "workshop",
-      "name": "Workshop",
-      "description": "Professional mechanic shop for major repairs.",
-      "summary": ["Major repairs", "Engine work", "Professional service"],
-      "bounds": { "x": 10, "y": 12, "w": 5, "h": 4 },
-      "entryPoint": { "x": 12, "y": 16 },
-      "activitiesFile": "workshop",
-      "tileStyle": "industrial"
-    },
-    {
-      "id": "bank",
-      "name": "Bank",
-      "description": "Save money, take loans, invest in index funds.",
-      "summary": ["Savings account", "Loans", "Investments"],
-      "bounds": { "x": 26, "y": 2, "w": 4, "h": 3 },
-      "entryPoint": { "x": 28, "y": 5 },
-      "activitiesFile": "bank",
-      "tileStyle": "commercial"
+      "icon": "Warehouse",
+      "category": "Industrial",
+      "region": "Central",
+      "position": { "x": 25, "y": 25 },
+      "address": "1 Industrial Way, Central Greymont",
+      "activitiesFile": "scrapyard"
     },
     {
       "id": "school",
       "name": "Driving School",
       "description": "Get your licenses. Study for tests.",
       "summary": ["Driving lessons", "License tests", "Study"],
-      "bounds": { "x": 32, "y": 2, "w": 4, "h": 4 },
-      "entryPoint": { "x": 34, "y": 6 },
-      "activitiesFile": "school",
-      "tileStyle": "commercial"
+      "icon": "GraduationCap",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 22, "y": 8 },
+      "address": "45 Learner Lane, North Greymont",
+      "activitiesFile": "school"
     },
     {
-      "id": "apartments",
-      "name": "Apartments",
-      "description": "Rent a place for better rest. Various quality levels.",
-      "summary": ["Rent apartment", "Better sleep quality"],
-      "bounds": { "x": 32, "y": 12, "w": 4, "h": 5 },
-      "entryPoint": { "x": 34, "y": 17 },
-      "activitiesFile": "apartments",
-      "tileStyle": "residential"
+      "id": "bank",
+      "name": "Bank",
+      "description": "Save money, take loans, invest in index funds.",
+      "summary": ["Savings account", "Loans", "Investments"],
+      "icon": "Landmark",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 28, "y": 10 },
+      "address": "100 Main Street, North Greymont",
+      "activitiesFile": "bank"
     },
     {
-      "id": "car_wash",
-      "name": "Car Wash",
-      "description": "Entry-level job washing cars.",
-      "summary": ["Work for tips", "Easy money"],
-      "bounds": { "x": 18, "y": 12, "w": 3, "h": 3 },
-      "entryPoint": { "x": 19, "y": 15 },
-      "activitiesFile": "car_wash",
-      "tileStyle": "commercial"
+      "id": "gas_station",
+      "name": "Gas Station",
+      "description": "Fill up your tank. Pay at the pump.",
+      "summary": ["Refuel your car"],
+      "icon": "Fuel",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 42, "y": 20 },
+      "address": "88 Highway Road, East Greymont",
+      "activitiesFile": "gas_station"
     },
     {
       "id": "auction",
       "name": "Auction House",
       "description": "Buy and sell cars at auction. Special deals on auction days.",
       "summary": ["Bid on cars", "Consign vehicles", "Auction schedule"],
-      "bounds": { "x": 24, "y": 12, "w": 5, "h": 4 },
-      "entryPoint": { "x": 26, "y": 16 },
-      "activitiesFile": "auction",
-      "tileStyle": "commercial"
+      "icon": "Gavel",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 45, "y": 30 },
+      "address": "120 Commerce Drive, East Greymont",
+      "activitiesFile": "auction"
     },
     {
       "id": "showroom",
       "name": "Showroom",
       "description": "High-end car dealership. Work as a salesperson or browse luxury cars.",
       "summary": ["Sales job", "Browse inventory", "Trade-ins"],
-      "bounds": { "x": 2, "y": 22, "w": 6, "h": 5 },
-      "entryPoint": { "x": 5, "y": 27 },
-      "activitiesFile": "showroom",
-      "tileStyle": "commercial"
+      "icon": "Car",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 44, "y": 38 },
+      "address": "200 Luxury Lane, East Greymont",
+      "activitiesFile": "showroom"
+    },
+    {
+      "id": "garage",
+      "name": "Garage",
+      "description": "Store and work on your cars. Basic repairs available.",
+      "summary": ["Store cars", "Basic repairs", "DIY work"],
+      "icon": "Wrench",
+      "category": "Industrial",
+      "region": "West",
+      "position": { "x": 8, "y": 22 },
+      "address": "13 Wrecksford Road, West Greymont",
+      "activitiesFile": "garage"
+    },
+    {
+      "id": "workshop",
+      "name": "Workshop",
+      "description": "Professional mechanic shop for major repairs.",
+      "summary": ["Major repairs", "Engine work", "Professional service"],
+      "icon": "Cog",
+      "category": "Industrial",
+      "region": "West",
+      "position": { "x": 6, "y": 32 },
+      "address": "27 Mechanic Street, West Greymont",
+      "activitiesFile": "workshop"
+    },
+    {
+      "id": "car_wash",
+      "name": "Car Wash",
+      "description": "Entry-level job washing cars.",
+      "summary": ["Work for tips", "Easy money"],
+      "icon": "Droplets",
+      "category": "Commercial",
+      "region": "West",
+      "position": { "x": 10, "y": 40 },
+      "address": "55 Suds Avenue, West Greymont",
+      "activitiesFile": "car_wash"
+    },
+    {
+      "id": "apartments",
+      "name": "Apartments",
+      "description": "Rent a place for better rest. Various quality levels.",
+      "summary": ["Rent apartment", "Better sleep quality"],
+      "icon": "Building2",
+      "category": "Residential",
+      "region": "South",
+      "position": { "x": 25, "y": 44 },
+      "address": "300 Residence Row, South Greymont",
+      "activitiesFile": "apartments"
+    },
+    {
+      "id": "parking_lot",
+      "name": "Parking Lot",
+      "description": "Public parking. Tow trucks bring stranded cars here.",
+      "summary": ["Park your car", "Retrieve towed vehicles"],
+      "icon": "ParkingCircle",
+      "category": "Parking",
+      "region": "South",
+      "position": { "x": 32, "y": 45 },
+      "address": "15 Storage Lane, South Greymont",
+      "activitiesFile": null
     }
-  ],
-
-  "roads": [
-    { "type": "horizontal", "y": 10, "xStart": 0, "xEnd": 39 },
-    { "type": "horizontal", "y": 20, "xStart": 0, "xEnd": 39 },
-    { "type": "vertical", "x": 8, "yStart": 0, "yEnd": 29 },
-    { "type": "vertical", "x": 16, "yStart": 0, "yEnd": 29 },
-    { "type": "vertical", "x": 24, "yStart": 0, "yEnd": 29 },
-    { "type": "vertical", "x": 32, "yStart": 0, "yEnd": 29 }
-  ],
-
-  "walkSpeed": 5,
-  "driveSpeed": 30,
-  "towCost": 50
+  ]
 }

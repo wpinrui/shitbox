@@ -1,0 +1,148 @@
+.location-card {
+  background-color: rgba(30, 30, 30, 0.95);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.location-card:hover {
+  border-color: #555;
+  background-color: rgba(40, 40, 40, 0.95);
+}
+
+.location-card.current {
+  border-color: #4a7c4a;
+  background-color: rgba(74, 124, 74, 0.15);
+}
+
+.location-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.location-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 215, 0, 0.15);
+  border-radius: 8px;
+  color: #ffd700;
+  flex-shrink: 0;
+}
+
+.location-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.location-card .location-name {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffd700;
+  text-transform: uppercase;
+}
+
+.location-address {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.current-badge {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #4a7c4a;
+  background-color: rgba(74, 124, 74, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.location-card .location-summary {
+  margin: 0 0 12px 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.location-card .location-summary li {
+  font-size: 12px;
+  color: #aaa;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.location-travel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #333;
+}
+
+.travel-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 13px;
+}
+
+.travel-stats .distance {
+  font-weight: bold;
+  color: #fff;
+}
+
+.travel-stats .travel-time {
+  color: #888;
+}
+
+.location-card .travel-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.location-card .travel-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.location-card .walk-button {
+  background-color: #4a7c4a;
+  color: #fff;
+}
+
+.location-card .walk-button:hover {
+  background-color: #5a9c5a;
+}
+
+.location-card .drive-button {
+  background-color: #7c4a4a;
+  color: #fff;
+}
+
+.location-card .drive-button:hover:not(:disabled) {
+  background-color: #9c5a5a;
+}
+
+.location-card .drive-button:disabled {
+  background-color: #333;
+  color: #666;
+  cursor: not-allowed;
+}

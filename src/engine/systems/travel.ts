@@ -250,5 +250,5 @@ export function getParkingLotPosition(): GridPosition {
   if (!parkingLot) {
     throw new Error('Parking lot location not found in map data');
   }
-  return parkingLot.entryPoint;
+  return parkingLot.position;
 }

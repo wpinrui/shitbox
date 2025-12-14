@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useGameStore } from '@store/index';
-import { TileMap, LocationInfoPanel } from '@ui/components/map';
+import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
 import { ToastContainer, FadeTransition } from '@ui/components/common';
 import { Sidebar } from '@ui/components/hud';
@@ -33,8 +33,6 @@ export function GameScreen({
   const setExecutingActivity = useGameStore((state) => state.setExecutingActivity);
   const walkTo = useGameStore((state) => state.walkTo);
   const driveTo = useGameStore((state) => state.driveTo);
-
-  const [selectedMapLocation, setSelectedMapLocation] = useState<LocationDefinition | null>(null);
 
   const economyConfig = getEconomyConfig();
   const starvationDays = economyConfig.survival.daysWithoutFoodUntilDeath;
@@ -90,35 +88,23 @@ export function GameScreen({
     setSelectedActivity(null);
   };
 
-  const handleMapLocationClick = (location: LocationDefinition) => {
-    setSelectedMapLocation(location);
-  };
-
-  const handleMapLocationClose = () => {
-    setSelectedMapLocation(null);
-  };
-
-  const handleWalk = () => {
-    if (!selectedMapLocation) return;
-    const result = walkTo(selectedMapLocation.entryPoint);
+  const handleWalk = useCallback((location: LocationDefinition) => {
+    const result = walkTo(location.position);
     if (result.success) {
-      addToast(`Walked to ${selectedMapLocation.name}`, 'info');
-      setSelectedMapLocation(null);
+      addToast(`Walked to ${location.name}`, 'info');
     } else if (result.error) {
       addToast(result.error, 'error');
     }
-  };
+  }, [walkTo, addToast]);
 
-  const handleDrive = () => {
-    if (!selectedMapLocation) return;
-    const result = driveTo(selectedMapLocation.entryPoint);
+  const handleDrive = useCallback((location: LocationDefinition) => {
+    const result = driveTo(location.position);
     if (result.success) {
-      addToast(`Drove to ${selectedMapLocation.name}`, 'info');
-      setSelectedMapLocation(null);
+      addToast(`Drove to ${location.name}`, 'info');
     } else if (result.error) {
       addToast(result.error, 'error');
     }
-  };
+  }, [driveTo, addToast]);
 
   return (
     <div className="game-screen">
@@ -191,26 +177,13 @@ export function GameScreen({
 
           {currentTab === 'map' && (
             <div className="map-tab">
-              <TileMap
+              <LocationList
                 playerPosition={gameState.player.position}
-                carPositions={gameState.inventory.cars.map((car) => ({
-                  x: car.position.x,
-                  y: car.position.y,
-                  instanceId: car.instanceId,
-                }))}
-                onLocationClick={handleMapLocationClick}
+                playerFitness={gameState.player.stats.fitness}
+                hasCarHere={hasCarHere}
+                onWalk={handleWalk}
+                onDrive={handleDrive}
               />
-
-              {selectedMapLocation && (
-                <LocationInfoPanel
-                  location={selectedMapLocation}
-                  playerPosition={gameState.player.position}
-                  hasCarHere={hasCarHere}
-                  onWalk={handleWalk}
-                  onDrive={handleDrive}
-                  onClose={handleMapLocationClose}
-                />
-              )}
             </div>
           )}
         </div>

@@ -39,13 +39,10 @@ export {
 export {
   loadMapData,
   getMapData,
-  getTileGrid,
-  getTileAt,
   getLocation,
   getAllLocations,
+  getLocationsByRegion,
   getLocationAtPosition,
-  isRoadTile,
-  isWalkable,
   calculateDistance,
   calculateDistanceMeters,
   calculateTravelTime,
@@ -55,7 +52,8 @@ export {
   clearMapCache,
   type MapData,
   type LocationDefinition,
-  type TileInfo,
+  type Region,
+  type LocationCategory,
 } from './data';
 
 // Validators
