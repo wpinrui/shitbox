@@ -1792,11 +1792,11 @@ export const selectPassiveIncome = (state: GameState): number => {
 ### Phase 0: Foundation (Week 1)
 **Goal**: Project skeleton that runs
 
-- [ ] Initialize Electron + React + TypeScript project
-- [ ] Set up directory structure
-- [ ] Create data loading system (JSON → typed objects)
-- [ ] Implement seeded RNG
-- [ ] Create basic Zustand store
+- [x] Initialize Electron + React + TypeScript project
+- [x] Set up directory structure
+- [x] Create data loading system (JSON → typed objects)
+- [x] Implement seeded RNG
+- [x] Create basic Zustand store
 - [ ] Build development hot-reload for data files
 - [ ] Create data validator tool
 
@@ -1804,41 +1804,41 @@ export const selectPassiveIncome = (state: GameState): number => {
 
 ---
 
-### Phase 1: Core Loop (Weeks 2-3)
+### Phase 1: Core Loop (Weeks 2-3) ✓
 **Goal**: Playable time/energy/money cycle
 
-- [ ] Implement `GameState` type and initial state creation
-- [ ] Build time system (hours, days, time-of-day)
-- [ ] Build resource system (money, energy)
-- [ ] Create activity execution engine
-- [ ] Implement prerequisite checking
-- [ ] Build stat system with growth
-- [ ] Create basic HUD (money, energy, time, stats)
-- [ ] Implement save/load
-- [ ] Add death conditions (starvation)
+- [x] Implement `GameState` type and initial state creation
+- [x] Build time system (hours, days, time-of-day)
+- [x] Build resource system (money, energy)
+- [x] Create activity execution engine
+- [x] Implement prerequisite checking
+- [x] Build stat system with growth
+- [x] Create basic HUD (money, energy, time, stats)
+- [x] Implement save/load
+- [x] Add death conditions (starvation)
 
 **Data files needed**:
-- `economy.json` (base values)
-- `activities/misc.json` (eat, sleep, wait)
+- `economy.json` (base values) ✓
+- `activities/misc.json` (eat, sleep, wait) ✓
 
 **Deliverable**: Can start game, watch time pass, energy deplete, eat food, sleep, die if broke
 
 ---
 
-### Phase 2: World & Basic Activities (Weeks 4-5)
+### Phase 2: World & Basic Activities (Weeks 4-5) ← CURRENT
 **Goal**: Navigate locations, perform work
 
 - [ ] Build map screen with clickable locations
 - [ ] Create location menu system
 - [ ] Implement activity UI (select, confirm, see results)
-- [ ] Add scrapyard activities (labor, scavenge)
+- [x] Add scrapyard activities (labor, scavenge)
 - [ ] Add basic car wash job
 - [ ] Implement inventory (parts)
 - [ ] Build time-of-day visuals
 - [ ] Add newspaper system (basic)
 
 **Data files needed**:
-- `activities/scrapyard.json`
+- `activities/scrapyard.json` ✓
 - `newspaper-templates.json`
 
 **Deliverable**: Can work at scrapyard, earn money, buy newspaper, survive
