@@ -155,6 +155,13 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 }
 
 /**
+ * Pluralize "hour" based on count.
+ */
+function pluralizeHours(hours: number): string {
+  return hours === 1 ? '1 hour' : `${hours} hours`;
+}
+
+/**
  * Generate a narrative description of what happened.
  */
 function generateNarrative(
@@ -164,24 +171,25 @@ function generateNarrative(
 ): string {
   const moneyChange = delta.player?.money ?? 0;
   const energyChange = delta.player?.energy ?? 0;
+  const hourStr = pluralizeHours(hours);
 
   switch (activityId) {
     case 'eat':
       return `You spent $${Math.abs(moneyChange)} on food. (1 hour)`;
 
     case 'sleep':
-      return `You slept for ${hours} hour${hours === 1 ? '' : 's'} and recovered ${energyChange} energy.`;
+      return `You slept for ${hourStr} and recovered ${energyChange} energy.`;
 
     case 'wait':
-      return `You waited for ${hours} hour${hours === 1 ? '' : 's'} and recovered ${energyChange} energy.`;
+      return `You waited for ${hourStr} and recovered ${energyChange} energy.`;
 
     default:
       if (moneyChange > 0) {
-        return `You earned $${moneyChange}. (${hours} hour${hours === 1 ? '' : 's'})`;
+        return `You earned $${moneyChange}. (${hourStr})`;
       } else if (moneyChange < 0) {
-        return `You spent $${Math.abs(moneyChange)}. (${hours} hour${hours === 1 ? '' : 's'})`;
+        return `You spent $${Math.abs(moneyChange)}. (${hourStr})`;
       }
-      return `Activity completed. (${hours} hour${hours === 1 ? '' : 's'})`;
+      return `Activity completed. (${hourStr})`;
   }
 }
 

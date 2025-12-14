@@ -74,20 +74,24 @@
   "statEffects": {
     "charisma": {
       "traitVisibilityPerPoint": 0.02,
-      "adResponseBonusPerPoint": 0.005
+      "adResponseBonusPerPoint": 0.005,
+      "earningsBonusPerPoint": 0.05
     },
     "mechanical": {
       "repairQualityBonusPerPoint": 0.01,
       "partFindBonusPerPoint": 0.02,
-      "valueSpotAccuracyPerPoint": 0.015
+      "valueSpotAccuracyPerPoint": 0.015,
+      "earningsBonusPerPoint": 0.05
     },
     "fitness": {
-      "energyDrainReductionPerPoint": 0.01,
+      "energyCostReductionPerPoint": 0.02,
+      "restEfficiencyBonusPerPoint": 0.02,
       "laborOutputBonusPerPoint": 0.008
     },
     "knowledge": {
       "researchAccuracyPerPoint": 0.02,
-      "hiddenListingChancePerPoint": 0.01
+      "hiddenListingChancePerPoint": 0.01,
+      "statGainBonusPerPoint": 0.03
     },
     "driving": {
       "roadTripRiskReductionPerPoint": 0.02,

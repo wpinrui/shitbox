@@ -163,11 +163,34 @@ export interface EconomyConfig {
     dealerTradeInPercent: number;
   };
   statEffects: {
-    charisma: Record<string, number>;
-    mechanical: Record<string, number>;
-    fitness: Record<string, number>;
-    knowledge: Record<string, number>;
-    driving: Record<string, number>;
+    charisma: {
+      traitVisibilityPerPoint: number;
+      adResponseBonusPerPoint: number;
+      earningsBonusPerPoint: number;
+    };
+    mechanical: {
+      repairQualityBonusPerPoint: number;
+      partFindBonusPerPoint: number;
+      valueSpotAccuracyPerPoint: number;
+      earningsBonusPerPoint: number;
+    };
+    fitness: {
+      energyCostReductionPerPoint: number;
+      restEfficiencyBonusPerPoint: number;
+      laborOutputBonusPerPoint: number;
+    };
+    knowledge: {
+      researchAccuracyPerPoint: number;
+      hiddenListingChancePerPoint: number;
+      statGainBonusPerPoint: number;
+    };
+    driving: {
+      roadTripRiskReductionPerPoint: number;
+      deliveryEfficiencyBonusPerPoint: number;
+      ticketAvoidancePerPoint: number;
+      fuelEfficiencyBonusPerPoint: number;
+      carWearReductionPerPoint: number;
+    };
   };
 }
 

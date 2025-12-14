@@ -5,6 +5,7 @@
 
 import type { GameState, PlayerStats } from '../types';
 import type { ActivityDefinition, EconomyConfig } from '../data';
+import { getEconomyConfig } from '../data';
 import { MAX_ENERGY } from '../index';
 
 /**
@@ -36,8 +37,9 @@ export function calculateEnergyCost(
     baseCost *= hours;
   }
 
-  // Apply fitness modifier: -2% energy cost per point
-  const fitnessReduction = state.player.stats.fitness * 0.02;
+  // Apply fitness modifier for energy cost reduction
+  const economyConfig = getEconomyConfig();
+  const fitnessReduction = state.player.stats.fitness * economyConfig.statEffects.fitness.energyCostReductionPerPoint;
   const finalCost = baseCost * (1 - fitnessReduction);
 
   return Math.max(0, Math.round(finalCost));
@@ -64,8 +66,8 @@ export function calculateEnergyRecovery(
     ratePerHour = getRestEnergyPerHour(state.player.housing.type, economyConfig);
   }
 
-  // Apply fitness rest efficiency bonus: +2% per point
-  const fitnessBonus = state.player.stats.fitness * 0.02;
+  // Apply fitness rest efficiency bonus
+  const fitnessBonus = state.player.stats.fitness * economyConfig.statEffects.fitness.restEfficiencyBonusPerPoint;
   const effectiveRate = ratePerHour * (1 + fitnessBonus);
 
   const recovery = effectiveRate * hours;
@@ -147,11 +149,14 @@ export function calculateMoneyEarned(
 
   // Apply stat modifier if specified
   if (activity.money.statModifier) {
-    const statValue = state.player.stats[activity.money.statModifier.stat];
+    const statName = activity.money.statModifier.stat;
+    const statValue = state.player.stats[statName];
     if (activity.money.statModifier.effect === 'increase') {
-      // Typical formula: base * (1 + stat * modifier)
-      // We'll use a default 0.05 bonus per point (5%)
-      baseEarnings *= 1 + statValue * 0.05;
+      // Use stat-specific earnings bonus from config (default 5% per point)
+      const economyConfig = getEconomyConfig();
+      const statConfig = economyConfig.statEffects[statName] as Record<string, number>;
+      const bonusPerPoint = statConfig?.earningsBonusPerPoint ?? 0.05;
+      baseEarnings *= 1 + statValue * bonusPerPoint;
     }
   }
 
@@ -205,8 +210,9 @@ export function calculateStatGains(
 
   const hours = getActivityHours(activity, params);
 
-  // Knowledge bonus: +3% per point
-  const knowledgeMultiplier = 1 + knowledgeLevel * 0.03;
+  // Knowledge bonus for stat gains
+  const economyConfig = getEconomyConfig();
+  const knowledgeMultiplier = 1 + knowledgeLevel * economyConfig.statEffects.knowledge.statGainBonusPerPoint;
 
   for (const statGain of activity.statGain) {
     let amount = statGain.amount;
