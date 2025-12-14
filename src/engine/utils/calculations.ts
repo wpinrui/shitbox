@@ -152,10 +152,16 @@ export function calculateMoneyEarned(
     const statName = activity.money.statModifier.stat;
     const statValue = state.player.stats[statName];
     if (activity.money.statModifier.effect === 'increase') {
-      // Use stat-specific earnings bonus from config (default 5% per point)
+      // Use stat-specific earnings bonus from config
+      // Only charisma and mechanical have earningsBonusPerPoint defined
       const economyConfig = getEconomyConfig();
-      const statConfig = economyConfig.statEffects[statName] as Record<string, number>;
-      const bonusPerPoint = statConfig?.earningsBonusPerPoint ?? 0.05;
+      const { statEffects } = economyConfig;
+      let bonusPerPoint = 0;
+      if (statName === 'charisma') {
+        bonusPerPoint = statEffects.charisma.earningsBonusPerPoint;
+      } else if (statName === 'mechanical') {
+        bonusPerPoint = statEffects.mechanical.earningsBonusPerPoint;
+      }
       baseEarnings *= 1 + statValue * bonusPerPoint;
     }
   }
