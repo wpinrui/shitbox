@@ -30,7 +30,7 @@
         "statModifier": {
           "stat": "fitness",
           "effect": "increase",
-          "formula": "base * (1 + fitness * 0.008)"
+          "formula": "base * (1 + fitness * 0.05)"
         }
       },
       "prerequisites": [],
