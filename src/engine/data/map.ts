@@ -1,6 +1,6 @@
 /**
  * Map data loading and management.
- * Handles the town map, locations, and tile generation.
+ * Handles the town map, locations, and distance calculations.
  */
 
 import type { GridPosition } from '../types';
@@ -9,22 +9,19 @@ import type { GridPosition } from '../types';
 // Types
 // ============================================================================
 
+export type Region = 'Central' | 'North' | 'South' | 'East' | 'West';
+export type LocationCategory = 'Industrial' | 'Commercial' | 'Residential' | 'Parking';
+
 export interface MapData {
   version: string;
-  tileSize: number;
-  tileSpacing: number;
-  tilesetWidth: number;
-  tilesetHeight: number;
-  tileset: string;
-  width: number;
-  height: number;
+  townName: string;
+  gridSize: number;
   metersPerTile: number;
-  tileTypes: Record<string, number>;
-  locations: LocationDefinition[];
-  roads: RoadDefinition[];
   walkSpeed: number; // km/h
   driveSpeed: number; // km/h
   towCost: number;
+  regions: Region[];
+  locations: LocationDefinition[];
 }
 
 export interface LocationDefinition {
@@ -32,27 +29,12 @@ export interface LocationDefinition {
   name: string;
   description: string;
   summary: string[];
-  bounds: { x: number; y: number; w: number; h: number };
-  entryPoint: GridPosition;
+  icon: string;
+  category: LocationCategory;
+  region: Region;
+  position: GridPosition;
+  address: string;
   activitiesFile: string | null;
-  tileStyle: 'industrial' | 'commercial' | 'residential' | 'parking';
-}
-
-export interface RoadDefinition {
-  type: 'horizontal' | 'vertical';
-  x?: number;
-  y?: number;
-  xStart?: number;
-  xEnd?: number;
-  yStart?: number;
-  yEnd?: number;
-}
-
-export interface TileInfo {
-  tileIndex: number;
-  isWalkable: boolean;
-  isRoad: boolean;
-  locationId: string | null;
 }
 
 // ============================================================================
@@ -61,9 +43,16 @@ export interface TileInfo {
 
 const mapCache = {
   data: null as MapData | null,
-  tileGrid: null as TileInfo[][] | null,
   locationById: new Map<string, LocationDefinition>(),
+  locationByPosition: new Map<string, LocationDefinition>(),
 };
+
+/**
+ * Get position key for map lookup.
+ */
+function positionKey(pos: GridPosition): string {
+  return `${pos.x},${pos.y}`;
+}
 
 // ============================================================================
 // Loading Functions
@@ -80,117 +69,13 @@ export async function loadMapData(): Promise<MapData> {
   const data = await window.electronAPI.loadData('map.json');
   mapCache.data = data as MapData;
 
-  // Index locations by ID
+  // Index locations by ID and position
   for (const loc of mapCache.data.locations) {
     mapCache.locationById.set(loc.id, loc);
+    mapCache.locationByPosition.set(positionKey(loc.position), loc);
   }
-
-  // Generate tile grid
-  mapCache.tileGrid = generateTileGrid(mapCache.data);
 
   return mapCache.data;
-}
-
-/**
- * Generate the tile grid from declarative map data.
- */
-function generateTileGrid(mapData: MapData): TileInfo[][] {
-  const { width, height, tileTypes, locations, roads } = mapData;
-
-  // Initialize with grass
-  const grid: TileInfo[][] = [];
-  for (let y = 0; y < height; y++) {
-    const row: TileInfo[] = [];
-    for (let x = 0; x < width; x++) {
-      row.push({
-        tileIndex: tileTypes.grass,
-        isWalkable: true,
-        isRoad: false,
-        locationId: null,
-      });
-    }
-    grid.push(row);
-  }
-
-  // Add roads
-  for (const road of roads) {
-    if (road.type === 'horizontal' && road.y !== undefined) {
-      for (let x = road.xStart ?? 0; x <= (road.xEnd ?? width - 1); x++) {
-        if (x >= 0 && x < width && road.y >= 0 && road.y < height) {
-          grid[road.y][x] = {
-            tileIndex: tileTypes.road_h,
-            isWalkable: true,
-            isRoad: true,
-            locationId: null,
-          };
-        }
-      }
-    } else if (road.type === 'vertical' && road.x !== undefined) {
-      for (let y = road.yStart ?? 0; y <= (road.yEnd ?? height - 1); y++) {
-        if (road.x >= 0 && road.x < width && y >= 0 && y < height) {
-          // Check for intersection with horizontal road
-          const existingTile = grid[y][road.x];
-          if (existingTile.isRoad) {
-            grid[y][road.x] = {
-              tileIndex: tileTypes.road_intersection,
-              isWalkable: true,
-              isRoad: true,
-              locationId: null,
-            };
-          } else {
-            grid[y][road.x] = {
-              tileIndex: tileTypes.road_v,
-              isWalkable: true,
-              isRoad: true,
-              locationId: null,
-            };
-          }
-        }
-      }
-    }
-  }
-
-  // Add location tiles
-  for (const loc of locations) {
-    const { bounds, id, tileStyle } = loc;
-    const tileIndex = getTileForStyle(tileStyle, tileTypes);
-
-    for (let y = bounds.y; y < bounds.y + bounds.h; y++) {
-      for (let x = bounds.x; x < bounds.x + bounds.w; x++) {
-        if (x >= 0 && x < width && y >= 0 && y < height) {
-          grid[y][x] = {
-            tileIndex,
-            isWalkable: true,
-            isRoad: false,
-            locationId: id,
-          };
-        }
-      }
-    }
-  }
-
-  return grid;
-}
-
-/**
- * Get tile index based on location style.
- */
-function getTileForStyle(
-  style: string,
-  tileTypes: Record<string, number>
-): number {
-  switch (style) {
-    case 'industrial':
-      return tileTypes.concrete;
-    case 'commercial':
-      return tileTypes.wood_floor;
-    case 'residential':
-      return tileTypes.brick_grey;
-    case 'parking':
-      return tileTypes.pavement;
-    default:
-      return tileTypes.grass;
-  }
 }
 
 // ============================================================================
@@ -208,31 +93,6 @@ export function getMapData(): MapData {
 }
 
 /**
- * Get the tile grid. Throws if not loaded.
- */
-export function getTileGrid(): TileInfo[][] {
-  if (!mapCache.tileGrid) {
-    throw new Error('Map data not loaded. Call loadMapData() first.');
-  }
-  return mapCache.tileGrid;
-}
-
-/**
- * Get tile info at a specific position.
- */
-export function getTileAt(position: GridPosition): TileInfo | null {
-  const grid = mapCache.tileGrid;
-  if (!grid) return null;
-
-  const { x, y } = position;
-  if (y < 0 || y >= grid.length || x < 0 || x >= grid[0].length) {
-    return null;
-  }
-
-  return grid[y][x];
-}
-
-/**
  * Get location definition by ID.
  */
 export function getLocation(locationId: string): LocationDefinition | undefined {
@@ -247,28 +107,33 @@ export function getAllLocations(): LocationDefinition[] {
 }
 
 /**
+ * Get locations grouped by region.
+ */
+export function getLocationsByRegion(): Map<Region, LocationDefinition[]> {
+  const byRegion = new Map<Region, LocationDefinition[]>();
+  const regions: Region[] = mapCache.data?.regions ?? ['Central', 'North', 'South', 'East', 'West'];
+
+  // Initialize empty arrays for each region
+  for (const region of regions) {
+    byRegion.set(region, []);
+  }
+
+  // Group locations
+  for (const loc of getAllLocations()) {
+    const list = byRegion.get(loc.region);
+    if (list) {
+      list.push(loc);
+    }
+  }
+
+  return byRegion;
+}
+
+/**
  * Get location at a specific position (if any).
  */
 export function getLocationAtPosition(position: GridPosition): LocationDefinition | null {
-  const tile = getTileAt(position);
-  if (!tile || !tile.locationId) return null;
-  return mapCache.locationById.get(tile.locationId) ?? null;
-}
-
-/**
- * Check if a position is on a road.
- */
-export function isRoadTile(position: GridPosition): boolean {
-  const tile = getTileAt(position);
-  return tile?.isRoad ?? false;
-}
-
-/**
- * Check if a position is walkable.
- */
-export function isWalkable(position: GridPosition): boolean {
-  const tile = getTileAt(position);
-  return tile?.isWalkable ?? false;
+  return mapCache.locationByPosition.get(positionKey(position)) ?? null;
 }
 
 /**
@@ -339,6 +204,6 @@ export function isMapLoaded(): boolean {
  */
 export function clearMapCache(): void {
   mapCache.data = null;
-  mapCache.tileGrid = null;
   mapCache.locationById.clear();
+  mapCache.locationByPosition.clear();
 }

@@ -1,2 +1,2 @@
-export { TileMap } from './TileMap';
-export { LocationInfoPanel } from './LocationInfoPanel';
+export { LocationList } from './LocationList';
+export { LocationCard } from './LocationCard';
