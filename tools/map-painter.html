@@ -17,7 +17,7 @@
 
     /* Sidebar */
     .sidebar {
-      width: 320px;
+      width: 680px;
       background: #16213e;
       display: flex;
       flex-direction: column;
@@ -98,27 +98,34 @@
     }
     .palette {
       display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 2px;
+      grid-template-columns: repeat(37, 1fr);
+      gap: 1px;
     }
     .palette-tile {
-      width: 28px;
-      height: 28px;
-      border: 2px solid transparent;
+      width: 17px;
+      height: 17px;
+      border: 1px solid transparent;
       cursor: pointer;
       image-rendering: pixelated;
       position: relative;
     }
     .palette-tile:hover { border-color: #ff6b6b; }
-    .palette-tile.selected { border-color: #e94560; box-shadow: 0 0 8px #e94560; }
+    .palette-tile.selected { border-color: #e94560; box-shadow: 0 0 4px #e94560; }
     .palette-tile .tile-index {
+      display: none;
+    }
+    .palette-tile:hover .tile-index {
+      display: block;
       position: absolute;
-      bottom: 0;
-      right: 0;
-      background: rgba(0,0,0,0.7);
-      font-size: 7px;
-      padding: 1px 2px;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      font-size: 9px;
+      padding: 2px 4px;
       color: #fff;
+      white-space: nowrap;
+      z-index: 10;
     }
 
     /* Selected tile preview */
