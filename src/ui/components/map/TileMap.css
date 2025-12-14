@@ -1,0 +1,114 @@
+.tilemap-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #1a1a1a;
+  position: relative;
+}
+
+.tilemap {
+  position: relative;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.tile {
+  position: absolute;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.tile.clickable {
+  cursor: pointer;
+}
+
+.tile.clickable:hover {
+  filter: brightness(1.2);
+}
+
+.tile.highlighted {
+  filter: brightness(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 0, 0.5);
+}
+
+/* Player marker - small character icon */
+.player-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background-color: #00ff00;
+  border: 2px solid #004400;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.8);
+  z-index: 10;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Car marker */
+.car-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: #ff8800;
+  border: 2px solid #884400;
+  border-radius: 2px;
+  z-index: 5;
+}
+
+/* Location labels floating above buildings */
+.location-label {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.location-label.highlighted {
+  opacity: 1;
+  background-color: rgba(255, 200, 0, 0.9);
+  color: #000000;
+}
+
+/* Night mode overlay - applied via CSS filter on container */
+.tilemap-container.night {
+  filter: brightness(0.6) saturate(0.8);
+}
+
+.tilemap-container.night::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 20, 50, 0.3);
+  pointer-events: none;
+}

@@ -35,6 +35,7 @@ export interface Player {
   name: string;
   money: number;
   energy: number;
+  position: GridPosition; // Grid coordinate on town map
 
   stats: PlayerStats;
   licenses: string[];
@@ -58,6 +59,11 @@ export interface PlayerStats {
 
 export type StatName = keyof PlayerStats;
 
+export interface GridPosition {
+  x: number;
+  y: number;
+}
+
 export interface Inventory {
   cars: OwnedCar[];
   engineParts: number;
@@ -69,7 +75,9 @@ export interface OwnedCar {
   carId: string;
   engineCondition: number; // 0-100
   bodyCondition: number; // 0-100
-  location: 'garage' | 'parking' | 'workshop' | 'in_use';
+  fuel: number; // Liters of fuel
+  fuelCapacity: number; // Max liters
+  position: GridPosition; // Grid coordinate on town map
   acquiredDay: number;
   acquiredPrice: number;
 }

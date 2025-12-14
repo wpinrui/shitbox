@@ -35,6 +35,29 @@ export {
   type StatGain,
 } from './data';
 
+// Map data
+export {
+  loadMapData,
+  getMapData,
+  getTileGrid,
+  getTileAt,
+  getLocation,
+  getAllLocations,
+  getLocationAtPosition,
+  isRoadTile,
+  isWalkable,
+  calculateDistance,
+  calculateDistanceMeters,
+  calculateTravelTime,
+  formatDistance,
+  formatTravelTime,
+  isMapLoaded,
+  clearMapCache,
+  type MapData,
+  type LocationDefinition,
+  type TileInfo,
+} from './data';
+
 // Validators
 export {
   checkPrerequisites,
@@ -76,3 +99,17 @@ export {
   canPerformActivity,
   type ExecuteActivityInput,
 } from './core/activity';
+
+// Travel system
+export {
+  getWalkingCost,
+  getDrivingCost,
+  canWalk,
+  canDrive,
+  executeWalk,
+  executeDrive,
+  getTowCost,
+  getParkingLotPosition,
+  type TravelCost,
+  type TravelResult,
+} from './systems/travel';
