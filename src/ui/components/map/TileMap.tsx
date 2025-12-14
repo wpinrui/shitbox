@@ -43,10 +43,10 @@ export function TileMap({
       const containerWidth = container.clientWidth;
       const containerHeight = container.clientHeight;
 
-      // Calculate scale to fit (contain)
+      // Calculate scale to fit (contain) - scale up or down to fill
       const scaleX = containerWidth / mapWidthPx;
       const scaleY = containerHeight / mapHeightPx;
-      const newScale = Math.min(scaleX, scaleY, 1); // Don't scale above 1
+      const newScale = Math.min(scaleX, scaleY);
 
       setScale(newScale);
     };
