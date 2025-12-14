@@ -19,7 +19,7 @@
         "statModifier": {
           "stat": "fitness",
           "effect": "reduce",
-          "formula": "base * (1 - fitness * 0.01)"
+          "formula": "base * (1 - fitness * 0.02)"
         }
       },
       "money": {
