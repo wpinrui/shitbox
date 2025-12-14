@@ -177,14 +177,14 @@ function validateAllData(): ValidationResult {
   // Future: Add validation for other data files as they're created
   // - cars.json
   // - traits.json
-  // - races.json
+  // - stunts.json
   // - activities/*.json
   // - etc.
 
   const missingFiles = [
     'cars.json',
     'traits.json',
-    'races.json',
+    'stunts.json',
     'licenses.json',
     'properties.json',
     'loans.json',

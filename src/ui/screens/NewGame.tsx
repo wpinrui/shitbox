@@ -8,19 +8,19 @@ const MAX_STAT = 20;
 const STAT_INFO: Record<StatName, { label: string; description: string }> = {
   charisma: {
     label: 'Charisma',
-    description: 'Negotiation, trait visibility, ad response',
+    description: 'Negotiation effectiveness, better deals',
   },
   mechanical: {
     label: 'Mechanical',
-    description: 'Repair quality, part finding, value spotting',
+    description: 'Repairs, car assessment, mechanic work',
   },
   fitness: {
     label: 'Fitness',
-    description: 'Energy efficiency, labor output',
+    description: 'Energy efficiency, labor, road trip endurance',
   },
   knowledge: {
     label: 'Knowledge',
-    description: 'Research accuracy, hidden listings',
+    description: 'Learning speed, skill gains, investments',
   },
   driving: {
     label: 'Driving',

@@ -120,7 +120,9 @@ function createInitialGameState(
     progression: {
       totalEarnings: 0,
       carsFlipped: 0,
-      racesWon: 0,
+      roadTripsCompleted: 0,
+      totalEngagement: 0,
+      subscribers: 0,
       highestCarValue: 0,
       gtoAcquired: false,
       gtoAcquiredDay: null,
