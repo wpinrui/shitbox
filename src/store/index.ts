@@ -20,6 +20,7 @@ import {
   applyStatGains,
   executeWalk,
   executeDrive,
+  getLocation,
   type ActivityParams,
   type ActivityDefinition,
 } from '@engine/index';
@@ -96,8 +97,12 @@ function createInitialGameState(
     rngSeed: seed,
   };
 
-  // Starting position at scrapyard (position: 100, 100)
-  const startingPosition = { x: 100, y: 100 };
+  // Starting position at scrapyard
+  const scrapyard = getLocation('scrapyard');
+  if (!scrapyard) {
+    throw new Error('Scrapyard location not found in map data');
+  }
+  const startingPosition = scrapyard.position;
 
   const player: Player = {
     name: playerName,
