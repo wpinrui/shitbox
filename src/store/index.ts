@@ -96,8 +96,8 @@ function createInitialGameState(
     rngSeed: seed,
   };
 
-  // Starting position inside scrapyard (bounds: x:2-9, y:2-7)
-  const startingPosition = { x: 5, y: 5 };
+  // Starting position at scrapyard (position: 25, 25)
+  const startingPosition = { x: 25, y: 25 };
 
   const player: Player = {
     name: playerName,
