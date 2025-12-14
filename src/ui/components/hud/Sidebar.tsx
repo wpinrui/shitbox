@@ -4,13 +4,9 @@ import { AnimatedMoney } from './AnimatedMoney';
 import { AnimatedEnergy } from './AnimatedEnergy';
 import './Sidebar.css';
 
-const STAT_DISPLAY: { key: StatName; label: string }[] = [
-  { key: 'charisma', label: 'CHA' },
-  { key: 'mechanical', label: 'MEC' },
-  { key: 'fitness', label: 'FIT' },
-  { key: 'knowledge', label: 'KNO' },
-  { key: 'driving', label: 'DRV' },
-];
+const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 interface SidebarProps {
   playerName: string;
@@ -58,10 +54,10 @@ export function Sidebar({
         <div className="sidebar-divider" />
 
         <div className="sidebar-stats">
-          {STAT_DISPLAY.map(({ key, label }) => (
-            <div key={key} className="sidebar-stat">
-              <span className="sidebar-stat-label">{label}</span>
-              <span className="sidebar-stat-value">{stats[key]}</span>
+          {STAT_ORDER.map((stat) => (
+            <div key={stat} className="sidebar-stat">
+              <span className="sidebar-stat-label">{capitalize(stat)}</span>
+              <span className="sidebar-stat-value">{stats[stat]}</span>
             </div>
           ))}
         </div>
