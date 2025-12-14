@@ -1868,8 +1868,8 @@ export const selectPassiveIncome = (state: GameState): number => {
 ### Phase 2: World & Basic Activities (Weeks 4-5) ← CURRENT
 **Goal**: Navigate locations, perform work
 
-- [ ] Build map screen with clickable locations
-- [ ] Create location menu system
+- [x] Build map screen with clickable locations
+- [x] Create location menu system
 - [ ] Implement activity UI (select, confirm, see results)
 - [x] Add scrapyard activities (labor, scavenge)
 - [ ] Add basic car wash job
