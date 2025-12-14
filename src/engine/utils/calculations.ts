@@ -6,7 +6,7 @@
 import type { GameState, PlayerStats } from '../types';
 import type { ActivityDefinition, EconomyConfig } from '../data';
 import { getEconomyConfig } from '../data';
-import { MAX_ENERGY } from '../index';
+import { MAX_ENERGY, MAX_STAT_LEVEL } from '../index';
 
 /**
  * Parameters passed when executing an activity
@@ -243,7 +243,7 @@ export function calculateStatGains(
 export function applyStatGains(
   currentStats: PlayerStats,
   gains: Partial<PlayerStats>,
-  maxStatLevel: number = 20
+  maxStatLevel: number = MAX_STAT_LEVEL
 ): PlayerStats {
   const newStats = { ...currentStats };
 

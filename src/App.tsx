@@ -116,7 +116,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
           <div className="energy-bar">
             <div
               className="energy-fill"
-              style={{ width: `${gameState.player.energy}%` }}
+              style={{ width: `${(gameState.player.energy / MAX_ENERGY) * 100}%` }}
             />
           </div>
           <span className="value">{gameState.player.energy}/{MAX_ENERGY}</span>
