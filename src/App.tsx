@@ -6,6 +6,7 @@ import {
   loadEconomyData,
   loadCoreActivities,
   getTimeOfDay,
+  getEconomyConfig,
 } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
@@ -78,6 +79,10 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
   const [sleepHours, setSleepHours] = useState(8);
   const [message, setMessage] = useState<string | null>(null);
 
+  const economyConfig = getEconomyConfig();
+  const foodCost = economyConfig.survival.dailyFoodCost;
+  const starvationDays = economyConfig.survival.daysWithoutFoodUntilDeath;
+
   const handleActivity = (activityId: string, params: { hours?: number } = {}) => {
     const result = performActivity(activityId, params);
     if (result.narrative) {
@@ -87,7 +92,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
     }
   };
 
-  const canAffordFood = gameState.player.money >= 25;
+  const canAffordFood = gameState.player.money >= foodCost;
   const timeOfDay = getTimeOfDay(gameState.time.currentHour);
 
   return (
@@ -121,7 +126,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
       {/* Food warning */}
       {gameState.player.daysWithoutFood > 0 && (
         <div className="warning food-warning">
-          Days without food: {gameState.player.daysWithoutFood}/2 - EAT OR DIE!
+          Days without food: {gameState.player.daysWithoutFood}/{starvationDays} - EAT OR DIE!
         </div>
       )}
 
@@ -145,7 +150,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
             disabled={!canAffordFood}
             className="activity-btn eat"
           >
-            Eat ($25)
+            Eat (${foodCost})
           </button>
 
           <div className="sleep-control">
