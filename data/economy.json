@@ -78,25 +78,28 @@
 
   "statEffects": {
     "charisma": {
-      "traitVisibilityPerPoint": 0.02,
-      "adResponseBonusPerPoint": 0.005,
-      "earningsBonusPerPoint": 0.05
+      "counterOfferShiftPerPoint": 0.01,
+      "insultThresholdMultiplierPerPoint": -0.01,
+      "interestCeilingMultiplierPerPoint": 0.01
     },
     "mechanical": {
-      "repairQualityBonusPerPoint": 0.01,
-      "partFindBonusPerPoint": 0.02,
-      "valueSpotAccuracyPerPoint": 0.015,
-      "earningsBonusPerPoint": 0.05
+      "diyRepairTimeReductionPerPoint": 0.02,
+      "diyRepairCostReductionPerPoint": 0.02,
+      "conditionAssessmentErrorReductionPerPoint": 0.004,
+      "lemonChanceReductionPerPoint": 0.002,
+      "mechanicWorkEarningsBonusPerPoint": 0.05
     },
     "fitness": {
       "energyCostReductionPerPoint": 0.02,
+      "physicalLaborEarningsBonusPerPoint": 0.05,
       "restEfficiencyBonusPerPoint": 0.02,
-      "laborOutputBonusPerPoint": 0.05
+      "roadTripFatigueDecayBonusPerPoint": 0.005
     },
     "knowledge": {
-      "researchAccuracyPerPoint": 0.02,
-      "hiddenListingChancePerPoint": 0.01,
-      "statGainBonusPerPoint": 0.03
+      "lessonsRequiredReductionPerPoint": 0.03,
+      "trainingGainBonusPerPoint": 0.03,
+      "passiveSkillGainBonusPerPoint": 0.03,
+      "investmentReturnBonusPerPoint": 0.0025
     },
     "driving": {
       "roadTripRiskReductionPerPoint": 0.02,
