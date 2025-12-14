@@ -1,15 +1,16 @@
+import { PlayerStats, StatName } from '@engine/index';
 import { AnimatedClock } from './AnimatedClock';
 import { AnimatedMoney } from './AnimatedMoney';
 import { AnimatedEnergy } from './AnimatedEnergy';
 import './Sidebar.css';
 
-interface PlayerStats {
-  charisma: number;
-  mechanical: number;
-  fitness: number;
-  knowledge: number;
-  driving: number;
-}
+const STAT_DISPLAY: { key: StatName; label: string }[] = [
+  { key: 'charisma', label: 'CHA' },
+  { key: 'mechanical', label: 'MEC' },
+  { key: 'fitness', label: 'FIT' },
+  { key: 'knowledge', label: 'KNO' },
+  { key: 'driving', label: 'DRV' },
+];
 
 interface SidebarProps {
   playerName: string;
@@ -57,26 +58,12 @@ export function Sidebar({
         <div className="sidebar-divider" />
 
         <div className="sidebar-stats">
-          <div className="sidebar-stat">
-            <span className="sidebar-stat-label">CHA</span>
-            <span className="sidebar-stat-value">{stats.charisma}</span>
-          </div>
-          <div className="sidebar-stat">
-            <span className="sidebar-stat-label">MEC</span>
-            <span className="sidebar-stat-value">{stats.mechanical}</span>
-          </div>
-          <div className="sidebar-stat">
-            <span className="sidebar-stat-label">FIT</span>
-            <span className="sidebar-stat-value">{stats.fitness}</span>
-          </div>
-          <div className="sidebar-stat">
-            <span className="sidebar-stat-label">KNO</span>
-            <span className="sidebar-stat-value">{stats.knowledge}</span>
-          </div>
-          <div className="sidebar-stat">
-            <span className="sidebar-stat-label">DRV</span>
-            <span className="sidebar-stat-value">{stats.driving}</span>
-          </div>
+          {STAT_DISPLAY.map(({ key, label }) => (
+            <div key={key} className="sidebar-stat">
+              <span className="sidebar-stat-label">{label}</span>
+              <span className="sidebar-stat-value">{stats[key]}</span>
+            </div>
+          ))}
         </div>
       </div>
 
