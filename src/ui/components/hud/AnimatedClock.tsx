@@ -4,6 +4,7 @@ import './AnimatedClock.css';
 interface AnimatedClockProps {
   day: number;
   hour: number;
+  minute: number;
   animationDuration?: number;
 }
 
@@ -14,33 +15,38 @@ function getTimeOfDayIcon(hour: number): string {
   return '🌙'; // Night
 }
 
-function formatHour(hour: number): string {
+function formatTime12Hour(hour: number, minute: number): string {
   const h = hour % 24;
-  if (h === 0) return '12 AM';
-  if (h === 12) return '12 PM';
-  if (h < 12) return `${h} AM`;
-  return `${h - 12} PM`;
+  const minStr = String(minute).padStart(2, '0');
+  if (h === 0) return `12:${minStr} AM`;
+  if (h === 12) return `12:${minStr} PM`;
+  if (h < 12) return `${h}:${minStr} AM`;
+  return `${h - 12}:${minStr} PM`;
 }
 
-export function AnimatedClock({ day, hour, animationDuration = 500 }: AnimatedClockProps) {
+export function AnimatedClock({ day, hour, minute, animationDuration = 500 }: AnimatedClockProps) {
   const [displayDay, setDisplayDay] = useState(day);
   const [displayHour, setDisplayHour] = useState(hour);
+  const [displayMinute, setDisplayMinute] = useState(minute);
   const [isAnimating, setIsAnimating] = useState(false);
   const previousDay = useRef(day);
   const previousHour = useRef(hour);
+  const previousMinute = useRef(minute);
 
   useEffect(() => {
-    if (day === previousDay.current && hour === previousHour.current) return;
+    if (day === previousDay.current && hour === previousHour.current && minute === previousMinute.current) return;
 
     const startDay = previousDay.current;
     const startHour = previousHour.current;
+    const startMinute = previousMinute.current;
     const endDay = day;
     const endHour = hour;
+    const endMinute = minute;
     const startTime = Date.now();
 
-    // Calculate total hours difference
-    const startTotal = startDay * 24 + startHour;
-    const endTotal = endDay * 24 + endHour;
+    // Calculate total minutes difference
+    const startTotal = startDay * 24 * 60 + startHour * 60 + startMinute;
+    const endTotal = endDay * 24 * 60 + endHour * 60 + endMinute;
     const diff = endTotal - startTotal;
 
     setIsAnimating(true);
@@ -50,11 +56,14 @@ export function AnimatedClock({ day, hour, animationDuration = 500 }: AnimatedCl
       const progress = Math.min(elapsed / animationDuration, 1);
 
       const currentTotal = Math.round(startTotal + diff * progress);
-      const currentDay = Math.floor(currentTotal / 24);
-      const currentHour = currentTotal % 24;
+      const currentDay = Math.floor(currentTotal / (24 * 60));
+      const remainingMinutes = currentTotal % (24 * 60);
+      const currentHour = Math.floor(remainingMinutes / 60);
+      const currentMinute = remainingMinutes % 60;
 
       setDisplayDay(currentDay);
       setDisplayHour(currentHour);
+      setDisplayMinute(currentMinute);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
@@ -66,10 +75,11 @@ export function AnimatedClock({ day, hour, animationDuration = 500 }: AnimatedCl
     requestAnimationFrame(animate);
     previousDay.current = day;
     previousHour.current = hour;
-  }, [day, hour, animationDuration]);
+    previousMinute.current = minute;
+  }, [day, hour, minute, animationDuration]);
 
   const icon = getTimeOfDayIcon(displayHour);
-  const timeString = formatHour(displayHour);
+  const timeString = formatTime12Hour(displayHour, displayMinute);
 
   return (
     <div className={`animated-clock ${isAnimating ? 'animating' : ''}`}>

@@ -12,12 +12,15 @@ interface SidebarProps {
   playerName: string;
   day: number;
   hour: number;
+  minute: number;
   money: number;
   energy: number;
   maxEnergy: number;
   stats: PlayerStats;
   daysWithoutFood: number;
   starvationDays: number;
+  isOpen: boolean;
+  onClose: () => void;
   onQuit: () => void;
 }
 
@@ -25,20 +28,28 @@ export function Sidebar({
   playerName,
   day,
   hour,
+  minute,
   money,
   energy,
   maxEnergy,
   stats,
   daysWithoutFood,
   starvationDays,
+  isOpen,
+  onClose,
   onQuit,
 }: SidebarProps) {
+  if (!isOpen) return null;
+
   return (
     <aside className="sidebar">
+      <button className="sidebar-close-button" onClick={onClose} aria-label="Close sidebar">
+        &times;
+      </button>
       <div className="sidebar-content">
         <div className="sidebar-player-name">{playerName}</div>
 
-        <AnimatedClock day={day} hour={hour} />
+        <AnimatedClock day={day} hour={hour} minute={minute} />
 
         <div className="sidebar-divider" />
 

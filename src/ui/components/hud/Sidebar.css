@@ -6,6 +6,29 @@
   border-right: 1px solid #333;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.sidebar-close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.sidebar-close-button:hover {
+  color: #ff4444;
 }
 
 .sidebar-content {
