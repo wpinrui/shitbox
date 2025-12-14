@@ -1,0 +1,93 @@
+{
+  "locationId": "misc",
+  "locationName": "General",
+  "activities": [
+    {
+      "id": "eat",
+      "name": "Eat",
+      "description": "Have a meal to stay alive. Costs $25.",
+      "category": "survival",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 0
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 25
+      },
+      "prerequisites": [
+        {
+          "type": "money",
+          "minimum": 25
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "resetFoodCounter",
+          "value": 0
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    },
+    {
+      "id": "sleep",
+      "name": "Sleep",
+      "description": "Rest to recover energy. Recovery rate depends on your housing.",
+      "category": "rest",
+      "time": {
+        "type": "variable",
+        "minHours": 1,
+        "maxHours": 12,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "recover",
+        "mode": "perHour",
+        "base": 4,
+        "housingModifier": true,
+        "statModifier": {
+          "stat": "fitness",
+          "effect": "increase",
+          "formula": "base * (1 + fitness * 0.02)"
+        }
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [],
+      "outcomes": [],
+      "statGain": [],
+      "risks": []
+    },
+    {
+      "id": "wait",
+      "name": "Wait",
+      "description": "Pass time doing nothing. Minimal energy recovery.",
+      "category": "misc",
+      "time": {
+        "type": "variable",
+        "minHours": 1,
+        "maxHours": 12,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "recover",
+        "mode": "perHour",
+        "base": 2
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [],
+      "outcomes": [],
+      "statGain": [],
+      "risks": []
+    }
+  ]
+}
