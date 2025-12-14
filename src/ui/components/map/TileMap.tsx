@@ -24,6 +24,7 @@ export function TileMap({
 }: TileMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
+  const [scale, setScale] = useState(1);
 
   const mapData = getMapData();
   const tileGrid = getTileGrid();
@@ -34,19 +35,32 @@ export function TileMap({
   const mapWidthPx = width * tileSize;
   const mapHeightPx = height * tileSize;
 
-  // Center on player when position changes
+  // Calculate scale to fit container (contain behavior)
   useEffect(() => {
-    if (playerPosition && containerRef.current) {
+    const updateScale = () => {
+      if (!containerRef.current) return;
       const container = containerRef.current;
-      const centerX = playerPosition.x * tileSize - container.clientWidth / 2 + tileSize / 2;
-      const centerY = playerPosition.y * tileSize - container.clientHeight / 2 + tileSize / 2;
-      container.scrollTo({
-        left: Math.max(0, centerX),
-        top: Math.max(0, centerY),
-        behavior: 'smooth',
-      });
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      // Calculate scale to fit (contain)
+      const scaleX = containerWidth / mapWidthPx;
+      const scaleY = containerHeight / mapHeightPx;
+      const newScale = Math.min(scaleX, scaleY, 1); // Don't scale above 1
+
+      setScale(newScale);
+    };
+
+    updateScale();
+
+    // Update on resize
+    const resizeObserver = new ResizeObserver(updateScale);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
     }
-  }, [playerPosition, tileSize]);
+
+    return () => resizeObserver.disconnect();
+  }, [mapWidthPx, mapHeightPx]);
 
   // Calculate background position for a tile index
   const getTileBackgroundPosition = useCallback(
@@ -108,6 +122,8 @@ export function TileMap({
           width: mapWidthPx,
           height: mapHeightPx,
           backgroundImage: `url(${tilesetImage})`,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
         }}
       >
         {/* Render tiles */}

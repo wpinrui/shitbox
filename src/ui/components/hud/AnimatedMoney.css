@@ -1,7 +1,9 @@
 .animated-money {
-  font-family: 'Courier New', monospace;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
   font-weight: bold;
+  font-variant-numeric: tabular-nums;
   transition: color 0.2s;
 }
 

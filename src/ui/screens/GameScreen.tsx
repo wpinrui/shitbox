@@ -3,7 +3,7 @@ import { useGameStore } from '@store/index';
 import { TileMap, LocationInfoPanel } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
 import { ToastContainer, FadeTransition } from '@ui/components/common';
-import { AnimatedMoney, AnimatedEnergy, AnimatedClock } from '@ui/components/hud';
+import { Sidebar } from '@ui/components/hud';
 import {
   getLocationActivities,
   getLocationAtPosition,
@@ -121,119 +121,100 @@ export function GameScreen({
   };
 
   return (
-    <div className="screen game-screen">
-      {/* Header with animated HUD */}
-      <div className="game-header-bar">
-        <AnimatedClock day={gameState.time.currentDay} hour={gameState.time.currentHour} />
-        <div className="player-name">{gameState.player.name}</div>
-        <AnimatedMoney value={gameState.player.money} />
-        <AnimatedEnergy value={gameState.player.energy} max={MAX_ENERGY} />
-      </div>
+    <div className="game-screen">
+      <Sidebar
+        playerName={gameState.player.name}
+        day={gameState.time.currentDay}
+        hour={gameState.time.currentHour}
+        money={gameState.player.money}
+        energy={gameState.player.energy}
+        maxEnergy={MAX_ENERGY}
+        stats={gameState.player.stats}
+        daysWithoutFood={gameState.player.daysWithoutFood}
+        starvationDays={starvationDays}
+        onQuit={resetGame}
+      />
 
-      {/* Food warning */}
-      {gameState.player.daysWithoutFood > 0 && (
-        <div className="warning food-warning">
-          Days without food: {gameState.player.daysWithoutFood}/{starvationDays} - EAT OR DIE!
+      <main className="game-main">
+        {/* Tab navigation */}
+        <div className="tab-bar">
+          <button
+            className={`tab-button ${currentTab === 'location' ? 'active' : ''}`}
+            onClick={() => setTab('location')}
+          >
+            {currentLocation?.name ?? 'Stranded'}
+          </button>
+          <button
+            className={`tab-button ${currentTab === 'map' ? 'active' : ''}`}
+            onClick={() => setTab('map')}
+          >
+            Map
+          </button>
         </div>
-      )}
 
-      {/* Tab navigation */}
-      <div className="tab-bar">
-        <button
-          className={`tab-button ${currentTab === 'location' ? 'active' : ''}`}
-          onClick={() => setTab('location')}
-        >
-          {currentLocation?.name ?? 'Unknown'}
-        </button>
-        <button
-          className={`tab-button ${currentTab === 'map' ? 'active' : ''}`}
-          onClick={() => setTab('map')}
-        >
-          Map
-        </button>
-      </div>
+        {/* Tab content */}
+        <div className="tab-content">
+          {currentTab === 'location' && (
+            <div className="location-tab">
+              {currentLocation ? (
+                <>
+                  <p className="location-description">{currentLocation.description}</p>
+                  <div className="activities-grid">
+                    {locationActivities.map((activity) => {
+                      const check = canPerformActivity(gameState, activity.id);
+                      return (
+                        <ActivityCard
+                          key={activity.id}
+                          activity={activity}
+                          canPerform={check.canPerform}
+                          reason={check.reason}
+                          onClick={() => handleActivityClick(activity)}
+                        />
+                      );
+                    })}
 
-      {/* Tab content */}
-      <div className="tab-content">
-        {currentTab === 'location' && (
-          <div className="location-tab">
-            {currentLocation ? (
-              <>
-                <div className="location-header">
-                  <h2>{currentLocation.name}</h2>
-                  <p>{currentLocation.description}</p>
+                    {locationActivities.length === 0 && (
+                      <div className="no-activities">
+                        <p>Nothing to do here.</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="stranded-notice">
+                  <p>You're on the road with nowhere to go.</p>
+                  <p>Open the Map to walk or drive to a location.</p>
                 </div>
+              )}
+            </div>
+          )}
 
-                <div className="activities-grid">
-                  {locationActivities.map((activity) => {
-                    const check = canPerformActivity(gameState, activity.id);
-                    return (
-                      <ActivityCard
-                        key={activity.id}
-                        activity={activity}
-                        canPerform={check.canPerform}
-                        reason={check.reason}
-                        onClick={() => handleActivityClick(activity)}
-                      />
-                    );
-                  })}
-
-                  {locationActivities.length === 0 && (
-                    <div className="no-activities">
-                      <p>Nothing to do here.</p>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="stranded-notice">
-                <h2>Stranded!</h2>
-                <p>You're on the road with nowhere to go.</p>
-                <p>Call a tow truck or walk to a location.</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {currentTab === 'map' && (
-          <div className="map-tab">
-            <TileMap
-              playerPosition={gameState.player.position}
-              carPositions={gameState.inventory.cars.map((car) => ({
-                x: car.position.x,
-                y: car.position.y,
-                instanceId: car.instanceId,
-              }))}
-              onLocationClick={handleMapLocationClick}
-            />
-
-            {selectedMapLocation && (
-              <LocationInfoPanel
-                location={selectedMapLocation}
+          {currentTab === 'map' && (
+            <div className="map-tab">
+              <TileMap
                 playerPosition={gameState.player.position}
-                hasCarHere={hasCarHere}
-                onWalk={handleWalk}
-                onDrive={handleDrive}
-                onClose={handleMapLocationClose}
+                carPositions={gameState.inventory.cars.map((car) => ({
+                  x: car.position.x,
+                  y: car.position.y,
+                  instanceId: car.instanceId,
+                }))}
+                onLocationClick={handleMapLocationClick}
               />
-            )}
-          </div>
-        )}
-      </div>
 
-      {/* Player stats (collapsed) */}
-      <div className="player-stats-bar">
-        <span className="stat">CHA: {gameState.player.stats.charisma}</span>
-        <span className="stat">MEC: {gameState.player.stats.mechanical}</span>
-        <span className="stat">FIT: {gameState.player.stats.fitness}</span>
-        <span className="stat">KNO: {gameState.player.stats.knowledge}</span>
-        <span className="stat">DRV: {gameState.player.stats.driving}</span>
-      </div>
-
-      {/* Footer */}
-      <button className="quit-button" onClick={resetGame}>
-        Quit to Menu
-      </button>
+              {selectedMapLocation && (
+                <LocationInfoPanel
+                  location={selectedMapLocation}
+                  playerPosition={gameState.player.position}
+                  hasCarHere={hasCarHere}
+                  onWalk={handleWalk}
+                  onDrive={handleDrive}
+                  onClose={handleMapLocationClose}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Activity Modal */}
       {selectedActivity && (

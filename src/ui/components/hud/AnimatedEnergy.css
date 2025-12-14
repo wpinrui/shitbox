@@ -5,8 +5,9 @@
 }
 
 .energy-emoji {
-  font-size: 24px;
+  font-size: 18px;
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 
 .animated-energy.animating .energy-emoji {
@@ -14,25 +15,25 @@
 }
 
 .energy-bar-container {
-  width: 120px;
-  height: 16px;
+  flex: 1;
+  height: 12px;
   background-color: #333;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  border: 1px solid #555;
+  border: 1px solid #444;
 }
 
 .energy-bar-fill {
   height: 100%;
   transition: width 0.1s linear, background-color 0.3s;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .energy-value {
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
-  min-width: 32px;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
   text-align: right;
 }
 
