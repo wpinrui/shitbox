@@ -510,6 +510,11 @@
       const list = document.getElementById('locationsList');
       const select = document.getElementById('assignLocation');
 
+      if (!list || !select) {
+        console.error('Location elements not found');
+        return;
+      }
+
       list.innerHTML = '';
       select.innerHTML = '<option value="">-- Select Location --</option>';
 
@@ -532,6 +537,9 @@
         select.appendChild(option);
       });
     }
+
+    // Initialize immediately since script is at end of body
+    initLocationsList();
 
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
