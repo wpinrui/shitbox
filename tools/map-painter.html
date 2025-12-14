@@ -344,10 +344,11 @@
     // State
     let gridWidth = 40;
     let gridHeight = 30;
-    let selectedTile = 111; // Default: grass
+    let selectedTile = 889; // Default: grass
     let grid = []; // 2D array of tile indices
     let locationAssignments = {}; // cellKey -> locationId
-    let isPainting = false;
+    let dragStart = null; // For bounding box drag
+    let isDragging = false;
 
     // Load tileset from file picker
     function loadTileset(input) {
@@ -363,7 +364,7 @@
 
     // Known tile types from map.json
     const TILE_TYPES = {
-      grass: 111,
+      grass: 889,
       pavement: 74,
       road_h: 673,
       road_v: 710,
@@ -464,7 +465,7 @@
         palette.appendChild(tile);
       }
 
-      selectTile(111); // Default to grass
+      selectTile(889); // Default to grass
     }
 
     function selectTile(index) {
@@ -615,6 +616,34 @@
           }
         }
       }
+
+      // Draw drag preview rectangle
+      if (isDragging && dragStart && dragEnd) {
+        const minX = Math.min(dragStart.x, dragEnd.x);
+        const maxX = Math.max(dragStart.x, dragEnd.x);
+        const minY = Math.min(dragStart.y, dragEnd.y);
+        const maxY = Math.max(dragStart.y, dragEnd.y);
+
+        ctx.strokeStyle = '#e94560';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 3]);
+        ctx.strokeRect(
+          minX * DISPLAY_TILE_SIZE,
+          minY * DISPLAY_TILE_SIZE,
+          (maxX - minX + 1) * DISPLAY_TILE_SIZE,
+          (maxY - minY + 1) * DISPLAY_TILE_SIZE
+        );
+        ctx.setLineDash([]);
+
+        // Show size
+        ctx.fillStyle = '#e94560';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(
+          `${maxX - minX + 1} x ${maxY - minY + 1}`,
+          (minX + (maxX - minX + 1) / 2) * DISPLAY_TILE_SIZE,
+          minY * DISPLAY_TILE_SIZE - 5
+        );
+      }
     }
 
     function getCellLabel(x, y) {
@@ -649,29 +678,59 @@
         } else if (tileIndex === TILE_TYPES.grass) {
           delete locationAssignments[`${x},${y}`];
         }
-
-        render();
       }
     }
 
-    // Mouse events
+    function paintRect(x1, y1, x2, y2, tileIndex) {
+      const minX = Math.min(x1, x2);
+      const maxX = Math.max(x1, x2);
+      const minY = Math.min(y1, y2);
+      const maxY = Math.max(y1, y2);
+
+      for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+          paintTile(x, y, tileIndex);
+        }
+      }
+      render();
+    }
+
+    let dragEnd = null;
+
+    // Mouse events - bounding box behavior
     canvas.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      isPainting = true;
-      const pos = getGridPosition(e);
-      const tile = e.button === 2 ? TILE_TYPES.grass : selectedTile;
-      paintTile(pos.x, pos.y, tile);
+      if (!tilesetLoaded) return;
+      isDragging = true;
+      dragStart = getGridPosition(e);
+      dragEnd = dragStart;
+      render();
     });
 
     canvas.addEventListener('mousemove', (e) => {
-      if (!isPainting) return;
-      const pos = getGridPosition(e);
-      const tile = e.buttons === 2 ? TILE_TYPES.grass : selectedTile;
-      paintTile(pos.x, pos.y, tile);
+      if (!isDragging || !tilesetLoaded) return;
+      dragEnd = getGridPosition(e);
+      render();
     });
 
-    canvas.addEventListener('mouseup', () => isPainting = false);
-    canvas.addEventListener('mouseleave', () => isPainting = false);
+    canvas.addEventListener('mouseup', (e) => {
+      if (!isDragging || !tilesetLoaded) return;
+      isDragging = false;
+      dragEnd = getGridPosition(e);
+      const tile = e.button === 2 ? TILE_TYPES.grass : selectedTile;
+      paintRect(dragStart.x, dragStart.y, dragEnd.x, dragEnd.y, tile);
+      dragStart = null;
+      dragEnd = null;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      if (isDragging) {
+        isDragging = false;
+        dragStart = null;
+        dragEnd = null;
+        render();
+      }
+    });
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
     // Control functions
