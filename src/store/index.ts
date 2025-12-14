@@ -4,7 +4,6 @@ import {
   GameState,
   GameMeta,
   Player,
-  PlayerStats,
   StatAllocation,
   ActivityResult,
   StateDelta,
@@ -17,6 +16,7 @@ import {
   processNewDay,
   checkDeathConditions,
   getEconomyConfig,
+  applyStatGains,
   type ActivityParams,
 } from '@engine/index';
 
@@ -184,25 +184,6 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
   return newState;
 }
 
-/**
- * Apply stat gains to player stats.
- */
-function applyStatGains(
-  currentStats: PlayerStats,
-  gains: Partial<PlayerStats>
-): PlayerStats {
-  const maxStatLevel = 20;
-  const newStats = { ...currentStats };
-
-  for (const [stat, gain] of Object.entries(gains)) {
-    if (gain !== undefined) {
-      const key = stat as keyof PlayerStats;
-      newStats[key] = Math.min(maxStatLevel, currentStats[key] + gain);
-    }
-  }
-
-  return newStats;
-}
 
 export const useGameStore = create<GameStore>()(
   persist(
