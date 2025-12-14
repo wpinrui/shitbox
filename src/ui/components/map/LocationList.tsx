@@ -33,7 +33,7 @@ export function LocationList({
 
   // Order regions: player's region first, then the rest in defined order
   const orderedRegions: Region[] = [];
-  const allRegions = mapData.regions as Region[];
+  const allRegions = mapData.regions;
 
   if (playerRegion) {
     orderedRegions.push(playerRegion);
