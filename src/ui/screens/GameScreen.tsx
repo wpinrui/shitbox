@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { ConfirmDialog } from '@ui/components/common';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
@@ -34,7 +35,7 @@ export function GameScreen({
   const walkTo = useGameStore((state) => state.walkTo);
   const driveTo = useGameStore((state) => state.driveTo);
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showQuitDialog, setShowQuitDialog] = useState(false);
 
   const economyConfig = getEconomyConfig();
   const starvationDays = economyConfig.survival.daysWithoutFoodUntilDeath;
@@ -108,17 +109,21 @@ export function GameScreen({
     }
   }, [driveTo, addToast]);
 
+  const handleQuitClick = () => {
+    setShowQuitDialog(true);
+  };
+
+  const handleQuitConfirm = () => {
+    setShowQuitDialog(false);
+    resetGame();
+  };
+
+  const handleQuitCancel = () => {
+    setShowQuitDialog(false);
+  };
+
   return (
     <div className="game-screen">
-      {!sidebarOpen && (
-        <button
-          className="sidebar-toggle-button"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open sidebar"
-        >
-          &#9776;
-        </button>
-      )}
       <Sidebar
         playerName={gameState.player.name}
         day={gameState.time.currentDay}
@@ -130,9 +135,7 @@ export function GameScreen({
         stats={gameState.player.stats}
         daysWithoutFood={gameState.player.daysWithoutFood}
         starvationDays={starvationDays}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onQuit={resetGame}
+        onQuit={handleQuitClick}
       />
 
       <main className="game-main">
@@ -220,6 +223,18 @@ export function GameScreen({
 
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
+
+      {/* Quit confirmation dialog */}
+      {showQuitDialog && (
+        <ConfirmDialog
+          title="Quit to Menu?"
+          message="Your progress will be lost. Are you sure you want to quit?"
+          confirmText="Quit"
+          cancelText="Keep Playing"
+          onConfirm={handleQuitConfirm}
+          onCancel={handleQuitCancel}
+        />
+      )}
     </div>
   );
 }
