@@ -1,4 +1,6 @@
 .location-card {
+  width: 280px;
+  flex-shrink: 0;
   background-color: rgba(30, 30, 30, 0.95);
   border: 1px solid #333;
   border-radius: 8px;
