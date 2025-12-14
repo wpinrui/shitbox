@@ -1,13 +1,15 @@
 .animated-money {
-  font-family: 'Courier New', monospace;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
   font-weight: bold;
+  font-variant-numeric: tabular-nums;
   transition: color 0.2s;
 }
 
 .animated-money .currency {
   color: #888;
-  margin-right: 2px;
+  margin-right: 0.1rem;
 }
 
 .animated-money .amount {

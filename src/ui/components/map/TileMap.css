@@ -1,15 +1,19 @@
 .tilemap-container {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background-color: #1a1a1a;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tilemap {
   position: relative;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  flex-shrink: 0;
 }
 
 .tile {
