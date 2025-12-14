@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, globalShortcut } from 'electron';
 import path from 'path';
 import fs from 'fs';
 
@@ -52,9 +52,20 @@ function createWindow() {
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
   createWindow();
+
+  // Register DevTools shortcut in dev mode
+  if (isDev) {
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
+      mainWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('F12', () => {
+      mainWindow?.webContents.toggleDevTools();
+    });
+  }
 });
 
 app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll();
   if (process.platform !== 'darwin') {
     app.quit();
   }

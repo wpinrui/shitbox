@@ -354,11 +354,7 @@ body {
   cursor: not-allowed;
 }
 
-/* Game Screen */
-.game-screen {
-  max-width: 800px;
-  margin: 0 auto;
-}
+/* Game Screen - styles moved to GameScreen.css */
 
 .game-header {
   display: flex;

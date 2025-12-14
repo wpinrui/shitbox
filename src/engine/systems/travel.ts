@@ -4,7 +4,8 @@
  */
 
 import type { GridPosition, GameState, OwnedCar, StateDelta } from '../types';
-import { calculateDistanceMeters, getMapData } from '../data';
+import { calculateDistanceMeters, getMapData, getLocation } from '../data';
+import { getEconomyConfig } from '../data';
 
 // ============================================================================
 // Types
@@ -39,8 +40,10 @@ export function calculateWalkingEnergyCost(
   // Base: 1 energy per 100 meters
   const baseEnergyCost = distanceMeters / 100;
 
-  // Fitness reduces energy cost by 2% per point
-  const fitnessModifier = 1 - fitnessLevel * 0.02;
+  // Fitness reduces energy cost per economy config
+  const economyConfig = getEconomyConfig();
+  const energyCostReductionPerPoint = economyConfig.statEffects.fitness.energyCostReductionPerPoint;
+  const fitnessModifier = 1 - fitnessLevel * energyCostReductionPerPoint;
 
   return Math.max(1, Math.round(baseEnergyCost * fitnessModifier));
 }
@@ -241,6 +244,9 @@ export function getTowCost(): number {
  * Get the parking lot location for tow destination.
  */
 export function getParkingLotPosition(): GridPosition {
-  // Hardcoded for now - should come from map data
-  return { x: 14, y: 6 };
+  const parkingLot = getLocation('parking_lot');
+  if (!parkingLot) {
+    throw new Error('Parking lot location not found in map data');
+  }
+  return parkingLot.entryPoint;
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame, GameScreen, GameOverScreen, PlaceholderScreen } from '@ui/screens';
-import { loadEconomyData, loadCoreActivities } from '@engine/index';
+import { loadEconomyData, loadCoreActivities, loadMapData } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
@@ -18,6 +18,8 @@ function App() {
         await loadEconomyData();
         // Load core activities (misc.json)
         await loadCoreActivities();
+        // Load map data
+        await loadMapData();
         setDataStatus('loaded');
       } catch (error) {
         console.error('Failed to load data:', error);
