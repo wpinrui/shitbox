@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "townName": "Greymont",
   "gridSize": 200,
-  "metersPerTile": 25,
+  "metersPerTile": 100,
   "walkSpeed": 5,
   "driveSpeed": 30,
   "towCost": 50,
