@@ -1,0 +1,59 @@
+.hours-slider {
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.hours-slider-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.hours-value {
+  color: #ffd700;
+}
+
+.hours-slider-input {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #333;
+  border-radius: 4px;
+  outline: none;
+}
+
+.hours-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #ffd700;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.hours-slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.hours-slider-input::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #ffd700;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.hours-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}

@@ -1,0 +1,180 @@
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #111;
+  color: #fff;
+}
+
+/* Header bar with HUD elements */
+.game-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #1a1a1a;
+  border-bottom: 2px solid #333;
+  gap: 16px;
+}
+
+.player-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Warning messages */
+.warning {
+  padding: 8px 16px;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.food-warning {
+  background-color: #5a2727;
+  color: #ff8888;
+  border-bottom: 1px solid #ff4444;
+}
+
+/* Tab navigation */
+.tab-bar {
+  display: flex;
+  background-color: #1a1a1a;
+  border-bottom: 2px solid #333;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  color: #aaa;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-button.active {
+  color: #ffd700;
+  background-color: #222;
+  border-bottom: 2px solid #ffd700;
+  margin-bottom: -2px;
+}
+
+/* Tab content */
+.tab-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Location tab */
+.location-tab {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.location-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.location-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: #ffd700;
+  text-transform: uppercase;
+}
+
+.location-header p {
+  margin: 0;
+  color: #888;
+}
+
+/* Activities grid */
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.no-activities {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Stranded notice */
+.stranded-notice {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.stranded-notice h2 {
+  color: #ff4444;
+  margin-bottom: 16px;
+}
+
+.stranded-notice p {
+  color: #888;
+  margin: 4px 0;
+}
+
+/* Map tab */
+.map-tab {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Player stats bar */
+.player-stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background-color: #1a1a1a;
+  border-top: 1px solid #333;
+}
+
+.player-stats-bar .stat {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #88aaff;
+}
+
+/* Quit button */
+.quit-button {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #888;
+  background-color: #1a1a1a;
+  border: none;
+  border-top: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quit-button:hover {
+  color: #ff4444;
+  background-color: #2a1a1a;
+}

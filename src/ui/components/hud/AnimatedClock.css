@@ -1,0 +1,56 @@
+.animated-clock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clock-icon {
+  font-size: 24px;
+  transition: transform 0.3s;
+}
+
+.animated-clock.animating .clock-icon {
+  animation: clockSpin 0.5s ease-out;
+}
+
+.clock-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.clock-day {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.clock-time {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.animated-clock.animating .clock-time {
+  animation: clockPulse 0.3s ease-out;
+}
+
+@keyframes clockSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes clockPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

@@ -8,8 +8,13 @@
   },
 
   "survival": {
-    "dailyFoodCost": 25,
+    "dailyFoodCost": 3,
     "daysWithoutFoodUntilDeath": 2
+  },
+
+  "travel": {
+    "walkingMetersPerEnergy": 100,
+    "defaultFuelEfficiency": 10
   },
 
   "rest": {

@@ -8,6 +8,7 @@ import {
   ActivityResult,
   StateDelta,
   GameEvent,
+  GridPosition,
   ENGINE_VERSION,
   MAX_ENERGY,
   RNG,
@@ -17,8 +18,20 @@ import {
   checkDeathConditions,
   getEconomyConfig,
   applyStatGains,
+  executeWalk,
+  executeDrive,
   type ActivityParams,
+  type ActivityDefinition,
 } from '@engine/index';
+
+// Toast message type
+export interface ToastMessage {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info' | 'earn' | 'spend';
+}
+
+type GameTab = 'location' | 'map';
 
 interface GameStore {
   // State
@@ -28,8 +41,12 @@ interface GameStore {
 
   // UI State (not persisted)
   currentScreen: Screen;
+  currentTab: GameTab;
   selectedLocation: string | null;
+  selectedActivity: ActivityDefinition | null;
   pendingEvents: GameEvent[];
+  toasts: ToastMessage[];
+  isExecutingActivity: boolean;
 
   // Actions
   newGame: (playerName: string, statAllocation: StatAllocation) => void;
@@ -41,9 +58,20 @@ interface GameStore {
   performActivity: (activityId: string, params?: ActivityParams) => ActivityResult;
   clearEvents: () => void;
 
+  // Travel
+  walkTo: (destination: GridPosition) => { success: boolean; error?: string };
+  driveTo: (destination: GridPosition) => { success: boolean; error?: string };
+
   // Navigation
   setScreen: (screen: Screen) => void;
+  setTab: (tab: GameTab) => void;
   setLocation: (locationId: string | null) => void;
+  setSelectedActivity: (activity: ActivityDefinition | null) => void;
+  setExecutingActivity: (isExecuting: boolean) => void;
+
+  // Toast management
+  addToast: (message: string, type: ToastMessage['type']) => void;
+  removeToast: (id: string) => void;
 
   // Error handling
   setError: (error: string | null) => void;
@@ -68,10 +96,14 @@ function createInitialGameState(
     rngSeed: seed,
   };
 
+  // Starting position inside scrapyard (bounds: x:2-9, y:2-7)
+  const startingPosition = { x: 5, y: 5 };
+
   const player: Player = {
     name: playerName,
     money: 0,
     energy: MAX_ENERGY,
+    position: startingPosition,
     stats: {
       charisma: statAllocation.charisma,
       mechanical: statAllocation.mechanical,
@@ -88,6 +120,19 @@ function createInitialGameState(
     daysWithoutFood: 0,
   };
 
+  // Starting shitbox - non-functional, 0 fuel
+  const startingShitbox = {
+    instanceId: rng.uuid(),
+    carId: 'shitbox_starter', // Reference to cars.json
+    engineCondition: 0, // Broken
+    bodyCondition: 30, // Rough but intact
+    fuel: 0,
+    fuelCapacity: 40, // 40 liter tank
+    position: startingPosition, // Same as player
+    acquiredDay: 1,
+    acquiredPrice: 0, // You already own it
+  };
+
   return {
     meta,
     time: {
@@ -97,7 +142,7 @@ function createInitialGameState(
     },
     player,
     inventory: {
-      cars: [],
+      cars: [startingShitbox],
       engineParts: 0,
       bodyParts: 0,
     },
@@ -193,8 +238,12 @@ export const useGameStore = create<GameStore>()(
       isLoading: false,
       error: null,
       currentScreen: 'main_menu',
+      currentTab: 'location',
       selectedLocation: null,
+      selectedActivity: null,
       pendingEvents: [],
+      toasts: [],
+      isExecutingActivity: false,
 
       // Actions
       newGame: (playerName, statAllocation) => {
@@ -254,9 +303,13 @@ export const useGameStore = create<GameStore>()(
         set({
           gameState: null,
           currentScreen: 'main_menu',
+          currentTab: 'location',
           selectedLocation: null,
+          selectedActivity: null,
           error: null,
           pendingEvents: [],
+          toasts: [],
+          isExecutingActivity: false,
         });
       },
 
@@ -362,9 +415,127 @@ export const useGameStore = create<GameStore>()(
         set({ pendingEvents: [] });
       },
 
+      // Travel
+      walkTo: (destination) => {
+        const { gameState } = get();
+        if (!gameState) {
+          return { success: false, error: 'No active game' };
+        }
+
+        const result = executeWalk(gameState, destination);
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        // Apply travel result
+        let newState = { ...gameState };
+
+        // Update player position
+        if (result.newPosition) {
+          newState = {
+            ...newState,
+            player: {
+              ...newState.player,
+              position: result.newPosition,
+            },
+          };
+        }
+
+        // Apply delta (energy cost, time)
+        if (result.delta) {
+          if (result.delta.player?.energy) {
+            newState = {
+              ...newState,
+              player: {
+                ...newState.player,
+                energy: Math.max(0, newState.player.energy + result.delta.player.energy),
+              },
+            };
+          }
+
+          if (result.delta.time?.hours) {
+            const timeResult = advanceTime(newState.time, result.delta.time.hours);
+            newState = { ...newState, time: timeResult.newTime };
+          }
+        }
+
+        set({ gameState: newState });
+        return { success: true };
+      },
+
+      driveTo: (destination) => {
+        const { gameState } = get();
+        if (!gameState) {
+          return { success: false, error: 'No active game' };
+        }
+
+        const result = executeDrive(gameState, destination);
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        // Apply travel result
+        let newState = { ...gameState };
+
+        // Update player position
+        if (result.newPosition) {
+          newState = {
+            ...newState,
+            player: {
+              ...newState.player,
+              position: result.newPosition,
+            },
+          };
+        }
+
+        // Update car fuel and position
+        if (result.carInstanceId && result.fuelUsed !== undefined && result.newPosition) {
+          const { carInstanceId, fuelUsed, newPosition } = result;
+          const updatedCars = newState.inventory.cars.map((car) => {
+            if (car.instanceId === carInstanceId) {
+              return {
+                ...car,
+                fuel: car.fuel - fuelUsed,
+                position: newPosition,
+              };
+            }
+            return car;
+          });
+          newState = {
+            ...newState,
+            inventory: { ...newState.inventory, cars: updatedCars },
+          };
+        }
+
+        // Apply delta (time)
+        if (result.delta?.time?.hours) {
+          const timeResult = advanceTime(newState.time, result.delta.time.hours);
+          newState = { ...newState, time: timeResult.newTime };
+        }
+
+        set({ gameState: newState });
+        return { success: true };
+      },
+
       // Navigation
       setScreen: (screen) => set({ currentScreen: screen }),
+      setTab: (tab) => set({ currentTab: tab }),
       setLocation: (locationId) => set({ selectedLocation: locationId }),
+      setSelectedActivity: (activity) => set({ selectedActivity: activity }),
+      setExecutingActivity: (isExecuting) => set({ isExecutingActivity: isExecuting }),
+
+      // Toast management
+      addToast: (message, type) => {
+        const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+        set((state) => ({
+          toasts: [...state.toasts, { id, message, type }],
+        }));
+      },
+      removeToast: (id) => {
+        set((state) => ({
+          toasts: state.toasts.filter((t) => t.id !== id),
+        }));
+      },
 
       // Error handling
       setError: (error) => set({ error }),

@@ -183,8 +183,13 @@ shitbox/
   },
   
   "survival": {
-    "dailyFoodCost": 25,
+    "dailyFoodCost": 3,
     "daysWithoutFoodUntilDeath": 2
+  },
+
+  "travel": {
+    "walkingMetersPerEnergy": 100,
+    "defaultFuelEfficiency": 10
   },
   
   "rest": {
@@ -1617,6 +1622,41 @@ export function calculateVideoRevenue(
   return { revenue, newSubscribers };
 }
 ```
+
+### 4.5 Travel System
+
+The travel system handles player movement between map locations.
+
+#### Walking
+
+Players can walk between locations at the cost of energy and time.
+
+- **Energy Cost**: `distance_meters / walkingMetersPerEnergy` (100m per energy point base)
+- **Fitness Modifier**: Energy cost is reduced by 2% per Fitness point: `cost * (1 - fitness * 0.02)`
+- **Time**: Based on walk speed from map data (default 5 km/h)
+
+#### Driving
+
+Players can drive if they have a working car at their current location.
+
+- **Car Selection**: If multiple cars are at the origin location, player can choose which car to use
+- **Fuel Cost**: `(distance_km / 100) * car.fuelEfficiency` (liters per 100km, varies by car)
+- **Default Fuel Efficiency**: 10 L/100km if car data unavailable
+- **Time**: Based on drive speed from map data (default 30 km/h)
+
+#### Towing
+
+If a car breaks down or player is stranded, tow service is available at a fixed cost (default $50).
+
+### 4.6 Food System
+
+Food is handled via automatic daily deduction, not as a player activity.
+
+- **Daily Cost**: $3 automatically deducted at the start of each day
+- **Insufficient Funds**: If player cannot afford food, they are notified and `daysWithoutFood` counter increments
+- **Starvation**: If auto-deduction fails for 2 consecutive days, the player dies (game over)
+
+This keeps food as a survival pressure without requiring manual "eat" actions.
 
 ---
 

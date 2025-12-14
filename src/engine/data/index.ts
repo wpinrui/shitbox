@@ -111,6 +111,10 @@ export interface EconomyConfig {
     dailyFoodCost: number;
     daysWithoutFoodUntilDeath: number;
   };
+  travel: {
+    walkingMetersPerEnergy: number;
+    defaultFuelEfficiency: number;
+  };
   rest: {
     shitboxEnergyPerHour: number;
     basicApartmentEnergyPerHour: number;
@@ -306,3 +310,29 @@ export function clearDataCache(): void {
   dataCache.activities.clear();
   dataCache.activityById.clear();
 }
+
+// ============================================================================
+// Map Data Re-exports
+// ============================================================================
+
+export {
+  loadMapData,
+  getMapData,
+  getTileGrid,
+  getTileAt,
+  getLocation,
+  getAllLocations,
+  getLocationAtPosition,
+  isRoadTile,
+  isWalkable,
+  calculateDistance,
+  calculateDistanceMeters,
+  calculateTravelTime,
+  formatDistance,
+  formatTravelTime,
+  isMapLoaded,
+  clearMapCache,
+  type MapData,
+  type LocationDefinition,
+  type TileInfo,
+} from './map';

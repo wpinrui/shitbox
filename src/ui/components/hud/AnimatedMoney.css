@@ -1,0 +1,39 @@
+.animated-money {
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.animated-money .currency {
+  color: #888;
+  margin-right: 2px;
+}
+
+.animated-money .amount {
+  color: #88ff88;
+}
+
+.animated-money.up .amount {
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  animation: moneyPulse 0.3s ease-out;
+}
+
+.animated-money.down .amount {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  animation: moneyPulse 0.3s ease-out;
+}
+
+@keyframes moneyPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
