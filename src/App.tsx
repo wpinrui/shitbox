@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame } from '@ui/screens';
 import { GameHeader, GameHUD, ActivityPanel, EventLog } from '@ui/components/game';
-import { loadEconomyData, loadCoreActivities, getEconomyConfig } from '@engine/index';
+import { loadEconomyData, loadCoreActivities, getEconomyConfig, type GameEvent } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
@@ -139,8 +139,7 @@ function GameScreen({
   );
 }
 
-function GameOverScreen({ events }: { events: { type: string; message: string }[] }) {
-  // Note: events param uses string type for compatibility with store's pendingEvents
+function GameOverScreen({ events }: { events: GameEvent[] }) {
   const resetGame = useGameStore((state) => state.resetGame);
   const clearEvents = useGameStore((state) => state.clearEvents);
 
