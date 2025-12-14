@@ -1,0 +1,259 @@
+{
+  "locationId": "scrapyard",
+  "locationName": "Scrapyard",
+  "activities": [
+    {
+      "id": "manual_labor",
+      "name": "Manual Labor",
+      "description": "Hard work sorting scrap. Always available.",
+      "category": "work",
+      "time": {
+        "type": "variable",
+        "minHours": 1,
+        "maxHours": 8,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "perHour",
+        "base": 10,
+        "statModifier": {
+          "stat": "fitness",
+          "effect": "reduce",
+          "formula": "base * (1 - fitness * 0.02)"
+        }
+      },
+      "money": {
+        "type": "earn",
+        "mode": "perHour",
+        "base": 12,
+        "variance": 3,
+        "statModifier": {
+          "stat": "fitness",
+          "effect": "increase",
+          "formula": "base * (1 + fitness * 0.05)"
+        }
+      },
+      "prerequisites": [],
+      "outcomes": [],
+      "statGain": [
+        {
+          "stat": "fitness",
+          "amount": 0.01,
+          "per": "hour"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "scavenge_parts",
+      "name": "Scavenge Parts",
+      "description": "Search for usable car parts in the junk piles.",
+      "category": "scavenge",
+      "time": {
+        "type": "fixed",
+        "hours": 2
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 15
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [],
+      "outcomes": [
+        {
+          "type": "items",
+          "itemType": "random_part",
+          "quantity": {
+            "min": 0,
+            "max": 3
+          },
+          "statModifier": {
+            "stat": "mechanical",
+            "effect": "increaseMax",
+            "formula": "max + floor(mechanical / 10)"
+          }
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "mechanical",
+          "amount": 0.02,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "focused_scavenge_engine",
+      "name": "Focused Scavenge: Engine Parts",
+      "description": "Specifically hunt for engine components.",
+      "category": "scavenge",
+      "time": {
+        "type": "fixed",
+        "hours": 3
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 20
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [
+        {
+          "type": "stat",
+          "stat": "mechanical",
+          "minimum": 15
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "items",
+          "itemType": "engine_part",
+          "quantity": {
+            "min": 1,
+            "max": 4
+          },
+          "statModifier": {
+            "stat": "mechanical",
+            "effect": "increaseMax",
+            "formula": "max + floor(mechanical / 15)"
+          }
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "mechanical",
+          "amount": 0.03,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "browse_junkers",
+      "name": "Browse Junkers",
+      "description": "See what project cars are available.",
+      "category": "browse",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 5
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [],
+      "outcomes": [
+        {
+          "type": "showListings",
+          "listingType": "junker_cars",
+          "priceRange": {
+            "min": 200,
+            "max": 2000
+          }
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "knowledge",
+          "amount": 0.01,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "negotiate_junker_purchase",
+      "name": "Buy Junker",
+      "description": "Negotiate to purchase a project car.",
+      "category": "negotiate",
+      "time": {
+        "type": "variable",
+        "minHours": 0.5,
+        "maxHours": 2
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 5
+      },
+      "money": {
+        "type": "spend",
+        "mode": "negotiated"
+      },
+      "prerequisites": [
+        {
+          "type": "context",
+          "requirement": "selectedCar"
+        },
+        {
+          "type": "money",
+          "minimum": "carPrice"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "acquireCar",
+          "source": "selectedCar"
+        },
+        {
+          "type": "conditionalCost",
+          "condition": "needsTowing",
+          "cost": {
+            "min": 50,
+            "max": 100
+          },
+          "description": "Towing fee"
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "charisma",
+          "amount": 0.02,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "sell_for_scrap",
+      "name": "Sell Car for Scrap",
+      "description": "Scrap your car for metal value. Permanent.",
+      "category": "sell",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 5
+      },
+      "money": {
+        "type": "earn",
+        "mode": "carScrapValue",
+        "formula": "carWeight * scrapPricePerKg"
+      },
+      "prerequisites": [
+        {
+          "type": "ownership",
+          "itemType": "car"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "removeCar",
+          "source": "selectedCar"
+        }
+      ],
+      "statGain": [],
+      "risks": [],
+      "confirmationRequired": true,
+      "confirmationMessage": "Are you sure? This will permanently destroy your car."
+    }
+  ]
+}

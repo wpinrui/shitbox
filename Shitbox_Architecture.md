@@ -329,7 +329,7 @@ shitbox/
       "energy": {
         "type": "perHour",
         "base": 10,
-        "statModifier": { "stat": "fitness", "effect": "reduce", "formula": "base * (1 - fitness * 0.01)" }
+        "statModifier": { "stat": "fitness", "effect": "reduce", "formula": "base * (1 - fitness * 0.02)" }
       },
       
       "money": {
@@ -337,7 +337,7 @@ shitbox/
         "mode": "perHour",
         "base": 12,
         "variance": 3,
-        "statModifier": { "stat": "fitness", "effect": "increase", "formula": "base * (1 + fitness * 0.008)" }
+        "statModifier": { "stat": "fitness", "effect": "increase", "formula": "base * (1 + fitness * 0.05)" }
       },
       
       "prerequisites": [],

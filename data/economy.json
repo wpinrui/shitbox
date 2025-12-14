@@ -86,7 +86,7 @@
     "fitness": {
       "energyCostReductionPerPoint": 0.02,
       "restEfficiencyBonusPerPoint": 0.02,
-      "laborOutputBonusPerPoint": 0.008
+      "laborOutputBonusPerPoint": 0.05
     },
     "knowledge": {
       "researchAccuracyPerPoint": 0.02,
