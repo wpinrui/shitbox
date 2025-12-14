@@ -111,6 +111,10 @@ export interface EconomyConfig {
     dailyFoodCost: number;
     daysWithoutFoodUntilDeath: number;
   };
+  travel: {
+    walkingMetersPerEnergy: number;
+    defaultFuelEfficiency: number;
+  };
   rest: {
     shitboxEnergyPerHour: number;
     basicApartmentEnergyPerHour: number;

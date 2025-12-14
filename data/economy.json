@@ -12,6 +12,11 @@
     "daysWithoutFoodUntilDeath": 3
   },
 
+  "travel": {
+    "walkingMetersPerEnergy": 100,
+    "defaultFuelEfficiency": 10
+  },
+
   "rest": {
     "shitboxEnergyPerHour": 4,
     "basicApartmentEnergyPerHour": 8,

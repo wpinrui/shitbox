@@ -37,11 +37,11 @@ export function calculateWalkingEnergyCost(
   distanceMeters: number,
   fitnessLevel: number
 ): number {
-  // Base: 1 energy per 100 meters
-  const baseEnergyCost = distanceMeters / 100;
-
-  // Fitness reduces energy cost per economy config
   const economyConfig = getEconomyConfig();
+  const metersPerEnergy = economyConfig.travel.walkingMetersPerEnergy;
+  const baseEnergyCost = distanceMeters / metersPerEnergy;
+
+  // Fitness reduces energy cost
   const energyCostReductionPerPoint = economyConfig.statEffects.fitness.energyCostReductionPerPoint;
   const fitnessModifier = 1 - fitnessLevel * energyCostReductionPerPoint;
 
@@ -54,10 +54,12 @@ export function calculateWalkingEnergyCost(
  */
 export function calculateDrivingFuelCost(
   distanceMeters: number,
-  fuelEfficiency: number = 10 // liters per 100km default
+  fuelEfficiency?: number
 ): number {
+  const economyConfig = getEconomyConfig();
+  const efficiency = fuelEfficiency ?? economyConfig.travel.defaultFuelEfficiency;
   const distanceKm = distanceMeters / 1000;
-  return (distanceKm / 100) * fuelEfficiency;
+  return (distanceKm / 100) * efficiency;
 }
 
 /**
@@ -86,7 +88,7 @@ export function getWalkingCost(
 export function getDrivingCost(
   from: GridPosition,
   to: GridPosition,
-  fuelEfficiency: number = 10
+  fuelEfficiency?: number
 ): TravelCost {
   const mapData = getMapData();
   const distanceMeters = calculateDistanceMeters(from, to);
@@ -152,7 +154,7 @@ export function canDrive(
 
   // Use the first available car (could add car selection later)
   const car = carsHere[0];
-  const cost = getDrivingCost(from, to, 10); // Assuming 10L/100km for now
+  const cost = getDrivingCost(from, to); // Uses default from economy config
 
   if (car.fuel < cost.fuelCost) {
     return {
@@ -215,7 +217,7 @@ export function executeDrive(
 
   const from = state.player.position;
   const car = validation.car;
-  const cost = getDrivingCost(from, to, 10); // Using default fuel efficiency
+  const cost = getDrivingCost(from, to); // Uses default from economy config
   const distanceMeters = calculateDistanceMeters(from, to);
 
   return {
