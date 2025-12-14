@@ -490,12 +490,13 @@ export const useGameStore = create<GameStore>()(
 
         // Update car fuel and position
         if (result.carInstanceId && result.fuelUsed !== undefined && result.newPosition) {
+          const { carInstanceId, fuelUsed, newPosition } = result;
           const updatedCars = newState.inventory.cars.map((car) => {
-            if (car.instanceId === result.carInstanceId) {
+            if (car.instanceId === carInstanceId) {
               return {
                 ...car,
-                fuel: car.fuel - result.fuelUsed!,
-                position: result.newPosition!,
+                fuel: car.fuel - fuelUsed,
+                position: newPosition,
               };
             }
             return car;
@@ -525,7 +526,7 @@ export const useGameStore = create<GameStore>()(
 
       // Toast management
       addToast: (message, type) => {
-        const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
         set((state) => ({
           toasts: [...state.toasts, { id, message, type }],
         }));
