@@ -45,3 +45,6 @@ agents/
 # Temporary files
 *.tmp
 *.temp
+
+# Assets (too large for git)
+src/assets/tilesets/
