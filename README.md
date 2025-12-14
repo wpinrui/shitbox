@@ -12,19 +12,20 @@ The ultimate aspiration: the Ferrari 250 GTO (~$70M).
 
 - **Negotiation** - Read NPC personality traits, use multi-dimensional trade levers
 - **Car Flipping** - Buy low, repair, sell high
-- **Racing** - Gear-shifting minigame for prize money
+- **Road Trips** - Top Gear-inspired content creation for engagement and income
 - **Resource Management** - Balance money, energy, and time
-- **Stat Progression** - Charisma, Mechanical, Fitness, Knowledge, Racing
+- **Stat Progression** - Charisma, Mechanical, Fitness, Knowledge, Driving (see [Shitbox_Skills.md](Shitbox_Skills.md))
 
 ## Locations
 
 - Scrapyard - Labor, scavenge parts, find project cars
 - Garage/Workshop - Store and repair vehicles
 - Auction Lot - Bi-weekly car auctions
-- Racetrack - Compete for prizes
 - Bank - Savings, investments, loans
 - Showroom - Buy new cars, work as dealer
 - School/Library - Training and licenses
+- Gym - Fitness training
+- Film School - Cinematography for content creation
 
 ## Tech Stack
 

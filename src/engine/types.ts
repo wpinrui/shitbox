@@ -53,7 +53,7 @@ export interface PlayerStats {
   mechanical: number;
   fitness: number;
   knowledge: number;
-  racing: number;
+  driving: number;
 }
 
 export type StatName = keyof PlayerStats;
@@ -289,5 +289,5 @@ export interface StatAllocation {
   mechanical: number;
   fitness: number;
   knowledge: number;
-  racing: number;
+  driving: number;
 }

@@ -62,7 +62,7 @@ function createInitialGameState(
       mechanical: statAllocation.mechanical,
       fitness: statAllocation.fitness,
       knowledge: statAllocation.knowledge,
-      racing: statAllocation.racing,
+      driving: statAllocation.driving,
     },
     licenses: [],
     completedCourses: [],

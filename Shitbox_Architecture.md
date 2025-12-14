@@ -1,5 +1,7 @@
 # SHITBOX — Software Architecture & Build Plan
 
+> **Note:** The skill system and racing mechanics in this document have been superseded. See [Shitbox_Skills.md](Shitbox_Skills.md) for the current skill system design (5 stats: Charisma, Mechanical, Fitness, Knowledge, Driving) and Road Trip content creation system.
+
 ## Table of Contents
 1. [Architecture Overview](#1-architecture-overview)
 2. [Directory Structure](#2-directory-structure)

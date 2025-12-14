@@ -138,7 +138,7 @@ function validateEconomy(dataDir: string): ValidationError[] {
   const economy = data as EconomyData;
 
   // Check that stat effects reference valid stats
-  const validStats = ['charisma', 'mechanical', 'fitness', 'knowledge', 'racing'];
+  const validStats = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
   for (const stat of Object.keys(economy.statEffects)) {
     if (!validStats.includes(stat)) {
       errors.push({

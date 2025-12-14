@@ -2,6 +2,8 @@
 
 **Version 1.0 — December 2025**
 
+> **Note:** The skill system and racing mechanics in this document have been superseded. See [Shitbox_Skills.md](Shitbox_Skills.md) for the current skill system design (5 stats: Charisma, Mechanical, Fitness, Knowledge, Driving) and Road Trip content creation system.
+
 ---
 
 ## 1. Executive Summary
