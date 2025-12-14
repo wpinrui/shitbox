@@ -138,7 +138,7 @@ function validateEconomy(dataDir: string): ValidationError[] {
   const economy = data as EconomyData;
 
   // Check that stat effects reference valid stats
-  const validStats = ['charisma', 'mechanical', 'fitness', 'knowledge', 'racing'];
+  const validStats = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
   for (const stat of Object.keys(economy.statEffects)) {
     if (!validStats.includes(stat)) {
       errors.push({
@@ -177,14 +177,14 @@ function validateAllData(): ValidationResult {
   // Future: Add validation for other data files as they're created
   // - cars.json
   // - traits.json
-  // - races.json
+  // - stunts.json
   // - activities/*.json
   // - etc.
 
   const missingFiles = [
     'cars.json',
     'traits.json',
-    'races.json',
+    'stunts.json',
     'licenses.json',
     'properties.json',
     'loans.json',

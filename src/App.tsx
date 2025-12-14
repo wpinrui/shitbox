@@ -91,7 +91,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
           <div className="stat">MEC: {gameState.player.stats.mechanical}</div>
           <div className="stat">FIT: {gameState.player.stats.fitness}</div>
           <div className="stat">KNO: {gameState.player.stats.knowledge}</div>
-          <div className="stat">RAC: {gameState.player.stats.racing}</div>
+          <div className="stat">DRV: {gameState.player.stats.driving}</div>
         </div>
       </div>
 

@@ -8,27 +8,27 @@ const MAX_STAT = 20;
 const STAT_INFO: Record<StatName, { label: string; description: string }> = {
   charisma: {
     label: 'Charisma',
-    description: 'Negotiation, trait visibility, ad response',
+    description: 'Negotiation effectiveness, better deals',
   },
   mechanical: {
     label: 'Mechanical',
-    description: 'Repair quality, part finding, value spotting',
+    description: 'Repairs, car assessment, mechanic work',
   },
   fitness: {
     label: 'Fitness',
-    description: 'Energy efficiency, labor output',
+    description: 'Energy efficiency, labor, road trip endurance',
   },
   knowledge: {
     label: 'Knowledge',
-    description: 'Research accuracy, hidden listings',
+    description: 'Learning speed, skill gains, investments',
   },
-  racing: {
-    label: 'Racing',
-    description: 'Power bonus in races',
+  driving: {
+    label: 'Driving',
+    description: 'Road trips, deliveries, fuel efficiency',
   },
 };
 
-const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'racing'];
+const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
 
 export function NewGame() {
   const setScreen = useGameStore((state) => state.setScreen);
@@ -36,11 +36,11 @@ export function NewGame() {
 
   const [playerName, setPlayerName] = useState('');
   const [stats, setStats] = useState<StatAllocation>({
-    charisma: 5,
-    mechanical: 5,
-    fitness: 5,
-    knowledge: 5,
-    racing: 5,
+    charisma: 0,
+    mechanical: 0,
+    fitness: 0,
+    knowledge: 0,
+    driving: 0,
   });
 
   const pointsUsed = Object.values(stats).reduce((sum, val) => sum + val, 0);

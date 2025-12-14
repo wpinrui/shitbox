@@ -53,7 +53,7 @@ export interface PlayerStats {
   mechanical: number;
   fitness: number;
   knowledge: number;
-  racing: number;
+  driving: number;
 }
 
 export type StatName = keyof PlayerStats;
@@ -211,7 +211,7 @@ export interface NewspaperContent {
   auctionPreviews: string[];
   marketNews: string[];
   gigs: GigListing[];
-  raceAnnouncements: string[];
+  roadTripNews: string[];
   indexFundNews: string;
 }
 
@@ -234,7 +234,9 @@ export interface GigListing {
 export interface Progression {
   totalEarnings: number;
   carsFlipped: number;
-  racesWon: number;
+  roadTripsCompleted: number;
+  totalEngagement: number;
+  subscribers: number;
   highestCarValue: number;
   gtoAcquired: boolean;
   gtoAcquiredDay: number | null;
@@ -289,5 +291,5 @@ export interface StatAllocation {
   mechanical: number;
   fitness: number;
   knowledge: number;
-  racing: number;
+  driving: number;
 }
