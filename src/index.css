@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 20px; /* Base size - change this to scale everything */
+}
+
 html, body, #root {
   height: 100%;
   overflow: hidden;

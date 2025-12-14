@@ -1,11 +1,11 @@
 .animated-energy {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .energy-emoji {
-  font-size: 18px;
+  font-size: 1.2rem;
   transition: transform 0.2s;
   flex-shrink: 0;
 }
@@ -16,9 +16,9 @@
 
 .energy-bar-container {
   flex: 1;
-  height: 12px;
+  height: 0.8rem;
   background-color: #333;
-  border-radius: 6px;
+  border-radius: 0.4rem;
   overflow: hidden;
   border: 1px solid #444;
 }
@@ -26,14 +26,14 @@
 .energy-bar-fill {
   height: 100%;
   transition: width 0.1s linear, background-color 0.3s;
-  border-radius: 6px;
+  border-radius: 0.4rem;
 }
 
 .energy-value {
-  font-size: 13px;
+  font-size: 0.9rem;
   font-weight: bold;
   font-variant-numeric: tabular-nums;
-  min-width: 28px;
+  min-width: 1.8rem;
   text-align: right;
 }
 

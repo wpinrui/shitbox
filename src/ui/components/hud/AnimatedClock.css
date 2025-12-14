@@ -1,11 +1,11 @@
 .animated-clock {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.6rem;
 }
 
 .clock-icon {
-  font-size: 20px;
+  font-size: 1.4rem;
   transition: transform 0.3s;
 }
 
@@ -16,17 +16,17 @@
 .clock-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.1rem;
 }
 
 .clock-day {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: bold;
   color: #eee;
 }
 
 .clock-time {
-  font-size: 13px;
+  font-size: 0.8rem;
   color: #888;
 }
 
