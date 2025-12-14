@@ -15,7 +15,7 @@ function getTimeOfDayIcon(hour: number): string {
   return '🌙'; // Night
 }
 
-function formatTime(hour: number, minute: number): string {
+function formatTime12Hour(hour: number, minute: number): string {
   const h = hour % 24;
   const minStr = String(minute).padStart(2, '0');
   if (h === 0) return `12:${minStr} AM`;
@@ -79,7 +79,7 @@ export function AnimatedClock({ day, hour, minute, animationDuration = 500 }: An
   }, [day, hour, minute, animationDuration]);
 
   const icon = getTimeOfDayIcon(displayHour);
-  const timeString = formatTime(displayHour, displayMinute);
+  const timeString = formatTime12Hour(displayHour, displayMinute);
 
   return (
     <div className={`animated-clock ${isAnimating ? 'animating' : ''}`}>
