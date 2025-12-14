@@ -1,10 +1,8 @@
-import { PlayerStats, StatName } from '@engine/index';
+import { PlayerStats, STAT_ORDER } from '@engine/index';
 import { AnimatedClock } from './AnimatedClock';
 import { AnimatedMoney } from './AnimatedMoney';
 import { AnimatedEnergy } from './AnimatedEnergy';
 import './Sidebar.css';
-
-const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 

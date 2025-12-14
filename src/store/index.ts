@@ -366,6 +366,7 @@ export const useGameStore = create<GameStore>()(
             ...newState,
             player: {
               ...newState.player,
+              money: newState.player.money + dayResult.moneyChange,
               daysWithoutFood: dayResult.daysWithoutFood,
             },
           };

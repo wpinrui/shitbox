@@ -14,6 +14,10 @@ export const MAX_STAT_LEVEL = 20;
 export const HOURS_PER_DAY = 24;
 export const MAX_PLAYER_NAME_LENGTH = 20;
 
+// Stat order for consistent UI display
+import type { StatName } from './types';
+export const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
+
 // RNG
 export { RNG, createRNG, deriveRNG } from './utils/rng';
 
