@@ -1,7 +1,7 @@
 {
   "version": "2.0.0",
   "townName": "Greymont",
-  "gridSize": 50,
+  "gridSize": 200,
   "metersPerTile": 25,
   "walkSpeed": 5,
   "driveSpeed": 30,
@@ -18,7 +18,7 @@
       "icon": "Warehouse",
       "category": "Industrial",
       "region": "Central",
-      "position": { "x": 25, "y": 25 },
+      "position": { "x": 100, "y": 100 },
       "address": "1 Industrial Way, Central Greymont",
       "activitiesFile": "scrapyard"
     },
@@ -30,7 +30,7 @@
       "icon": "GraduationCap",
       "category": "Commercial",
       "region": "North",
-      "position": { "x": 22, "y": 8 },
+      "position": { "x": 80, "y": 30 },
       "address": "45 Learner Lane, North Greymont",
       "activitiesFile": "school"
     },
@@ -42,7 +42,7 @@
       "icon": "Landmark",
       "category": "Commercial",
       "region": "North",
-      "position": { "x": 28, "y": 10 },
+      "position": { "x": 125, "y": 25 },
       "address": "100 Main Street, North Greymont",
       "activitiesFile": "bank"
     },
@@ -54,7 +54,7 @@
       "icon": "Fuel",
       "category": "Commercial",
       "region": "East",
-      "position": { "x": 42, "y": 20 },
+      "position": { "x": 170, "y": 70 },
       "address": "88 Highway Road, East Greymont",
       "activitiesFile": "gas_station"
     },
@@ -66,7 +66,7 @@
       "icon": "Gavel",
       "category": "Commercial",
       "region": "East",
-      "position": { "x": 45, "y": 30 },
+      "position": { "x": 180, "y": 120 },
       "address": "120 Commerce Drive, East Greymont",
       "activitiesFile": "auction"
     },
@@ -78,7 +78,7 @@
       "icon": "Car",
       "category": "Commercial",
       "region": "East",
-      "position": { "x": 44, "y": 38 },
+      "position": { "x": 165, "y": 160 },
       "address": "200 Luxury Lane, East Greymont",
       "activitiesFile": "showroom"
     },
@@ -90,7 +90,7 @@
       "icon": "Wrench",
       "category": "Industrial",
       "region": "West",
-      "position": { "x": 8, "y": 22 },
+      "position": { "x": 25, "y": 85 },
       "address": "13 Wrecksford Road, West Greymont",
       "activitiesFile": "garage"
     },
@@ -102,7 +102,7 @@
       "icon": "Cog",
       "category": "Industrial",
       "region": "West",
-      "position": { "x": 6, "y": 32 },
+      "position": { "x": 20, "y": 135 },
       "address": "27 Mechanic Street, West Greymont",
       "activitiesFile": "workshop"
     },
@@ -114,7 +114,7 @@
       "icon": "Droplets",
       "category": "Commercial",
       "region": "West",
-      "position": { "x": 10, "y": 40 },
+      "position": { "x": 35, "y": 175 },
       "address": "55 Suds Avenue, West Greymont",
       "activitiesFile": "car_wash"
     },
@@ -126,7 +126,7 @@
       "icon": "Building2",
       "category": "Residential",
       "region": "South",
-      "position": { "x": 25, "y": 44 },
+      "position": { "x": 95, "y": 170 },
       "address": "300 Residence Row, South Greymont",
       "activitiesFile": "apartments"
     },
@@ -138,7 +138,7 @@
       "icon": "ParkingCircle",
       "category": "Parking",
       "region": "South",
-      "position": { "x": 32, "y": 45 },
+      "position": { "x": 130, "y": 180 },
       "address": "15 Storage Lane, South Greymont",
       "activitiesFile": null
     }
