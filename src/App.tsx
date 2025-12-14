@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame } from '@ui/screens';
-import {
-  MAX_ENERGY,
-  loadEconomyData,
-  loadCoreActivities,
-  getTimeOfDay,
-  getEconomyConfig,
-} from '@engine/index';
+import { GameHeader, GameHUD, ActivityPanel, EventLog } from '@ui/components/game';
+import { loadEconomyData, loadCoreActivities, getEconomyConfig } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
@@ -70,13 +65,16 @@ function App() {
   return <div className="app">{renderScreen()}</div>;
 }
 
-function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof useGameStore.getState>['gameState']> }) {
+function GameScreen({
+  gameState,
+}: {
+  gameState: NonNullable<ReturnType<typeof useGameStore.getState>['gameState']>;
+}) {
   const resetGame = useGameStore((state) => state.resetGame);
   const performActivity = useGameStore((state) => state.performActivity);
   const pendingEvents = useGameStore((state) => state.pendingEvents);
   const clearEvents = useGameStore((state) => state.clearEvents);
 
-  const [sleepHours, setSleepHours] = useState(8);
   const [message, setMessage] = useState<string | null>(null);
 
   const economyConfig = getEconomyConfig();
@@ -93,35 +91,12 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
   };
 
   const canAffordFood = gameState.player.money >= foodCost;
-  const timeOfDay = getTimeOfDay(gameState.time.currentHour);
 
   return (
     <div className="screen game-screen">
-      <header className="game-header">
-        <h1>Day {gameState.time.currentDay}</h1>
-        <span className="time">
-          {String(gameState.time.currentHour).padStart(2, '0')}:
-          {String(gameState.time.currentMinute).padStart(2, '0')}
-          <span className="time-period"> ({timeOfDay})</span>
-        </span>
-      </header>
+      <GameHeader time={gameState.time} />
 
-      <div className="game-hud">
-        <div className="resource money">
-          <span className="label">Money</span>
-          <span className="value">${gameState.player.money}</span>
-        </div>
-        <div className="resource energy">
-          <span className="label">Energy</span>
-          <div className="energy-bar">
-            <div
-              className="energy-fill"
-              style={{ width: `${(gameState.player.energy / MAX_ENERGY) * 100}%` }}
-            />
-          </div>
-          <span className="value">{gameState.player.energy}/{MAX_ENERGY}</span>
-        </div>
-      </div>
+      <GameHUD money={gameState.player.money} energy={gameState.player.energy} />
 
       {/* Food warning */}
       {gameState.player.daysWithoutFood > 0 && (
@@ -141,45 +116,11 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
         </div>
       </div>
 
-      {/* Activity buttons */}
-      <div className="activity-section">
-        <h3>Actions</h3>
-        <div className="activity-buttons">
-          <button
-            onClick={() => handleActivity('eat')}
-            disabled={!canAffordFood}
-            className="activity-btn eat"
-          >
-            Eat (${foodCost})
-          </button>
-
-          <div className="sleep-control">
-            <label>
-              Sleep: {sleepHours}h
-              <input
-                type="range"
-                min={1}
-                max={12}
-                value={sleepHours}
-                onChange={(e) => setSleepHours(Number(e.target.value))}
-              />
-            </label>
-            <button
-              onClick={() => handleActivity('sleep', { hours: sleepHours })}
-              className="activity-btn sleep"
-            >
-              Sleep ({sleepHours}h)
-            </button>
-          </div>
-
-          <button
-            onClick={() => handleActivity('wait', { hours: 1 })}
-            className="activity-btn wait"
-          >
-            Wait (1h)
-          </button>
-        </div>
-      </div>
+      <ActivityPanel
+        foodCost={foodCost}
+        canAffordFood={canAffordFood}
+        onActivity={handleActivity}
+      />
 
       {/* Message display */}
       {message && (
@@ -189,18 +130,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
         </div>
       )}
 
-      {/* Event log */}
-      {pendingEvents.length > 0 && (
-        <div className="event-log">
-          <h4>Events</h4>
-          {pendingEvents.map((event, i) => (
-            <div key={i} className={`event event-${event.type}`}>
-              {event.message}
-            </div>
-          ))}
-          <button onClick={clearEvents}>Dismiss</button>
-        </div>
-      )}
+      <EventLog events={pendingEvents} onDismiss={clearEvents} />
 
       <button className="quit-button" onClick={resetGame}>
         Quit to Menu
@@ -210,6 +140,7 @@ function GameScreen({ gameState }: { gameState: NonNullable<ReturnType<typeof us
 }
 
 function GameOverScreen({ events }: { events: { type: string; message: string }[] }) {
+  // Note: events param uses string type for compatibility with store's pendingEvents
   const resetGame = useGameStore((state) => state.resetGame);
   const clearEvents = useGameStore((state) => state.clearEvents);
 

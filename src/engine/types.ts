@@ -279,8 +279,16 @@ export interface StateDelta {
   events?: GameEvent[];
 }
 
+export type GameEventType =
+  | 'food_eaten'
+  | 'new_day'
+  | 'hunger_warning'
+  | 'hunger_critical'
+  | 'death_imminent'
+  | 'death';
+
 export interface GameEvent {
-  type: string;
+  type: GameEventType;
   message: string;
   data?: Record<string, unknown>;
 }
