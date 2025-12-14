@@ -9,7 +9,7 @@
 
   "survival": {
     "dailyFoodCost": 3,
-    "daysWithoutFoodUntilDeath": 3
+    "daysWithoutFoodUntilDeath": 2
   },
 
   "travel": {

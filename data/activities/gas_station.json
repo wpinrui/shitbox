@@ -33,39 +33,6 @@
       ],
       "statGain": [],
       "risks": []
-    },
-    {
-      "id": "buy_snacks",
-      "name": "Buy Snacks",
-      "description": "Grab some overpriced gas station food. Counts as a meal.",
-      "category": "survival",
-      "time": {
-        "type": "fixed",
-        "hours": 0.25
-      },
-      "energy": {
-        "type": "fixed",
-        "base": 5
-      },
-      "money": {
-        "type": "spend",
-        "mode": "fixed",
-        "base": 5
-      },
-      "prerequisites": [
-        {
-          "type": "money",
-          "minimum": 5
-        }
-      ],
-      "outcomes": [
-        {
-          "type": "resetFoodCounter",
-          "value": 0
-        }
-      ],
-      "statGain": [],
-      "risks": []
     }
   ]
 }

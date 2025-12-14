@@ -41,7 +41,7 @@ Almost every activity reduces to: *Activity(parameters, context) → {Δmoney, �
 
 | Resource | Function | Dynamics |
 |----------|----------|----------|
-| **Money** | Primary progression metric; enables all purchases and unlocks | Earned through work, flipping, rentals. Spent on assets, food (constant daily cost), repairs, rent/mortgage |
+| **Money** | Primary progression metric; enables all purchases and unlocks | Earned through work, flipping, rentals. Spent on assets, food ($3/day auto-deducted), repairs, rent/mortgage |
 | **Energy** | Limits daily activity; harder labor drains faster | Regenerates through rest. Rest quality depends on shelter (shitbox = poor, apartment = good) |
 | **Time** | Day counter is the score; time-of-day affects availability and visuals | Activities skip time forward. Lower day count = better run. Some locations/activities are time-gated |
 
@@ -262,7 +262,7 @@ These tiers are not rigid gates but typical stages players pass through. Mechani
 
 ### Tier 0: Survival
 
-Player spawns as an 18-year-old with nothing. They've wandered to the scrapyard and claimed a shitbox (might be worth scrap value). No driver's license, no cash. Fail to afford food for 2 days = death. Options: manual labor, scavenge parts, sell scrap, maybe sell the shitbox for seed money.
+Player spawns as an 18-year-old with nothing. They've wandered to the scrapyard and claimed a shitbox (might be worth scrap value). No driver's license, no cash. Food costs $3/day (auto-deducted); fail to afford for 2 consecutive days = death. Options: manual labor, scavenge parts, sell scrap, maybe sell the shitbox for seed money.
 
 ### Tier 1: Mobile
 
