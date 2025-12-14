@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import type { ActivityDefinition, GameState } from '@engine/index';
+import {
+  calculateEnergyCost,
+  calculateEnergyRecovery,
+  calculateMoneyEarned,
+  calculateMoneyCost,
+  getEconomyConfig,
+} from '@engine/index';
 import './ActivityModal.css';
 
 interface ActivityModalProps {
@@ -21,48 +28,48 @@ export function ActivityModal({
 
   const [hours, setHours] = useState(minHours);
 
-  // Calculate estimated costs based on selected hours
+  // Calculate estimated energy using actual engine calculations
   const getEstimatedEnergy = () => {
+    const params = isVariableTime ? { hours } : {};
+
     if (activity.energy.type === 'recover') {
-      const base = activity.energy.base ?? 0;
-      const perHour = isVariableTime ? hours : (activity.time.hours ?? 1);
-      return `+${base * perHour}`;
+      const economyConfig = getEconomyConfig();
+      const recovery = calculateEnergyRecovery(gameState, activity, params, economyConfig);
+      return `+${recovery}`;
     }
+
     if (activity.energy.type === 'none') {
       return '0';
     }
-    const base = activity.energy.base ?? 0;
-    if (activity.energy.type === 'perHour') {
-      const perHour = isVariableTime ? hours : (activity.time.hours ?? 1);
-      const min = Math.floor(base * perHour * 0.8);
-      const max = Math.ceil(base * perHour * 1.2);
-      return `~${min}-${max}`;
-    }
-    // Fixed energy cost with variance
-    const min = Math.floor(base * 0.8);
-    const max = Math.ceil(base * 1.2);
-    return `~${min}-${max}`;
+
+    // Use actual calculation with stat modifiers applied
+    const cost = calculateEnergyCost(gameState, activity, params);
+    return `-${cost}`;
   };
 
   const getEstimatedMoney = () => {
     if (activity.money.type === 'none') {
       return null;
     }
-    const base = activity.money.base ?? 0;
+
+    const params = isVariableTime ? { hours } : {};
     const variance = activity.money.variance ?? 0;
 
     if (activity.money.type === 'earn') {
-      if (activity.money.mode === 'perHour') {
-        const perHour = isVariableTime ? hours : (activity.time.hours ?? 1);
-        const min = Math.floor((base - variance) * perHour);
-        const max = Math.ceil((base + variance) * perHour);
+      // Use actual calculation with stat modifiers applied
+      const baseEarnings = calculateMoneyEarned(gameState, activity, params);
+      const min = baseEarnings - variance;
+      const max = baseEarnings + variance;
+
+      if (variance > 0) {
         return `+$${min}-${max}`;
       }
-      return `+$${base - variance}-${base + variance}`;
+      return `+$${baseEarnings}`;
     }
 
     if (activity.money.type === 'spend') {
-      return `-$${base}`;
+      const cost = calculateMoneyCost(gameState, activity, params);
+      return `-$${cost}`;
     }
 
     return null;
