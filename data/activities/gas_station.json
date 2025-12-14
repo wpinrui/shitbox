@@ -1,0 +1,71 @@
+{
+  "locationId": "gas_station",
+  "locationName": "Gas Station",
+  "activities": [
+    {
+      "id": "refuel",
+      "name": "Refuel",
+      "description": "Fill up your car with gas. Current price: $2/liter.",
+      "category": "vehicle",
+      "time": {
+        "type": "fixed",
+        "hours": 0.25
+      },
+      "energy": {
+        "type": "none"
+      },
+      "money": {
+        "type": "spend",
+        "mode": "variable",
+        "base": 2,
+        "perUnit": "liter"
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "refuelCar",
+          "value": "full"
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    },
+    {
+      "id": "buy_snacks",
+      "name": "Buy Snacks",
+      "description": "Grab some overpriced gas station food. Counts as a meal.",
+      "category": "survival",
+      "time": {
+        "type": "fixed",
+        "hours": 0.25
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 5
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 5
+      },
+      "prerequisites": [
+        {
+          "type": "money",
+          "minimum": 5
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "resetFoodCounter",
+          "value": 0
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    }
+  ]
+}

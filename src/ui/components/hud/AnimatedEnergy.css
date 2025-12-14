@@ -1,0 +1,52 @@
+.animated-energy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.energy-emoji {
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+
+.animated-energy.animating .energy-emoji {
+  animation: emojiWobble 0.5s ease-in-out;
+}
+
+.energy-bar-container {
+  width: 120px;
+  height: 16px;
+  background-color: #333;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.energy-bar-fill {
+  height: 100%;
+  transition: width 0.1s linear, background-color 0.3s;
+  border-radius: 8px;
+}
+
+.energy-value {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 32px;
+  text-align: right;
+}
+
+@keyframes emojiWobble {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+}

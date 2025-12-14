@@ -8,8 +8,8 @@
   },
 
   "survival": {
-    "dailyFoodCost": 25,
-    "daysWithoutFoodUntilDeath": 2
+    "dailyFoodCost": 3,
+    "daysWithoutFoodUntilDeath": 3
   },
 
   "rest": {

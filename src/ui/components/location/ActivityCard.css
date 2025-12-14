@@ -1,0 +1,74 @@
+.activity-card {
+  padding: 16px;
+  background-color: rgba(40, 40, 40, 0.9);
+  border: 2px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activity-card:hover:not(.disabled) {
+  border-color: #ffd700;
+  background-color: rgba(60, 60, 40, 0.9);
+  transform: translateY(-2px);
+}
+
+.activity-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.activity-name {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.activity-description {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.activity-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.activity-stats .stat {
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.activity-stats .time {
+  color: #88aaff;
+}
+
+.activity-stats .energy {
+  color: #ffaa00;
+}
+
+.activity-stats .money.earn {
+  color: #88ff88;
+}
+
+.activity-stats .money.spend {
+  color: #ff8888;
+}
+
+.locked-reason {
+  margin-top: 12px;
+  padding: 8px;
+  font-size: 11px;
+  color: #ff6666;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 4px;
+}
