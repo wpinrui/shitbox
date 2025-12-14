@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
@@ -33,6 +33,8 @@ export function GameScreen({
   const setExecutingActivity = useGameStore((state) => state.setExecutingActivity);
   const walkTo = useGameStore((state) => state.walkTo);
   const driveTo = useGameStore((state) => state.driveTo);
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const economyConfig = getEconomyConfig();
   const starvationDays = economyConfig.survival.daysWithoutFoodUntilDeath;
@@ -108,16 +110,28 @@ export function GameScreen({
 
   return (
     <div className="game-screen">
+      {!sidebarOpen && (
+        <button
+          className="sidebar-toggle-button"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+        >
+          &#9776;
+        </button>
+      )}
       <Sidebar
         playerName={gameState.player.name}
         day={gameState.time.currentDay}
         hour={gameState.time.currentHour}
+        minute={gameState.time.currentMinute}
         money={gameState.player.money}
         energy={gameState.player.energy}
         maxEnergy={MAX_ENERGY}
         stats={gameState.player.stats}
         daysWithoutFood={gameState.player.daysWithoutFood}
         starvationDays={starvationDays}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         onQuit={resetGame}
       />
 

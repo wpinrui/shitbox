@@ -1,6 +1,34 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useGameStore } from '@store/index';
 import { StatAllocation, StatName, STARTING_STAT_POINTS, MAX_PLAYER_NAME_LENGTH } from '@engine/index';
+
+interface ConfirmDialogProps {
+  pointsRemaining: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+function ConfirmDialog({ pointsRemaining, onConfirm, onCancel }: ConfirmDialogProps) {
+  return (
+    <div className="confirm-dialog-overlay">
+      <div className="confirm-dialog">
+        <h3>Unallocated Points</h3>
+        <p>
+          You have <strong>{pointsRemaining}</strong> unallocated stat point
+          {pointsRemaining !== 1 ? 's' : ''}. Are you sure you want to start?
+        </p>
+        <div className="confirm-dialog-buttons">
+          <button className="confirm-dialog-cancel" onClick={onCancel}>
+            Go Back
+          </button>
+          <button className="confirm-dialog-confirm" onClick={onConfirm}>
+            Start Anyway
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const MIN_STAT = 0;
 const MAX_STAT = 20;
@@ -42,6 +70,7 @@ export function NewGame() {
     knowledge: 0,
     driving: 0,
   });
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const pointsUsed = Object.values(stats).reduce((sum, val) => sum + val, 0);
   const pointsRemaining = STARTING_STAT_POINTS - pointsUsed;
@@ -57,13 +86,29 @@ export function NewGame() {
     }));
   };
 
+  const startGame = useCallback(() => {
+    newGame(playerName.trim(), stats);
+  }, [newGame, playerName, stats]);
+
   const handleStartGame = () => {
     if (!playerName.trim()) return;
-    if (pointsRemaining !== 0) return;
-    newGame(playerName.trim(), stats);
+    if (pointsRemaining > 0) {
+      setShowConfirmDialog(true);
+      return;
+    }
+    startGame();
   };
 
-  const canStart = playerName.trim().length > 0 && pointsRemaining === 0;
+  const handleConfirmStart = () => {
+    setShowConfirmDialog(false);
+    startGame();
+  };
+
+  const handleCancelStart = () => {
+    setShowConfirmDialog(false);
+  };
+
+  const canStart = playerName.trim().length > 0 && pointsRemaining >= 0;
 
   return (
     <div className="screen new-game">
@@ -132,13 +177,19 @@ export function NewGame() {
         >
           {!playerName.trim()
             ? 'Enter your name'
-            : pointsRemaining > 0
-            ? `Allocate ${pointsRemaining} more point${pointsRemaining !== 1 ? 's' : ''}`
             : pointsRemaining < 0
             ? 'Too many points allocated'
             : 'Start Game'}
         </button>
       </div>
+
+      {showConfirmDialog && (
+        <ConfirmDialog
+          pointsRemaining={pointsRemaining}
+          onConfirm={handleConfirmStart}
+          onCancel={handleCancelStart}
+        />
+      )}
     </div>
   );
 }
