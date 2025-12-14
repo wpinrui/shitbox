@@ -2,8 +2,6 @@
 
 **Version 1.0 — December 2025**
 
-> **Note:** The skill system and racing mechanics in this document have been superseded. See [Shitbox_Skills.md](Shitbox_Skills.md) for the current skill system design (5 stats: Charisma, Mechanical, Fitness, Knowledge, Driving) and Road Trip content creation system.
-
 ---
 
 ## 1. Executive Summary
@@ -49,15 +47,15 @@ Almost every activity reduces to: *Activity(parameters, context) → {Δmoney, �
 
 ### 3.2 Player Stats
 
-Stats are distributed at game start (fewer points = harder challenge). They grow through a hybrid system: slow passive gain from relevant activities, faster gains from dedicated training (school, gym, racing lessons).
+Stats are distributed at game start (10 points total, all stats start at 0, max 20 per stat). They grow through a hybrid system: slow passive gain from relevant activities (0.02/hour), faster gains from dedicated training at gym, library, or driving school (0.15/hour base). See [Shitbox_Skills.md](Shitbox_Skills.md) for complete stat system details.
 
 | Stat | Effects | Archetype |
 |------|---------|-----------|
-| **Charisma** | Negotiation effectiveness; probability of seeing NPC personality traits; better rental/sales ad response rates | *"Charisma Chad"* — wins through deals |
-| **Mechanical** | Repair speed/quality; spotting true car value; better scrapyard finds | *"Grease Monkey"* — hidden gems |
-| **Fitness** | Energy efficiency (-X% drain); manual labor output bonus | *"Workhorse"* — grind master |
-| **Knowledge** | Unlock opportunities earlier; better research outcomes; spot hidden listings | *"Scholar"* — plays the system |
-| **Racing** | Bonus power in races; affects racing minigame performance | *"Speed Demon"* — prize money |
+| **Charisma** | Counter-offer shift (+1%/pt), insult threshold (×0.99/pt), interest ceiling (×1.01/pt) — all multiplicative on trait/RNG base | *"Charisma Chad"* — wins through deals |
+| **Mechanical** | DIY repair time/cost (-2%/pt), condition assessment error (-0.4%/pt from ±10% base), lemon chance (-0.2%/pt from 5% base), mechanic earnings (+5%/pt) | *"Grease Monkey"* — hidden gems |
+| **Fitness** | Energy cost (-2%/pt), physical labor earnings (+5%/pt), rest efficiency (+2%/pt), road trip engagement fatigue decay (+0.005/pt from 0.80 base) | *"Workhorse"* — grind master |
+| **Knowledge** | Lessons required (-3%/pt), training gains (+3%/pt), passive skill gains (+3%/pt), investment return (+0.25%/pt annual from 5% base) | *"Scholar"* — plays the system |
+| **Driving** | Road trip risk (-2%/pt), delivery earnings (+3%/pt), ticket avoidance (-2%/pt), fuel efficiency (-1.5%/pt), car wear (-1.5%/pt) | *"Content Creator"* — road trip revenue |
 
 ### 3.3 Inventory
 
@@ -75,12 +73,12 @@ Cars are the central object of the game—both tools for making money and assets
 
 | Stat | Description |
 |------|-------------|
-| Power/Speed | Racing performance, job efficiency (faster deliveries) |
+| Power/Speed | Road trip stunt performance, job efficiency (faster deliveries) |
 | Engine Condition | Affects power output, fuel efficiency. Degrades with use. At zero, engine dies (requires expensive replacement) |
 | Body Condition | Cosmetic only. Affects resale value and eligibility for prestige gigs. No catastrophic failure |
 | Capacity | Passengers (taxi), cargo (deliveries), towing capability |
 | Fuel Efficiency | Running cost per trip. Poor engine condition worsens this |
-| Style/Prestige | Affects sale price premium, unlocks certain gigs, racing class eligibility |
+| Style/Prestige | Affects sale price premium, road trip engagement bonuses (luxury or shitbox), content appeal |
 
 ### 4.2 Repairs
 
@@ -104,7 +102,8 @@ The world is presented as a **point-and-click map**. Players click locations to 
 | **Workshop** | Major repairs (engine replacement), equipment storage, can rent bench time if not owned, work as mechanic |
 | **Apartments** | Rent or buy housing. Better shelter = better rest quality = more efficient energy recovery |
 | **Auction Lot** | Car auctions (twice weekly). Browse, bid, buy. Higher volume, less negotiation flexibility |
-| **Racetrack** | Race for prize money (requires car), lend car to pro drivers, work as track mechanic |
+| **Film School** | Cinematography training, equipment rental, content creation courses |
+| **Gym** | Fitness training |
 | **School / Library** | Training: spend time + money to increase stats. Get licenses (driver's, taxi, truck) |
 | **Showroom** | Buy new cars at list price (no negotiation). Later: work as salesperson, become dealer |
 | **Bank** | Savings account, index fund investment, loans |
@@ -190,7 +189,7 @@ The newspaper is the dynamic content delivery system. It costs a small amount of
 - **Auction previews** — What's coming up this week
 - **Market trends** — "Truck prices up this month" (affects flip strategy)
 - **One-off gigs** — "Moving company needs driver Saturday, $200"
-- **Race announcements** — Upcoming events, entry fees, prize pools
+- **Trending content** — What road trip stunts are popular right now
 - **Index fund updates** — "Markets up 3% this week"
 
 *Knowledge stat payoff:* Higher Knowledge could mean spotting "hidden" listings others miss.
@@ -207,7 +206,7 @@ Players can rent out owned assets or find tenants/buyers through advertising:
 
 **Rentable assets:**
 
-- Cars (to drivers, to racers)
+- Cars (to drivers)
 - Garage space
 - Workshop bench time
 - Trucks (to hired drivers)
@@ -215,25 +214,45 @@ Players can rent out owned assets or find tenants/buyers through advertising:
 
 ---
 
-## 10. Racing Minigame
+## 10. Road Trip Content Creation
 
-Racing is the one active skill moment in an otherwise decision-based game. It's a reaction-based gear-shifting minigame where player execution matters.
+Road trips are the content creation system—Top Gear/Grand Tour inspired adventures that generate social media engagement and income.
 
-### 10.1 Mechanics
+### 10.1 How It Works
 
-- **Visual**: RPM gauge + progress line with dots (you and opponents)
-- **Input**: Player shifts gears 1→6, timing matters
-- **Optimal shift**: Shift at peak RPM for maximum acceleration
-- **Early shift**: Sluggish acceleration, lose time
-- **Late shift**: Hit the limiter, waste time
+1. **Select a car** — High base value OR low current value cars get engagement bonuses
+2. **Plan stunts** — Choose from available activities (road test, rally racing, desert crossing, etc.)
+3. **Execute trip** — Risk/reward for each stunt, Driving stat reduces risk
+4. **Release video** — Engagement calculated based on stunts, equipment quality, and cinematography skill
+5. **Grow audience** — Subscribers increase, revenue per video increases
 
-### 10.2 Variables
+### 10.2 Engagement System
 
-- **Your speed** = Base car power × engine condition % + Racing stat bonus
-- **Car condition**: Down on power if engine is worn
-- **Car quality**: Irrelevant to winning (you race similar cars), but affects prize money (more glamorous = higher stakes)
-- **Opponents**: Simulated as dots on the progress line at their own competence level
-- **Stakes**: Time and entry fee only. Bad shifts cost time, not car damage
+**Base Engagement = Car Bonus + Sum(Stunt Engagement × Stunt Interest × Fatigue)**
+
+- **Stunt Interest**: Each stunt has a cooldown (drops to 10% after use, recovers +10%/day)
+- **Fatigue**: Engagement decays per day of trip (base ×0.80/day, Fitness improves this)
+- **Video Quality**: Cinematography skill (×1.0 to ×2.0) × Equipment tier (low/mid/high)
+
+### 10.3 Car Bonuses
+
+- **High base value cars** (>$100k): Luxury adventure bonus
+- **Low current value cars** (<$2k): Shitbox survival bonus
+- **Exotic destruction**: Massive engagement if you destroy an expensive car (but huge financial loss)
+
+### 10.4 Risk & Breakdown
+
+- Each stunt has a base risk % (reduced by Driving stat at -2%/point)
+- Failed stunts damage the car (10-40%)
+- If car condition hits 0, it breaks down (towed home, trip ends, but partial content still released)
+- "How to Destroy a Car" stunt = 100% risk, car is gone, very high engagement
+
+### 10.5 Domain Skill: Cinematography
+
+- Hidden until unlocked (first content-related activity)
+- 0-20 scale like core stats, same growth rates
+- Trained via: film school, studying cinematography, or making videos
+- Effect: Video quality multiplier (×1.0 at 0, ×2.0 at 20)
 
 ---
 
@@ -251,7 +270,7 @@ Working car + driver's license. Can do deliveries, taxi rides. These incur fuel 
 
 ### Tier 2: Operator
 
-Equipment to buy/fix/flip seriously. Own a workshop. Buy a truck warehouse, become a truck driver (need license or risk fines). Hire drivers, negotiate their pay, RNG generates their revenue. Loan cars to pro racers or race yourself. Work as mechanic at the racetrack.
+Equipment to buy/fix/flip seriously. Own a workshop. Buy a truck warehouse, become a truck driver (need license or risk fines). Hire drivers, negotiate their pay, RNG generates their revenue. Start road trip content creation—buy equipment, learn cinematography, grow your subscriber base.
 
 ### Tier 3: Mogul
 
@@ -279,7 +298,7 @@ Ferrari 250 GTO acquired. Game records the day count. Player can continue indefi
 
 ### 13.2 Architecture Philosophy
 
-One core loop: *Activity(parameters, context) → {Δmoney, Δenergy, Δtime, outcomes}*. Each "feature" is content in a data structure, not a new system. The engine stays small; variety comes from the activity catalog. Only negotiation and racing get dedicated interaction systems.
+One core loop: *Activity(parameters, context) → {Δmoney, Δenergy, Δtime, outcomes}*. Each "feature" is content in a data structure, not a new system. The engine stays small; variety comes from the activity catalog. Only negotiation and road trip content creation get dedicated interaction systems.
 
 ### 13.3 Save System
 
@@ -314,7 +333,7 @@ This design was developed using principles from "The Art of Game Design: A Book 
 - **Lens of the Ramp**: Progression is about recognizing minimum investment to reach next tier
 - **Lens of the Pyramid**: Early game = survival, mid game = accumulation, late game = optimization
 - **Lens of Time**: Skip-ahead system with day counter as score
-- **Lens of Actions**: Decision-making is the core skill, not dexterity (except racing)
+- **Lens of Actions**: Decision-making is the core skill, not dexterity
 - **Lens of the Toy**: Negotiation should be fun to play with even outside optimal strategy
 - **Lens of Character Traits**: Stats reflect how your hustler hustles—implicit narrative
 - **Lens of Scope**: Everything reduces to one formula; complexity comes from content, not systems

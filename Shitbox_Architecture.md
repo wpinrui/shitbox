@@ -1,7 +1,5 @@
 # SHITBOX — Software Architecture & Build Plan
 
-> **Note:** The skill system and racing mechanics in this document have been superseded. See [Shitbox_Skills.md](Shitbox_Skills.md) for the current skill system design (5 stats: Charisma, Mechanical, Fitness, Knowledge, Driving) and Road Trip content creation system.
-
 ## Table of Contents
 1. [Architecture Overview](#1-architecture-overview)
 2. [Directory Structure](#2-directory-structure)
@@ -36,7 +34,7 @@
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                         REACT UI LAYER                          │
-│  - Components (Map, Location, Negotiation, Racing, HUD)         │
+│  - Components (Map, Location, Negotiation, Road Trips, HUD)     │
 │  - Renders from state                                           │
 │  - Dispatches actions to engine                                 │
 │  - Animations, transitions, sound (future)                      │
@@ -57,7 +55,7 @@
 │  - Pure functions: (state, action, rng) => newState             │
 │  - Zero side effects                                            │
 │  - Imports data from JSON configs                               │
-│  - Modules: Activity, Negotiation, Racing, Economy, Time        │
+│  - Modules: Activity, Negotiation, Road Trips, Economy, Time    │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -97,7 +95,7 @@ shitbox/
 │   │   │   └── resources.ts    # Resource calculations
 │   │   ├── systems/
 │   │   │   ├── negotiation.ts  # Negotiation logic
-│   │   │   ├── racing.ts       # Racing simulation
+│   │   │   ├── roadtrip.ts     # Road trip content creation
 │   │   │   ├── economy.ts      # Prices, markets, interest
 │   │   │   ├── cars.ts         # Car operations
 │   │   │   ├── npcs.ts         # NPC generation, traits
@@ -122,7 +120,7 @@ shitbox/
 │   │   │   ├── map/            # World map, location nodes
 │   │   │   ├── location/       # Location menus, activity lists
 │   │   │   ├── negotiation/    # Negotiation UI
-│   │   │   ├── racing/         # Racing minigame UI
+│   │   │   ├── roadtrip/       # Road trip content UI
 │   │   │   ├── cars/           # Car cards, garage view
 │   │   │   ├── bank/           # Banking interface
 │   │   │   └── newspaper/      # Newspaper reader
@@ -147,7 +145,7 @@ shitbox/
 │   │   ├── workshop.json
 │   │   ├── apartments.json
 │   │   ├── auction.json
-│   │   ├── racetrack.json
+│   │   ├── roadtrip.json
 │   │   ├── school.json
 │   │   ├── showroom.json
 │   │   ├── bank.json
@@ -155,7 +153,7 @@ shitbox/
 │   │   └── misc.json
 │   ├── cars.json               # Car database
 │   ├── traits.json             # NPC personality traits
-│   ├── races.json              # Race definitions
+│   ├── stunts.json             # Road trip stunt definitions
 │   ├── properties.json         # Apartments, houses, commercial
 │   ├── licenses.json           # License requirements
 │   ├── loans.json              # Loan products
@@ -181,7 +179,7 @@ shitbox/
   "resources": {
     "maxEnergy": 100,
     "startingMoney": 0,
-    "startingStatPoints": 25
+    "startingStatPoints": 10
   },
   
   "survival": {
@@ -250,25 +248,60 @@ shitbox/
   
   "statEffects": {
     "charisma": {
-      "traitVisibilityPerPoint": 0.02,
-      "adResponseBonusPerPoint": 0.005
+      "counterOfferShiftPerPoint": 0.01,
+      "insultThresholdMultiplierPerPoint": -0.01,
+      "interestCeilingMultiplierPerPoint": 0.01
     },
     "mechanical": {
-      "repairQualityBonusPerPoint": 0.01,
-      "partFindBonusPerPoint": 0.02,
-      "valueSpotAccuracyPerPoint": 0.015
+      "diyRepairTimeReductionPerPoint": 0.02,
+      "diyRepairCostReductionPerPoint": 0.02,
+      "conditionAssessmentErrorReductionPerPoint": 0.004,
+      "lemonChanceReductionPerPoint": 0.002,
+      "mechanicWorkEarningsBonusPerPoint": 0.05
     },
     "fitness": {
-      "energyDrainReductionPerPoint": 0.01,
-      "laborOutputBonusPerPoint": 0.008
+      "energyCostReductionPerPoint": 0.02,
+      "physicalLaborEarningsBonusPerPoint": 0.05,
+      "restEfficiencyBonusPerPoint": 0.02,
+      "roadTripFatigueDecayBonusPerPoint": 0.005
     },
     "knowledge": {
-      "researchAccuracyPerPoint": 0.02,
-      "hiddenListingChancePerPoint": 0.01
+      "lessonsRequiredReductionPerPoint": 0.03,
+      "trainingGainBonusPerPoint": 0.03,
+      "passiveSkillGainBonusPerPoint": 0.03,
+      "investmentReturnBonusPerPoint": 0.0025
     },
-    "racing": {
-      "powerBonusPerPoint": 0.015
+    "driving": {
+      "roadTripRiskReductionPerPoint": 0.02,
+      "deliveryEfficiencyBonusPerPoint": 0.03,
+      "ticketAvoidancePerPoint": 0.02,
+      "fuelEfficiencyBonusPerPoint": 0.015,
+      "carWearReductionPerPoint": 0.015
     }
+  },
+
+  "skillGrowth": {
+    "passiveGainPerHour": 0.02,
+    "trainingGainPerHour": 0.15,
+    "maxStatLevel": 20
+  },
+
+  "conditionAssessment": {
+    "baseErrorPercent": 10
+  },
+
+  "lemonChance": {
+    "basePercent": 5,
+    "valueLossPercent": 30
+  },
+
+  "investmentFund": {
+    "baseAnnualReturnPercent": 5
+  },
+
+  "roadTripEngagement": {
+    "baseFatigueDecayPerDay": 0.80,
+    "stuntCooldownRecoveryPerDay": 0.10
   }
 }
 ```
@@ -788,81 +821,203 @@ shitbox/
 }
 ```
 
-### 3.5 Races (`data/races.json`)
+### 3.5 Road Trip Stunts (`data/stunts.json`)
 
 ```json
 {
   "version": "1.0.0",
-  
-  "raceClasses": [
+
+  "stunts": [
     {
-      "id": "amateur",
-      "name": "Amateur Race",
-      "tier": 0,
-      "entryFee": 50,
-      "prizes": { "1st": 500, "2nd": 200, "3rd": 100 },
+      "id": "road_test",
+      "name": "Road Test",
+      "description": "Basic car review content",
+      "category": "low_risk",
+      "baseRiskPercent": 5,
+      "baseEngagement": 100,
+      "cooldownDays": 3,
       "requirements": {
-        "carValueMin": 0,
-        "license": "driver"
+        "mods": []
       },
-      "opponentSkillRange": { "min": 10, "max": 30 },
-      "statGain": { "racing": 0.05 }
+      "statGain": { "driving": 0.02, "cinematography": 0.01 }
     },
     {
-      "id": "club",
-      "name": "Club Race",
-      "tier": 1,
-      "entryFee": 200,
-      "prizes": { "1st": 2000, "2nd": 800, "3rd": 400 },
+      "id": "handbrake_turn",
+      "name": "Handbrake Turn",
+      "description": "Skill showcase stunt",
+      "category": "low_risk",
+      "baseRiskPercent": 10,
+      "baseEngagement": 200,
+      "cooldownDays": 5,
       "requirements": {
-        "carValueMin": 10000,
-        "license": "driver"
+        "mods": []
       },
-      "opponentSkillRange": { "min": 25, "max": 50 },
-      "statGain": { "racing": 0.08 }
+      "statGain": { "driving": 0.03 }
     },
     {
-      "id": "pro",
-      "name": "Pro Race",
-      "tier": 2,
-      "entryFee": 1000,
-      "prizes": { "1st": 10000, "2nd": 4000, "3rd": 2000 },
+      "id": "track_day",
+      "name": "Track Day",
+      "description": "Controlled environment racing content",
+      "category": "low_risk",
+      "baseRiskPercent": 10,
+      "baseEngagement": 300,
+      "cooldownDays": 7,
       "requirements": {
-        "carValueMin": 50000,
-        "license": "driver"
+        "mods": []
       },
-      "opponentSkillRange": { "min": 45, "max": 75 },
-      "statGain": { "racing": 0.10 }
+      "statGain": { "driving": 0.04 }
     },
     {
-      "id": "elite",
-      "name": "Elite Race",
-      "tier": 3,
-      "entryFee": 5000,
-      "prizes": { "1st": 50000, "2nd": 20000, "3rd": 10000 },
+      "id": "rally_racing",
+      "name": "Rally Racing",
+      "description": "Off-road racing adventure",
+      "category": "medium_risk",
+      "baseRiskPercent": 25,
+      "baseEngagement": 500,
+      "cooldownDays": 10,
       "requirements": {
-        "carValueMin": 200000,
-        "license": "driver"
+        "mods": ["lifted_suspension"]
       },
-      "opponentSkillRange": { "min": 70, "max": 95 },
-      "statGain": { "racing": 0.12 }
+      "statGain": { "driving": 0.05 }
+    },
+    {
+      "id": "driving_on_ice",
+      "name": "Driving on Ice",
+      "description": "Frozen lake adventure",
+      "category": "medium_risk",
+      "baseRiskPercent": 30,
+      "baseEngagement": 600,
+      "cooldownDays": 14,
+      "requirements": {
+        "mods": []
+      },
+      "seasonal": "winter",
+      "statGain": { "driving": 0.05 }
+    },
+    {
+      "id": "climb_mountain",
+      "name": "Climb a Mountain",
+      "description": "Extreme elevation challenge",
+      "category": "high_risk",
+      "baseRiskPercent": 40,
+      "baseEngagement": 800,
+      "cooldownDays": 14,
+      "requirements": {
+        "mods": ["lifted_suspension", "reinforced_engine"]
+      },
+      "statGain": { "driving": 0.06, "fitness": 0.02 }
+    },
+    {
+      "id": "cross_desert",
+      "name": "Cross a Desert",
+      "description": "Multi-day desert survival journey",
+      "category": "high_risk",
+      "baseRiskPercent": 45,
+      "baseEngagement": 1000,
+      "cooldownDays": 21,
+      "tripDays": 3,
+      "requirements": {
+        "mods": ["reinforced_cooling"]
+      },
+      "statGain": { "driving": 0.08, "fitness": 0.04 }
+    },
+    {
+      "id": "cross_salt_pans",
+      "name": "Cross Salt Pans",
+      "description": "Unique flat terrain adventure",
+      "category": "high_risk",
+      "baseRiskPercent": 35,
+      "baseEngagement": 900,
+      "cooldownDays": 21,
+      "requirements": {
+        "mods": []
+      },
+      "statGain": { "driving": 0.06 }
+    },
+    {
+      "id": "fit_jet_engine",
+      "name": "Fit a Jet Engine",
+      "description": "Insane modification challenge",
+      "category": "extreme",
+      "baseRiskPercent": 50,
+      "baseEngagement": 2000,
+      "cooldownDays": 30,
+      "requirements": {
+        "mods": ["jet_engine_mount"],
+        "mechanical": 15
+      },
+      "statGain": { "mechanical": 0.10, "driving": 0.05 }
+    },
+    {
+      "id": "destroy_car",
+      "name": "How to Destroy a Car",
+      "description": "Sacrificial destruction content",
+      "category": "extreme",
+      "baseRiskPercent": 100,
+      "baseEngagement": 3000,
+      "cooldownDays": 14,
+      "destroysCar": true,
+      "requirements": {
+        "mods": []
+      },
+      "statGain": {}
+    },
+    {
+      "id": "car_into_house",
+      "name": "Turn Car into House/Pub",
+      "description": "Creative conversion challenge",
+      "category": "extreme",
+      "baseRiskPercent": 10,
+      "baseEngagement": 2500,
+      "cooldownDays": 30,
+      "makesCarUnusable": true,
+      "requirements": {
+        "mods": []
+      },
+      "statGain": { "mechanical": 0.08 }
     }
   ],
-  
-  "racingMechanics": {
-    "gears": 6,
-    "optimalShiftWindowMs": 150,
-    "earlyShiftPenalty": 0.08,
-    "lateShiftPenalty": 0.12,
-    "skillBonusPerRacingStat": 0.015,
-    "engineConditionPowerMultiplier": true
+
+  "equipment": {
+    "tiers": [
+      {
+        "id": "low",
+        "name": "Basic Equipment",
+        "videoQualityMultiplier": 1.0,
+        "audioQualityMultiplier": 1.0,
+        "rentCostPerDay": 20,
+        "buyCost": 500
+      },
+      {
+        "id": "mid",
+        "name": "Prosumer Equipment",
+        "videoQualityMultiplier": 1.25,
+        "audioQualityMultiplier": 1.25,
+        "rentCostPerDay": 75,
+        "buyCost": 2500
+      },
+      {
+        "id": "high",
+        "name": "Professional Equipment",
+        "videoQualityMultiplier": 1.5,
+        "audioQualityMultiplier": 1.5,
+        "rentCostPerDay": 200,
+        "buyCost": 8000
+      }
+    ]
   },
-  
-  "practiceSession": {
-    "trackFee": 30,
-    "hours": 1,
-    "energy": 15,
-    "statGain": { "racing": 0.03 }
+
+  "cinematography": {
+    "maxLevel": 20,
+    "qualityMultiplierAtMax": 2.0
+  },
+
+  "carBonuses": {
+    "highBaseValueThreshold": 100000,
+    "highBaseValueEngagementBonus": 500,
+    "lowCurrentValueThreshold": 2000,
+    "lowCurrentValueEngagementBonus": 300,
+    "exoticDestructionBonus": 5000
   }
 }
 ```
@@ -901,7 +1056,11 @@ export interface GameState {
       mechanical: number;
       fitness: number;
       knowledge: number;
-      racing: number;
+      driving: number;
+    };
+
+    domainSkills: {
+      cinematography: number;  // Hidden until unlocked
     };
     
     licenses: string[];  // ["driver", "taxi", "truck"]
@@ -960,7 +1119,9 @@ export interface GameState {
   progression: {
     totalEarnings: number;
     carsFlipped: number;
-    racesWon: number;
+    roadTripsCompleted: number;
+    totalEngagement: number;
+    subscribers: number;
     highestCarValue: number;
     gtoAcquired: boolean;
     gtoAcquiredDay: number | null;
@@ -1247,189 +1408,199 @@ export function submitOffer(
 }
 ```
 
-### 4.4 Racing Minigame
+### 4.4 Road Trip System
 
 ```typescript
-// src/engine/systems/racing.ts
+// src/engine/systems/roadtrip.ts
 
-export interface RaceState {
-  raceId: string;
-  raceClass: string;
-  playerCar: OwnedCar;
-  playerPosition: number;     // 0-1000 (finish line)
-  playerSpeed: number;
-  playerGear: number;         // 1-6
-  playerRpm: number;          // 0-1
-  
-  opponents: OpponentState[];
-  
-  status: "countdown" | "racing" | "finished";
-  raceTimeMs: number;
-  
-  shiftHistory: ShiftEvent[];
+export interface RoadTripState {
+  tripId: string;
+  car: OwnedCar;
+  plannedStunts: PlannedStunt[];
+  completedStunts: CompletedStunt[];
+  currentDay: number;
+  totalDays: number;
+  status: "planning" | "in_progress" | "completed" | "car_broken_down";
+  equipment: EquipmentTier;
 }
 
-export interface OpponentState {
-  id: string;
-  name: string;
-  skill: number;
-  position: number;
-  finished: boolean;
-  finishTime: number | null;
+export interface PlannedStunt {
+  stuntId: string;
+  dayPlanned: number;
 }
 
-export interface ShiftEvent {
-  gear: number;
-  rpm: number;
-  quality: "perfect" | "good" | "early" | "late";
-  timeLost: number;
+export interface CompletedStunt {
+  stuntId: string;
+  dayCompleted: number;
+  success: boolean;
+  damageIncurred: number;
+  engagementEarned: number;
+  breakdown: boolean;
 }
 
-export function initializeRace(
+export interface StuntCooldown {
+  stuntId: string;
+  currentInterest: number;  // 0-100, recovers 10% per day
+}
+
+export function planRoadTrip(
   state: GameState,
-  raceClassId: string,
   carInstanceId: string,
+  stuntIds: string[],
+  equipmentTier: EquipmentTier,
   rng: RNG
-): RaceState {
-  
-  const raceClass = getRaceClass(raceClassId);
+): RoadTripState {
+
   const car = state.inventory.cars.find(c => c.instanceId === carInstanceId)!;
-  const carDef = getCarDefinition(car.carId);
-  
-  // Generate opponents
-  const opponents: OpponentState[] = [];
-  for (let i = 0; i < 5; i++) {
-    const skill = rng.randomInRange(
-      raceClass.opponentSkillRange.min,
-      raceClass.opponentSkillRange.max
-    );
-    opponents.push({
-      id: `opponent_${i}`,
-      name: generateDriverName(rng),
-      skill,
-      position: 0,
-      finished: false,
-      finishTime: null
-    });
+
+  // Calculate trip length based on stunts
+  const stunts = stuntIds.map(id => getStuntDefinition(id));
+  const totalDays = stunts.reduce((sum, s) => sum + (s.tripDays || 1), 0);
+
+  const plannedStunts: PlannedStunt[] = [];
+  let currentDay = 1;
+  for (const stuntId of stuntIds) {
+    plannedStunts.push({ stuntId, dayPlanned: currentDay });
+    const stunt = getStuntDefinition(stuntId);
+    currentDay += stunt.tripDays || 1;
   }
-  
+
   return {
-    raceId: generateId(),
-    raceClass: raceClassId,
-    playerCar: car,
-    playerPosition: 0,
-    playerSpeed: 0,
-    playerGear: 1,
-    playerRpm: 0,
-    opponents,
-    status: "countdown",
-    raceTimeMs: 0,
-    shiftHistory: []
+    tripId: generateId(),
+    car,
+    plannedStunts,
+    completedStunts: [],
+    currentDay: 1,
+    totalDays,
+    status: "in_progress",
+    equipment: equipmentTier
   };
 }
 
-export function updateRace(
-  race: RaceState,
-  deltaMs: number,
-  playerStats: { racing: number },
+export function executeStunt(
+  trip: RoadTripState,
+  stuntIndex: number,
+  playerStats: { driving: number; mechanical: number; fitness: number },
+  cinematography: number,
+  stuntCooldowns: StuntCooldown[],
   rng: RNG
-): RaceState {
-  
-  if (race.status !== "racing") return race;
-  
-  const carDef = getCarDefinition(race.playerCar.carId);
-  const racingConfig = getRacingMechanics();
-  
-  // Calculate player's effective power
-  const basePower = carDef.baseStats.power;
-  const conditionMultiplier = race.playerCar.engineCondition / 100;
-  const statBonus = 1 + (playerStats.racing * racingConfig.skillBonusPerRacingStat);
-  const effectivePower = basePower * conditionMultiplier * statBonus;
-  
-  // RPM increases over time in current gear
-  const newRpm = Math.min(1, race.playerRpm + (deltaMs / 1000) * 0.3);
-  
-  // Speed based on gear and RPM
-  const gearMultiplier = race.playerGear / 6;
-  const rpmEfficiency = newRpm > 0.8 ? 1 - (newRpm - 0.8) * 2 : newRpm / 0.8;
-  const acceleration = (effectivePower / carDef.baseStats.weight) * gearMultiplier * rpmEfficiency;
-  
-  const newSpeed = race.playerSpeed + acceleration * (deltaMs / 1000);
-  const newPosition = race.playerPosition + newSpeed * (deltaMs / 1000);
-  
-  // Update opponents
-  const updatedOpponents = race.opponents.map(opp => {
-    if (opp.finished) return opp;
-    
-    const oppSpeed = 50 + opp.skill * 0.8 + rng.random() * 5;
-    const newOppPosition = opp.position + oppSpeed * (deltaMs / 1000);
-    
-    if (newOppPosition >= 1000) {
-      return { ...opp, position: 1000, finished: true, finishTime: race.raceTimeMs };
-    }
-    return { ...opp, position: newOppPosition };
-  });
-  
-  // Check if player finished
-  const status = newPosition >= 1000 ? "finished" : "racing";
-  
+): { trip: RoadTripState; result: StuntResult } {
+
+  const plannedStunt = trip.plannedStunts[stuntIndex];
+  const stuntDef = getStuntDefinition(plannedStunt.stuntId);
+
+  // Calculate risk (reduced by driving stat)
+  const baseRisk = stuntDef.baseRiskPercent / 100;
+  const drivingReduction = playerStats.driving * 0.02;  // -2% per point
+  const effectiveRisk = Math.max(0, baseRisk * (1 - drivingReduction));
+
+  // Roll for success
+  const rollFailed = rng.random() < effectiveRisk;
+
+  let damageIncurred = 0;
+  let breakdown = false;
+
+  if (rollFailed) {
+    // Car takes damage
+    damageIncurred = rng.randomInRange(10, 40);
+
+    // Check if car breaks down (ends trip)
+    const newCondition = Math.min(
+      trip.car.engineCondition - damageIncurred * 0.6,
+      trip.car.bodyCondition - damageIncurred * 0.4
+    );
+    breakdown = newCondition <= 0;
+  }
+
+  // Handle special stunts
+  if (stuntDef.destroysCar) {
+    damageIncurred = 100;
+    breakdown = false;  // Car is destroyed on purpose, not a breakdown
+  }
+
+  // Calculate engagement
+  const cooldown = stuntCooldowns.find(c => c.stuntId === plannedStunt.stuntId);
+  const interestMultiplier = (cooldown?.currentInterest || 100) / 100;
+
+  // Fatigue based on trip day
+  const baseFatigueDecay = 0.80;
+  const fitnessBonusPerPoint = 0.005;
+  const fatigueDecay = baseFatigueDecay + (playerStats.fitness * fitnessBonusPerPoint);
+  const fatigueMultiplier = Math.pow(fatigueDecay, trip.currentDay - 1);
+
+  // Video quality from cinematography + equipment
+  const cinematographyMultiplier = 1 + (cinematography / 20);  // 1.0 to 2.0
+  const equipmentMultiplier = trip.equipment.videoQualityMultiplier * trip.equipment.audioQualityMultiplier;
+  const videoQuality = cinematographyMultiplier * equipmentMultiplier;
+
+  // Car bonus
+  const carDef = getCarDefinition(trip.car.carId);
+  let carBonus = 0;
+  if (carDef.marketValue.excellent >= 100000) {
+    carBonus += 500;  // High value car
+  }
+  const currentValue = calculateCarValue(trip.car);
+  if (currentValue <= 2000) {
+    carBonus += 300;  // Shitbox bonus
+  }
+
+  // Final engagement
+  const baseEngagement = stuntDef.baseEngagement + carBonus;
+  const engagementEarned = Math.round(
+    baseEngagement * interestMultiplier * fatigueMultiplier * videoQuality
+  );
+
+  // Bonus engagement for dramatic failures
+  const failureBonus = rollFailed && !stuntDef.destroysCar ? engagementEarned * 0.5 : 0;
+
+  const completedStunt: CompletedStunt = {
+    stuntId: plannedStunt.stuntId,
+    dayCompleted: trip.currentDay,
+    success: !rollFailed,
+    damageIncurred,
+    engagementEarned: engagementEarned + failureBonus,
+    breakdown
+  };
+
+  const newStatus = breakdown ? "car_broken_down"
+    : stuntIndex >= trip.plannedStunts.length - 1 ? "completed"
+    : "in_progress";
+
   return {
-    ...race,
-    playerPosition: Math.min(1000, newPosition),
-    playerSpeed: newSpeed,
-    playerRpm: newRpm,
-    opponents: updatedOpponents,
-    status,
-    raceTimeMs: race.raceTimeMs + deltaMs
+    trip: {
+      ...trip,
+      completedStunts: [...trip.completedStunts, completedStunt],
+      currentDay: trip.currentDay + (stuntDef.tripDays || 1),
+      status: newStatus
+    },
+    result: {
+      success: !rollFailed,
+      engagement: engagementEarned + failureBonus,
+      damage: damageIncurred,
+      breakdown
+    }
   };
 }
 
-export function shiftGear(
-  race: RaceState,
-  playerStats: { racing: number }
-): { race: RaceState; shiftQuality: string } {
-  
-  if (race.playerGear >= 6) {
-    return { race, shiftQuality: "max_gear" };
-  }
-  
-  const racingConfig = getRacingMechanics();
-  
-  // Determine shift quality based on RPM
-  let quality: "perfect" | "good" | "early" | "late";
-  let timeLost = 0;
-  
-  if (race.playerRpm >= 0.85 && race.playerRpm <= 0.95) {
-    quality = "perfect";
-    timeLost = 0;
-  } else if (race.playerRpm >= 0.75 && race.playerRpm < 0.85) {
-    quality = "good";
-    timeLost = racingConfig.earlyShiftPenalty * 0.5;
-  } else if (race.playerRpm < 0.75) {
-    quality = "early";
-    timeLost = racingConfig.earlyShiftPenalty;
-  } else {
-    quality = "late";
-    timeLost = racingConfig.lateShiftPenalty;
-  }
-  
-  const shiftEvent: ShiftEvent = {
-    gear: race.playerGear + 1,
-    rpm: race.playerRpm,
-    quality,
-    timeLost
-  };
-  
-  return {
-    race: {
-      ...race,
-      playerGear: race.playerGear + 1,
-      playerRpm: 0.3,  // Drop RPM on shift
-      playerSpeed: race.playerSpeed * (1 - timeLost),
-      shiftHistory: [...race.shiftHistory, shiftEvent]
-    },
-    shiftQuality: quality
-  };
+export function calculateVideoRevenue(
+  totalEngagement: number,
+  subscriberCount: number
+): { revenue: number; newSubscribers: number } {
+
+  // Reach = subscribers * engagement factor + non-subscriber views
+  const subscriberReach = subscriberCount * 0.3;  // 30% of subs watch
+  const nonSubscriberReach = totalEngagement * 0.1;  // Engagement drives discovery
+  const totalReach = subscriberReach + nonSubscriberReach;
+
+  // Revenue per view (simplified)
+  const revenuePerView = 0.002;  // $0.002 per view
+  const revenue = totalReach * revenuePerView;
+
+  // Subscriber conversion
+  const conversionRate = 0.01;  // 1% of non-sub viewers subscribe
+  const newSubscribers = Math.floor(nonSubscriberReach * conversionRate);
+
+  return { revenue, newSubscribers };
 }
 ```
 
@@ -1459,7 +1630,7 @@ interface GameStore {
   currentScreen: Screen;
   selectedLocation: string | null;
   activeNegotiation: string | null;
-  activeRace: RaceState | null;
+  activeRoadTrip: RoadTripState | null;
   
   // Actions
   newGame: (playerName: string, statAllocation: StatAllocation) => void;
@@ -1473,11 +1644,11 @@ interface GameStore {
   startNegotiation: (type: string, npcId: string, itemId: string) => void;
   submitOffer: (offer: Offer) => NpcResponse;
   cancelNegotiation: () => void;
-  
-  // Racing
-  enterRace: (raceClassId: string, carId: string) => void;
-  updateRace: (deltaMs: number) => void;
-  shiftGear: () => void;
+
+  // Road Trips
+  planRoadTrip: (carId: string, stuntIds: string[], equipment: string) => void;
+  executeNextStunt: () => StuntResult;
+  completeRoadTrip: () => VideoResult;
   
   // Navigation
   setLocation: (locationId: string) => void;
@@ -1493,7 +1664,7 @@ export const useGameStore = create<GameStore>()(
       currentScreen: "main_menu",
       selectedLocation: null,
       activeNegotiation: null,
-      activeRace: null,
+      activeRoadTrip: null,
       
       newGame: (playerName, statAllocation) => {
         const seed = Date.now();
@@ -1744,24 +1915,26 @@ export const selectPassiveIncome = (state: GameState): number => {
 
 ---
 
-### Phase 7: Racing (Weeks 15-16)
-**Goal**: Racing minigame
+### Phase 7: Road Trips & Content Creation (Weeks 15-16)
+**Goal**: Road trip content creation system
 
-- [ ] Build racetrack location
-- [ ] Create race initialization
-- [ ] Implement gear-shifting minigame
-- [ ] Build RPM gauge UI
-- [ ] Add opponent simulation
-- [ ] Create race finish and results
-- [ ] Implement prize payouts
-- [ ] Add practice sessions
-- [ ] Create car lending system
+- [ ] Build road trip planning UI
+- [ ] Create stunt selection interface
+- [ ] Implement stunt execution with risk/reward
+- [ ] Build engagement calculation system
+- [ ] Add cinematography domain skill
+- [ ] Create equipment rental/purchase system
+- [ ] Implement subscriber growth
+- [ ] Add video revenue calculation
+- [ ] Create stunt cooldown system
+- [ ] Build car breakdown handling
 
 **Data files needed**:
-- `races.json`
-- `activities/racetrack.json`
+- `stunts.json`
+- `activities/roadtrip.json`
+- Equipment definitions in `economy.json`
 
-**Deliverable**: Can enter and race, skill matters, win prizes
+**Deliverable**: Can plan and execute road trips, earn engagement, grow subscribers, make content
 
 ---
 
@@ -1894,7 +2067,7 @@ describe('executeActivity', () => {
 describe('Full day simulation', () => {
   it('should survive a day with proper money management', () => {
     const store = createTestStore();
-    store.getState().newGame('Test', { charisma: 5, mechanical: 5, fitness: 5, knowledge: 5, racing: 5 });
+    store.getState().newGame('Test', { charisma: 2, mechanical: 2, fitness: 2, knowledge: 2, driving: 2 });
     
     // Work
     store.getState().performActivity('manual_labor', { hours: 8 });
@@ -1920,7 +2093,7 @@ describe('Full day simulation', () => {
 // tools/balance-tester.ts
 
 interface SimulationConfig {
-  archetype: 'charisma' | 'mechanical' | 'fitness' | 'knowledge' | 'racing' | 'balanced';
+  archetype: 'charisma' | 'mechanical' | 'fitness' | 'knowledge' | 'driving' | 'balanced';
   strategy: 'conservative' | 'aggressive' | 'random';
   maxDays: number;
   runs: number;
