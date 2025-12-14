@@ -895,6 +895,20 @@ shitbox/
       "statGain": { "driving": 0.05 }
     },
     {
+      "id": "endurance_racing",
+      "name": "Endurance Racing",
+      "description": "Long-distance racing challenge",
+      "category": "medium_risk",
+      "baseRiskPercent": 20,
+      "baseEngagement": 700,
+      "cooldownDays": 14,
+      "tripDays": 2,
+      "requirements": {
+        "mods": []
+      },
+      "statGain": { "driving": 0.06, "fitness": 0.02 }
+    },
+    {
       "id": "climb_mountain",
       "name": "Climb a Mountain",
       "description": "Extreme elevation challenge",
