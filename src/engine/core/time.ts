@@ -54,21 +54,22 @@ export function advanceTime(
  */
 export interface NewDayResult {
   daysWithoutFood: number;
+  moneyChange: number;
   events: GameEvent[];
 }
 
 /**
  * Process new day events.
- * Increments hunger counter and generates day events.
+ * Auto-deducts food cost if affordable, otherwise increments hunger counter.
  */
 export function processNewDay(
   state: GameState,
   economyConfig: EconomyConfig
 ): NewDayResult {
   const events: GameEvent[] = [];
-
-  // Increment days without food
-  const daysWithoutFood = state.player.daysWithoutFood + 1;
+  const foodCost = economyConfig.survival.dailyFoodCost;
+  let daysWithoutFood: number;
+  let moneyChange: number;
 
   // Generate day start event
   events.push({
@@ -76,8 +77,21 @@ export function processNewDay(
     message: `Day ${state.time.currentDay + 1} begins.`,
   });
 
-  // Generate hunger warning
-  if (daysWithoutFood > 0) {
+  // Auto-deduct food cost if player can afford it
+  if (state.player.money >= foodCost) {
+    // Can afford food - auto-deduct and reset hunger
+    moneyChange = -foodCost;
+    daysWithoutFood = 0;
+    events.push({
+      type: 'food_purchased',
+      message: `Food purchased for $${foodCost}.`,
+      data: { cost: foodCost },
+    });
+  } else {
+    // Can't afford food - increment hunger counter
+    moneyChange = 0;
+    daysWithoutFood = state.player.daysWithoutFood + 1;
+
     const daysUntilDeath = economyConfig.survival.daysWithoutFoodUntilDeath - daysWithoutFood;
 
     if (daysUntilDeath <= 0) {
@@ -89,13 +103,13 @@ export function processNewDay(
     } else if (daysUntilDeath === 1) {
       events.push({
         type: 'hunger_critical',
-        message: `You haven't eaten in ${daysWithoutFood} day(s). Eat tomorrow or die!`,
+        message: `You haven't eaten in ${daysWithoutFood} day(s). You need $${foodCost} for food or you will die!`,
         data: { daysWithoutFood },
       });
     } else {
       events.push({
         type: 'hunger_warning',
-        message: `You need to eat. Food costs $${economyConfig.survival.dailyFoodCost}.`,
+        message: `You can't afford food ($${foodCost}). ${daysUntilDeath} days until starvation.`,
         data: { daysWithoutFood },
       });
     }
@@ -103,6 +117,7 @@ export function processNewDay(
 
   return {
     daysWithoutFood,
+    moneyChange,
     events,
   };
 }

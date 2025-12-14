@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useGameStore } from '@store/index';
-import { StatAllocation, StatName, STARTING_STAT_POINTS, MAX_PLAYER_NAME_LENGTH } from '@engine/index';
+import { StatAllocation, StatName, STARTING_STAT_POINTS, MAX_PLAYER_NAME_LENGTH, STAT_ORDER } from '@engine/index';
 
 interface ConfirmDialogProps {
   pointsRemaining: number;
@@ -55,8 +55,6 @@ const STAT_INFO: Record<StatName, { label: string; description: string }> = {
     description: 'Road trips, deliveries, fuel efficiency',
   },
 };
-
-const STAT_ORDER: StatName[] = ['charisma', 'mechanical', 'fitness', 'knowledge', 'driving'];
 
 export function NewGame() {
   const setScreen = useGameStore((state) => state.setScreen);

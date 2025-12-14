@@ -289,6 +289,7 @@ export interface StateDelta {
 
 export type GameEventType =
   | 'food_eaten'
+  | 'food_purchased'
   | 'new_day'
   | 'hunger_warning'
   | 'hunger_critical'
