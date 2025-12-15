@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
-import { ConfirmDialog } from '@ui/components/common';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
-import { ToastContainer, FadeTransition } from '@ui/components/common';
+import { ConfirmDialog, ToastContainer, FadeTransition } from '@ui/components/common';
 import { Sidebar } from '@ui/components/hud';
 import {
   getLocationActivities,
