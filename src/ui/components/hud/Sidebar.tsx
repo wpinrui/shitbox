@@ -17,8 +17,6 @@ interface SidebarProps {
   stats: PlayerStats;
   daysWithoutFood: number;
   starvationDays: number;
-  isOpen: boolean;
-  onClose: () => void;
   onQuit: () => void;
 }
 
@@ -33,17 +31,10 @@ export function Sidebar({
   stats,
   daysWithoutFood,
   starvationDays,
-  isOpen,
-  onClose,
   onQuit,
 }: SidebarProps) {
-  if (!isOpen) return null;
-
   return (
     <aside className="sidebar">
-      <button className="sidebar-close-button" onClick={onClose} aria-label="Close sidebar">
-        &times;
-      </button>
       <div className="sidebar-content">
         <div className="sidebar-player-name">{playerName}</div>
 

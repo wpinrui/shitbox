@@ -1,34 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useGameStore } from '@store/index';
+import { ConfirmDialog } from '@ui/components/common';
 import { StatAllocation, StatName, STARTING_STAT_POINTS, MAX_PLAYER_NAME_LENGTH, STAT_ORDER } from '@engine/index';
-
-interface ConfirmDialogProps {
-  pointsRemaining: number;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
-
-function ConfirmDialog({ pointsRemaining, onConfirm, onCancel }: ConfirmDialogProps) {
-  return (
-    <div className="confirm-dialog-overlay">
-      <div className="confirm-dialog">
-        <h3>Unallocated Points</h3>
-        <p>
-          You have <strong>{pointsRemaining}</strong> unallocated stat point
-          {pointsRemaining !== 1 ? 's' : ''}. Are you sure you want to start?
-        </p>
-        <div className="confirm-dialog-buttons">
-          <button className="confirm-dialog-cancel" onClick={onCancel}>
-            Go Back
-          </button>
-          <button className="confirm-dialog-confirm" onClick={onConfirm}>
-            Start Anyway
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const MIN_STAT = 0;
 const MAX_STAT = 20;
@@ -183,7 +156,10 @@ export function NewGame() {
 
       {showConfirmDialog && (
         <ConfirmDialog
-          pointsRemaining={pointsRemaining}
+          title="Unallocated Points"
+          message={`You have ${pointsRemaining} unallocated stat point${pointsRemaining !== 1 ? 's' : ''}. Are you sure you want to start?`}
+          confirmText="Start Anyway"
+          cancelText="Go Back"
           onConfirm={handleConfirmStart}
           onCancel={handleCancelStart}
         />
