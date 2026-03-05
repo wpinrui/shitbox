@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import type { GameState } from '@engine/index';
 
 interface SaveInfo {
   saveId: string;
   playerName: string;
   day: number;
-  lastSaved: string;
+  lastSavedAt: number;
+  lastSavedDisplay: string;
 }
 
 interface LoadGameDialogProps {
@@ -18,7 +20,7 @@ export function LoadGameDialog({ onLoad, onBack }: LoadGameDialogProps) {
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const fetchSaves = async () => {
+  const fetchSaves = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -28,33 +30,30 @@ export function LoadGameDialog({ onLoad, onBack }: LoadGameDialogProps) {
       for (const saveId of saveIds) {
         try {
           const data = await window.electronAPI.loadGame(saveId);
-          const gameState = data as {
-            meta: { saveId: string; lastSavedAt: number };
-            player: { name: string };
-            time: { currentDay: number };
-          };
+          const gameState = data as GameState;
           saveInfos.push({
             saveId,
             playerName: gameState.player.name,
             day: gameState.time.currentDay,
-            lastSaved: new Date(gameState.meta.lastSavedAt).toLocaleString(),
+            lastSavedAt: gameState.meta.lastSavedAt,
+            lastSavedDisplay: new Date(gameState.meta.lastSavedAt).toLocaleString(),
           });
         } catch {
           // Skip corrupted saves
         }
       }
 
-      saveInfos.sort((a, b) => b.lastSaved.localeCompare(a.lastSaved));
+      saveInfos.sort((a, b) => b.lastSavedAt - a.lastSavedAt);
       setSaves(saveInfos);
     } catch {
       setError('Failed to load save files.');
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchSaves();
-  }, []);
+  }, [fetchSaves]);
 
   const handleDelete = async (saveId: string) => {
     try {
@@ -94,7 +93,7 @@ export function LoadGameDialog({ onLoad, onBack }: LoadGameDialogProps) {
                   <>
                     <button className="save-item-main" onClick={() => onLoad(save.saveId)}>
                       <span className="save-name">{save.playerName}</span>
-                      <span className="save-details">Day {save.day} | {save.lastSaved}</span>
+                      <span className="save-details">Day {save.day} | {save.lastSavedDisplay}</span>
                     </button>
                     <button
                       className="save-item-delete"
