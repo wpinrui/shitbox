@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
-import { ConfirmDialog, ToastContainer, FadeTransition } from '@ui/components/common';
+import { PauseMenu, ToastContainer, FadeTransition } from '@ui/components/common';
 import { Sidebar } from '@ui/components/hud';
 import {
   getLocationActivities,
@@ -34,7 +34,11 @@ export function GameScreen({
   const walkTo = useGameStore((state) => state.walkTo);
   const driveTo = useGameStore((state) => state.driveTo);
 
-  const [showQuitDialog, setShowQuitDialog] = useState(false);
+  const saveGame = useGameStore((state) => state.saveGame);
+  const loadGame = useGameStore((state) => state.loadGame);
+  const isLoading = useGameStore((state) => state.isLoading);
+
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
 
   const economyConfig = getEconomyConfig();
   const starvationDays = economyConfig.survival.daysWithoutFoodUntilDeath;
@@ -108,17 +112,22 @@ export function GameScreen({
     }
   }, [driveTo, addToast]);
 
-  const handleQuitClick = () => {
-    setShowQuitDialog(true);
+  const handleMenuClick = () => {
+    setShowPauseMenu(true);
   };
 
-  const handleQuitConfirm = () => {
-    setShowQuitDialog(false);
+  const handleSave = () => {
+    saveGame();
+  };
+
+  const handleLoad = (saveId: string) => {
+    loadGame(saveId);
+    setShowPauseMenu(false);
+  };
+
+  const handleQuit = () => {
+    setShowPauseMenu(false);
     resetGame();
-  };
-
-  const handleQuitCancel = () => {
-    setShowQuitDialog(false);
   };
 
   return (
@@ -134,7 +143,7 @@ export function GameScreen({
         stats={gameState.player.stats}
         daysWithoutFood={gameState.player.daysWithoutFood}
         starvationDays={starvationDays}
-        onQuit={handleQuitClick}
+        onQuit={handleMenuClick}
       />
 
       <main className="game-main">
@@ -223,15 +232,14 @@ export function GameScreen({
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
-      {/* Quit confirmation dialog */}
-      {showQuitDialog && (
-        <ConfirmDialog
-          title="Quit to Menu?"
-          message="Your progress will be lost. Are you sure you want to quit?"
-          confirmText="Quit"
-          cancelText="Keep Playing"
-          onConfirm={handleQuitConfirm}
-          onCancel={handleQuitCancel}
+      {/* Pause menu */}
+      {showPauseMenu && (
+        <PauseMenu
+          onSave={handleSave}
+          onLoad={handleLoad}
+          onQuit={handleQuit}
+          onClose={() => setShowPauseMenu(false)}
+          isSaving={isLoading}
         />
       )}
     </div>
