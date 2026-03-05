@@ -436,7 +436,7 @@ body {
   border: 2px solid #f39c12;
   border-radius: 8px;
   padding: 2rem;
-  min-width: 280px;
+  min-width: 400px;
   text-align: center;
 }
 
@@ -491,8 +491,8 @@ body {
   border: 2px solid #f39c12;
   border-radius: 8px;
   padding: 2rem;
-  min-width: 350px;
-  max-width: 450px;
+  min-width: 480px;
+  max-width: 560px;
   max-height: 70vh;
   text-align: center;
 }
