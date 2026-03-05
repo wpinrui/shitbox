@@ -2,22 +2,27 @@ import { useState } from 'react';
 import { LoadGameDialog } from './LoadGameDialog';
 
 interface PauseMenuProps {
-  onSave: () => void;
+  onSave: () => Promise<void>;
   onLoad: (saveId: string) => void;
   onQuit: () => void;
   onClose: () => void;
-  isSaving: boolean;
 }
 
-export function PauseMenu({ onSave, onLoad, onQuit, onClose, isSaving }: PauseMenuProps) {
+export function PauseMenu({ onSave, onLoad, onQuit, onClose }: PauseMenuProps) {
   const [showLoad, setShowLoad] = useState(false);
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
-    onSave();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (showLoad) {

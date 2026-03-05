@@ -36,7 +36,6 @@ export function GameScreen({
 
   const saveGame = useGameStore((state) => state.saveGame);
   const loadGame = useGameStore((state) => state.loadGame);
-  const isLoading = useGameStore((state) => state.isLoading);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
 
@@ -116,8 +115,8 @@ export function GameScreen({
     setShowPauseMenu(true);
   };
 
-  const handleSave = () => {
-    saveGame();
+  const handleSave = async () => {
+    await saveGame();
   };
 
   const handleLoad = (saveId: string) => {
@@ -239,7 +238,6 @@ export function GameScreen({
           onLoad={handleLoad}
           onQuit={handleQuit}
           onClose={() => setShowPauseMenu(false)}
-          isSaving={isLoading}
         />
       )}
     </div>
