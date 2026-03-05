@@ -1,7 +1,17 @@
+import { useState } from 'react';
 import { useGameStore } from '@store/index';
+import { LoadGameDialog } from '@ui/components/common';
 
 export function MainMenu() {
   const setScreen = useGameStore((state) => state.setScreen);
+  const loadGame = useGameStore((state) => state.loadGame);
+
+  const [showLoadDialog, setShowLoadDialog] = useState(false);
+
+  const handleLoad = (saveId: string) => {
+    loadGame(saveId);
+    setShowLoadDialog(false);
+  };
 
   return (
     <div className="screen main-menu">
@@ -19,8 +29,7 @@ export function MainMenu() {
         </button>
         <button
           className="menu-button"
-          disabled
-          title="Coming soon"
+          onClick={() => setShowLoadDialog(true)}
         >
           Load Game
         </button>
@@ -33,8 +42,15 @@ export function MainMenu() {
       </nav>
 
       <footer className="version-info">
-        <p>v0.1.0 - Phase 1</p>
+        <p>v0.1.0 - Phase 2</p>
       </footer>
+
+      {showLoadDialog && (
+        <LoadGameDialog
+          onLoad={handleLoad}
+          onBack={() => setShowLoadDialog(false)}
+        />
+      )}
     </div>
   );
 }
