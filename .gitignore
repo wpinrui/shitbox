@@ -40,7 +40,7 @@ saves/
 
 # Agentic instructions (local only)
 .claude/
-agents/
+.agent/
 
 # Temporary files
 *.tmp
