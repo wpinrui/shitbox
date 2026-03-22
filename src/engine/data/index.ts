@@ -57,7 +57,7 @@ export interface StatModifier {
 }
 
 export interface Prerequisite {
-  type: 'money' | 'stat' | 'item' | 'license' | 'ownership' | 'context';
+  type: 'money' | 'stat' | 'item' | 'license' | 'ownership' | 'context' | 'hasCarHere';
   minimum?: number | string;
   stat?: keyof PlayerStats;
   requirement?: string;
@@ -65,7 +65,7 @@ export interface Prerequisite {
 }
 
 export interface Outcome {
-  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter';
+  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter' | 'refuelCar';
   itemType?: string;
   quantity?: { min: number; max: number };
   statModifier?: StatModifier;
@@ -75,7 +75,7 @@ export interface Outcome {
   condition?: string;
   cost?: { min: number; max: number };
   description?: string;
-  value?: number;
+  value?: number | string;
 }
 
 export interface StatGain {

@@ -223,11 +223,23 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
     };
   }
 
-  if (delta.inventory) {
+  if (delta.inventory || delta.carUpdates) {
+    const updatedCars = delta.carUpdates
+      ? state.inventory.cars.map((car) => {
+          const update = delta.carUpdates!.find((u) => u.instanceId === car.instanceId);
+          if (!update) return car;
+          return {
+            ...car,
+            fuel: update.fuel ?? car.fuel,
+          };
+        })
+      : state.inventory.cars;
+
     newState.inventory = {
       ...state.inventory,
-      engineParts: state.inventory.engineParts + (delta.inventory.engineParts ?? 0),
-      bodyParts: state.inventory.bodyParts + (delta.inventory.bodyParts ?? 0),
+      cars: updatedCars,
+      engineParts: state.inventory.engineParts + (delta.inventory?.engineParts ?? 0),
+      bodyParts: state.inventory.bodyParts + (delta.inventory?.bodyParts ?? 0),
     };
   }
 
