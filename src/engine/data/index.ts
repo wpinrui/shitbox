@@ -3,7 +3,7 @@
  * All game data is loaded from JSON files and cached in memory.
  */
 
-import type { PlayerStats } from '../types';
+import type { PlayerStats, CarDefinition, CarDataConfig, ConditionRating } from '../types';
 
 // ============================================================================
 // Activity Definition Types
@@ -230,6 +230,8 @@ const dataCache = {
   activities: new Map<string, ActivityDefinition[]>(),
   activityById: new Map<string, ActivityDefinition>(),
   newspaperTemplates: null as NewspaperTemplates | null,
+  carData: null as CarDataConfig | null,
+  carById: new Map<string, CarDefinition>(),
 };
 
 // ============================================================================
@@ -248,6 +250,74 @@ export async function loadEconomyData(): Promise<EconomyConfig> {
   const data = await window.electronAPI.loadData('economy.json');
   dataCache.economy = data as EconomyConfig;
   return dataCache.economy;
+}
+
+/**
+ * Load car data from JSON.
+ */
+export async function loadCarData(): Promise<CarDataConfig> {
+  if (dataCache.carData) {
+    return dataCache.carData;
+  }
+
+  const data = await window.electronAPI.loadData('cars.json');
+  const carConfig = data as CarDataConfig;
+  dataCache.carData = carConfig;
+
+  // Index cars by ID for O(1) lookup
+  for (const car of carConfig.cars) {
+    dataCache.carById.set(car.id, car);
+  }
+
+  return dataCache.carData;
+}
+
+/**
+ * Get a car definition by ID.
+ * Returns undefined if not loaded or not found.
+ */
+export function getCarDefinition(carId: string): CarDefinition | undefined {
+  return dataCache.carById.get(carId);
+}
+
+/**
+ * Get all loaded car definitions.
+ */
+export function getAllCarDefinitions(): CarDefinition[] {
+  return dataCache.carData?.cars ?? [];
+}
+
+/**
+ * Get the scrap price per kg from car data config.
+ * Throws if car data not loaded.
+ */
+export function getScrapPricePerKg(): number {
+  if (!dataCache.carData) {
+    throw new Error('Car data not loaded. Call loadCarData() first.');
+  }
+  return dataCache.carData.scrapPricePerKg;
+}
+
+/**
+ * Get the condition rating for a given condition value (0-100).
+ */
+export function getConditionRating(condition: number): ConditionRating {
+  if (!dataCache.carData) {
+    throw new Error('Car data not loaded. Call loadCarData() first.');
+  }
+  const ratings = dataCache.carData.conditionRatings;
+  if (condition >= ratings.excellent.min) return 'excellent';
+  if (condition >= ratings.good.min) return 'good';
+  if (condition >= ratings.fair.min) return 'fair';
+  if (condition >= ratings.poor.min) return 'poor';
+  return 'scrap';
+}
+
+/**
+ * Check if car data is loaded.
+ */
+export function isCarDataLoaded(): boolean {
+  return dataCache.carData !== null;
 }
 
 /**
@@ -345,6 +415,8 @@ export function clearDataCache(): void {
   dataCache.activities.clear();
   dataCache.activityById.clear();
   dataCache.newspaperTemplates = null;
+  dataCache.carData = null;
+  dataCache.carById.clear();
 }
 
 /**
