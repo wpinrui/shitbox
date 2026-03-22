@@ -1,105 +1,280 @@
+/* ==========================================================================
+   Game Screen — Brand Guide v2 Layout System
+   ========================================================================== */
+
 .game-screen {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
   width: 100vw;
-  background-color: #111;
-  color: #fff;
+  height: 100vh;
+  background: #000;
+  color: var(--text-1);
   overflow: hidden;
+  position: relative;
 }
 
-/* Main content area */
-.game-main {
+/* ── Background Photo (Brand Guide §8.1) ── */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.bg__photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.8s ease-in-out;
+}
+
+.bg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+}
+
+/* ── Shell (5vh/5vw inset — Brand Guide §4.1) ── */
+.shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 5vh 5vw;
+  width: 100%;
+  height: 100vh;
+}
+
+/* ── Panel (Tier 1 Glass — the single panel) ── */
+.panel {
   flex: 1;
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Tab navigation */
-.tab-bar {
+/* ── Header (Brand Guide §4.2) ── */
+.header {
   display: flex;
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #333;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--divider);
   flex-shrink: 0;
 }
 
-.tab-button {
-  padding: 0.8rem 1.6rem;
-  font-size: 0.9rem;
-  font-weight: bold;
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.header__subtitle {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-2);
+  margin-left: 4px;
+}
+
+.header__resources {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--divider);
+}
+
+.res {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: var(--shadow-text);
+  color: var(--text-1);
+}
+
+.res__label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-3);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #888;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
+  letter-spacing: 0.1em;
 }
 
-.tab-button:hover {
-  color: #aaa;
-  background-color: rgba(255, 255, 255, 0.05);
+.energy-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.tab-button.active {
-  color: #ffd700;
-  background-color: #222;
-  border-bottom: 3px solid #ffd700;
-  margin-bottom: -1px;
+.energy-bar__icon {
+  color: var(--energy-color);
+  font-size: 0.9rem;
 }
 
-/* Tab content */
-.tab-content {
-  flex: 1;
+.energy-bar__track {
+  width: 120px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.energy-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--earn), var(--energy-color));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.energy-bar__text {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-2);
+}
+
+.food-warn {
+  font-size: 0.8rem;
+  color: var(--energy-color);
+  text-shadow: var(--shadow-text);
+}
+
+/* ── Body (Brand Guide §4.3) ── */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  min-height: 0;
+}
+
+.body::-webkit-scrollbar { width: 8px; }
+.body::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+.body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Player Sub-Card (Brand Guide §4.4) ── */
+.player-card {
+  width: 240px;
+  min-width: 240px;
+  flex-shrink: 0;
+  background: var(--glass-2-bg);
+  border: var(--glass-2-border);
+  border-radius: var(--glass-2-radius);
+  box-shadow: var(--glass-2-shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.player-card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 12px;
+}
+
+.player-card__divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 10px 0;
+}
+
+.player-card__label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+
+.player-card .row-3__label {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+.player-card .row-3__value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.player-card .row-3__icon {
+  margin-right: 8px;
+  font-size: 0.85rem;
+}
+
+.player-card__menu-btn {
+  margin-top: auto;
+}
+
+/* ── Content Area (Brand Guide §4.5) ── */
+.content-area {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* Location tab */
-.location-tab {
-  flex: 1;
-  padding: 1.2rem;
-  overflow-y: auto;
-}
-
-.location-description {
-  color: #888;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-/* Activities grid */
+/* ── Activity Cards Grid ── */
 .activities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  align-content: start;
 }
 
-.no-activities {
-  grid-column: 1 / -1;
-  padding: 2.4rem;
-  color: #666;
-  text-align: left;
-  font-size: 0.9rem;
+.section-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 20px 0;
 }
 
-/* Stranded notice */
+/* ── Stranded notice ── */
 .stranded-notice {
   padding: 1.6rem;
 }
 
 .stranded-notice p {
-  color: #888;
+  color: var(--text-2);
   margin: 0.3rem 0;
   font-size: 0.9rem;
 }
 
-/* Map tab */
-.map-tab {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
+.no-activities {
+  grid-column: 1 / -1;
+  padding: 2.4rem;
+  color: var(--text-3);
+  font-size: 0.9rem;
 }
 
+/* ── Modal dimming of game content ── */
+.game-screen--modal-open .body {
+  opacity: 0.3;
+  pointer-events: none;
+}

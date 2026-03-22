@@ -14,36 +14,36 @@ export function MainMenu() {
   };
 
   return (
-    <div className="screen main-menu">
-      <div className="title-section">
-        <h1 className="game-title">SHITBOX</h1>
-        <p className="tagline">From scrapyard to showroom</p>
+    <div className="main-menu">
+      <div className="main-menu__shell">
+        <div className="main-menu__card">
+          <div className="main-menu__title">SHITBOX</div>
+          <div className="main-menu__tagline">From scrapyard to showroom</div>
+
+          <div className="main-menu__buttons">
+            <button
+              className="btn-primary"
+              onClick={() => setScreen('new_game')}
+            >
+              New Game
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={() => setShowLoadDialog(true)}
+            >
+              Load Game
+            </button>
+            <button
+              className="btn-danger"
+              onClick={() => window.electronAPI.quitApp()}
+            >
+              Quit
+            </button>
+          </div>
+        </div>
       </div>
 
-      <nav className="menu-buttons">
-        <button
-          className="menu-button primary"
-          onClick={() => setScreen('new_game')}
-        >
-          New Game
-        </button>
-        <button
-          className="menu-button"
-          onClick={() => setShowLoadDialog(true)}
-        >
-          Load Game
-        </button>
-        <button
-          className="menu-button"
-          onClick={() => window.electronAPI.quitApp()}
-        >
-          Quit
-        </button>
-      </nav>
-
-      <footer className="version-info">
-        <p>v0.1.0 - Phase 2</p>
-      </footer>
+      <div className="main-menu__version">v0.1.0</div>
 
       {showLoadDialog && (
         <LoadGameDialog

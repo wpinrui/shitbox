@@ -1,186 +1,242 @@
+/* ==========================================================================
+   Activity Modal — Three-Phase (Brand Guide §7.2)
+   ========================================================================== */
+
 .activity-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
 }
 
 .activity-modal {
-  width: 400px;
-  max-width: 90vw;
-  padding: 24px;
-  background-color: #1a1a1a;
-  border: 2px solid #444;
-  border-radius: 12px;
-  color: #fff;
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 420px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.3s ease-out;
 }
 
-.modal-title {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffd700;
-  text-transform: uppercase;
+/* ── Phase: Hours Picker ── */
+.modal-hours {
   text-align: center;
 }
 
-.modal-description {
-  margin: 0 0 24px 0;
-  font-size: 14px;
-  color: #aaa;
-  text-align: center;
+.modal-hours__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 8px;
+}
+
+.modal-hours__desc {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 24px;
   line-height: 1.5;
 }
 
-.hours-selector {
+.modal-hours__slider {
   margin-bottom: 24px;
   padding: 16px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
 }
 
-.hours-selector label {
+.modal-hours__label {
   display: block;
   margin-bottom: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-1);
 }
 
-.hours-selector input[type="range"] {
+.modal-hours__input {
   width: 100%;
   height: 8px;
   -webkit-appearance: none;
   appearance: none;
-  background: #333;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
   outline: none;
 }
 
-.hours-selector input[type="range"]::-webkit-slider-thumb {
+.modal-hours__input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 24px;
   height: 24px;
-  background: #ffd700;
+  background: var(--text-1);
   border-radius: 50%;
   cursor: pointer;
+  transition: transform 0.1s;
 }
 
-.hours-selector input[type="range"]::-moz-range-thumb {
+.modal-hours__input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.modal-hours__input::-moz-range-thumb {
   width: 24px;
   height: 24px;
-  background: #ffd700;
+  background: var(--text-1);
   border-radius: 50%;
   cursor: pointer;
   border: none;
 }
 
-.hours-range {
+.modal-hours__range {
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
-  font-size: 12px;
-  color: #666;
+  font-size: 0.8rem;
+  color: var(--text-3);
 }
 
-.estimated-costs {
-  margin-bottom: 16px;
-}
-
-.cost-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.cost-row:last-child {
-  border-bottom: none;
-}
-
-.cost-label {
-  font-size: 14px;
-  color: #888;
-}
-
-.cost-value {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.cost-value.energy {
-  color: #ffaa00;
-}
-
-.cost-value .current {
-  font-size: 12px;
-  font-weight: normal;
-  color: #666;
-  margin-left: 8px;
-}
-
-.cost-value.earn {
-  color: #88ff88;
-}
-
-.cost-value.spend {
-  color: #ff8888;
-}
-
-.cost-value.stats {
-  color: #88aaff;
-  font-size: 14px;
-}
-
-.estimated-note {
-  margin: 0 0 24px 0;
-  font-size: 11px;
-  color: #666;
-  text-align: center;
-  font-style: italic;
-}
-
-.modal-buttons {
+.modal-hours__buttons {
   display: flex;
   gap: 16px;
 }
 
-.modal-buttons button {
+.modal-hours__cancel,
+.modal-hours__go {
   flex: 1;
-  padding: 16px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.cancel-button {
-  background-color: #333;
-  color: #aaa;
+/* ── Phase: Progress ── */
+.modal-progress {
+  text-align: center;
 }
 
-.cancel-button:hover {
-  background-color: #444;
-  color: #fff;
+.modal-progress__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 8px;
 }
 
-.execute-button {
-  background-color: #ffd700;
-  color: #000;
+.modal-progress__desc {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 20px;
 }
 
-.execute-button:hover {
-  background-color: #ffea00;
-  transform: scale(1.02);
+.modal-progress__bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.modal-progress__bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--text-1);
+  border-radius: 3px;
+  animation: barFill 2.2s ease-in-out forwards;
+}
+
+.modal-progress__time {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* ── Phase: Outcome ── */
+.modal-outcome__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 6px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: slideUp 0.35s ease-out 0.1s forwards;
+}
+
+.modal-outcome__subtitle {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: slideUp 0.35s ease-out 0.2s forwards;
+}
+
+.modal-outcome__divider {
+  height: 1px;
+  background: var(--divider);
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out 0.3s forwards;
+}
+
+.modal-outcome__results {
+  margin-bottom: 8px;
+}
+
+.modal-outcome__result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.modal-outcome__result-icon {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.modal-outcome__result-label {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  flex: 1;
+}
+
+.modal-outcome__result-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-shadow: var(--shadow-text);
+}
+
+.modal-outcome__result-value--earn { color: var(--earn); }
+.modal-outcome__result-value--spend { color: var(--spend); }
+.modal-outcome__result-value--neutral { color: var(--text-1); }
+
+.modal-outcome__close {
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: slideUp 0.4s ease-out forwards;
 }

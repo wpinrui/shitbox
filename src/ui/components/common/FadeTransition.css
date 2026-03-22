@@ -1,22 +1,21 @@
+/* Fade Transition — Activity Execution Blackout */
+
 .fade-transition {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #000;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.95);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  color: var(--text-2);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: var(--shadow-text);
 }
 
 .fade-transition.fadeOut {
-  animation: fadeOut var(--fade-duration, 500ms) ease-out forwards;
+  animation: fadeTransitionOut var(--fade-duration, 500ms) ease-out forwards;
 }
 
 .fade-transition.black {
@@ -24,23 +23,15 @@
 }
 
 .fade-transition.fadeIn {
-  animation: fadeIn var(--fade-duration, 500ms) ease-in forwards;
+  animation: fadeTransitionIn var(--fade-duration, 500ms) ease-in forwards;
 }
 
-@keyframes fadeOut {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+@keyframes fadeTransitionOut {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+@keyframes fadeTransitionIn {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

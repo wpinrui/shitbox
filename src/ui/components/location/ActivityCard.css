@@ -1,74 +1,105 @@
-.activity-card {
-  padding: 16px;
-  background-color: rgba(40, 40, 40, 0.9);
-  border: 2px solid #444;
-  border-radius: 8px;
+/* ==========================================================================
+   Activity Card — Tier 2 Glass (Brand Guide §6.5)
+   ========================================================================== */
+
+.card {
+  background: var(--glass-2-bg);
+  border: var(--glass-2-border);
+  border-radius: var(--glass-2-radius);
+  box-shadow: var(--glass-2-shadow);
+  padding: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.activity-card:hover:not(.disabled) {
-  border-color: #ffd700;
-  background-color: rgba(60, 60, 40, 0.9);
-  transform: translateY(-2px);
+.card:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.20);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
 }
 
-.activity-card.disabled {
-  opacity: 0.6;
+.card:active {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.30);
+  transform: translateY(0) scale(0.99);
+  transition: all 0.1s ease;
+}
+
+.card--disabled {
+  opacity: 0.4;
   cursor: not-allowed;
+  filter: saturate(0.3);
 }
 
-.activity-name {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  text-transform: uppercase;
+.card--disabled:hover {
+  background: var(--glass-2-bg);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: var(--glass-2-shadow);
+  transform: none;
 }
 
-.activity-description {
-  margin: 0 0 12px 0;
-  font-size: 13px;
-  color: #aaa;
-  line-height: 1.4;
+.card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 8px;
+  text-shadow: var(--shadow-text);
 }
 
-.activity-stats {
+.card__desc {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  text-shadow: var(--shadow-text);
+}
+
+.card__divider {
+  height: 1px;
+  background: var(--divider);
+  margin-bottom: 12px;
+}
+
+.card__cost {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
-.activity-stats .stat {
-  padding: 4px 8px;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.3);
+.card__cost:last-child {
+  margin-bottom: 0;
 }
 
-.activity-stats .time {
-  color: #88aaff;
+.card__cost-icon {
+  font-size: 0.85rem;
+  width: 18px;
+  text-align: center;
 }
 
-.activity-stats .energy {
-  color: #ffaa00;
+.card__cost-icon--time { color: var(--text-2); }
+.card__cost-icon--energy { color: var(--energy-color); }
+.card__cost-icon--earn { color: var(--earn); }
+.card__cost-icon--spend { color: var(--spend); }
+
+.card__cost-text {
+  font-size: 0.85rem;
+  font-weight: 400;
+  text-shadow: var(--shadow-text);
 }
 
-.activity-stats .money.earn {
-  color: #88ff88;
-}
+.card__cost-text--neutral { color: var(--text-2); }
+.card__cost-text--earn { color: var(--earn); }
+.card__cost-text--spend { color: var(--spend); }
 
-.activity-stats .money.spend {
-  color: #ff8888;
-}
-
-.locked-reason {
+.card__locked {
   margin-top: 12px;
   padding: 8px;
-  font-size: 11px;
-  color: #ff6666;
-  background-color: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.2);
-  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  background: rgba(0, 0, 0, 0.3);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
 }

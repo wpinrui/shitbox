@@ -9,7 +9,7 @@ import type { GridPosition } from '../types';
 // Types
 // ============================================================================
 
-export type Region = 'Central' | 'North' | 'South' | 'East' | 'West';
+export type Region = 'North' | 'South' | 'East' | 'West';
 export type LocationCategory = 'Industrial' | 'Commercial' | 'Residential' | 'Parking';
 
 export interface MapData {
@@ -35,6 +35,7 @@ export interface LocationDefinition {
   position: GridPosition;
   address: string;
   activitiesFile: string | null;
+  backgroundImage: string;
 }
 
 // ============================================================================
@@ -111,7 +112,7 @@ export function getAllLocations(): LocationDefinition[] {
  */
 export function getLocationsByRegion(): Map<Region, LocationDefinition[]> {
   const byRegion = new Map<Region, LocationDefinition[]>();
-  const regions: Region[] = mapCache.data?.regions ?? ['Central', 'North', 'South', 'East', 'West'];
+  const regions: Region[] = mapCache.data?.regions ?? ['North', 'West', 'East', 'South'];
 
   // Initialize empty arrays for each region
   for (const region of regions) {

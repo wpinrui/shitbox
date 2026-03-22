@@ -110,7 +110,7 @@ export function LoadGameDialog({ onLoad, onBack }: LoadGameDialogProps) {
         )}
 
         <div className="confirm-dialog-buttons">
-          <button className="confirm-dialog-cancel" onClick={onBack}>
+          <button className="btn-secondary" onClick={onBack}>
             Back
           </button>
         </div>

@@ -1,166 +1,203 @@
-import { useState } from 'react';
-import type { ActivityDefinition, GameState } from '@engine/index';
-import {
-  calculateEnergyCost,
-  calculateEnergyRecovery,
-  calculateMoneyEarned,
-  calculateMoneyCost,
-  getEconomyConfig,
-} from '@engine/index';
+import { useState, useEffect, useCallback } from 'react';
+import type { ActivityDefinition } from '@engine/index';
 import './ActivityModal.css';
+
+type ModalPhase = 'hours' | 'progress' | 'outcome';
+
+interface ActivityResult {
+  success: boolean;
+  narrative?: string;
+  error?: string;
+  delta?: {
+    player?: { money?: number; energy?: number };
+    time?: { hours?: number };
+    stats?: Record<string, number>;
+  };
+  hoursWorked?: number;
+}
 
 interface ActivityModalProps {
   activity: ActivityDefinition;
-  gameState: GameState;
-  onExecute: (params: { hours?: number }) => void;
-  onCancel: () => void;
+  gameState: unknown;
+  onExecute: (params: { hours?: number }) => ActivityResult | void;
+  onClose: () => void;
 }
 
 export function ActivityModal({
   activity,
-  gameState,
   onExecute,
-  onCancel,
+  onClose,
 }: ActivityModalProps) {
   const isVariableTime = activity.time.type === 'variable';
   const minHours = activity.time.minHours ?? 1;
   const maxHours = activity.time.maxHours ?? 8;
+  const fixedHours = activity.time.hours ?? 1;
 
+  const [phase, setPhase] = useState<ModalPhase>(isVariableTime ? 'hours' : 'progress');
   const [hours, setHours] = useState(minHours);
+  const [result, setResult] = useState<ActivityResult | null>(null);
 
-  // Calculate estimated energy using actual engine calculations
-  const getEstimatedEnergy = () => {
+  const actualHours = isVariableTime ? hours : fixedHours;
+
+  // Execute the activity when entering progress phase
+  const executeAndProgress = useCallback(() => {
     const params = isVariableTime ? { hours } : {};
-
-    if (activity.energy.type === 'recover') {
-      const economyConfig = getEconomyConfig();
-      const recovery = calculateEnergyRecovery(gameState, activity, params, economyConfig);
-      return `+${recovery}`;
+    const res = onExecute(params);
+    if (res && typeof res === 'object') {
+      setResult(res as ActivityResult);
     }
+    setPhase('progress');
+  }, [isVariableTime, hours, onExecute]);
 
-    if (activity.energy.type === 'none') {
-      return '0';
-    }
-
-    // Use actual calculation with stat modifiers applied
-    const cost = calculateEnergyCost(gameState, activity, params);
-    return `-${cost}`;
-  };
-
-  const getEstimatedMoney = () => {
-    if (activity.money.type === 'none') {
-      return null;
-    }
-
-    const params = isVariableTime ? { hours } : {};
-    const variance = activity.money.variance ?? 0;
-
-    if (activity.money.type === 'earn') {
-      // Use actual calculation with stat modifiers applied
-      const baseEarnings = calculateMoneyEarned(gameState, activity, params);
-      const min = baseEarnings - variance;
-      const max = baseEarnings + variance;
-
-      if (variance > 0) {
-        return `+$${min}-${max}`;
+  // Auto-execute for fixed-time activities on mount
+  useEffect(() => {
+    if (!isVariableTime) {
+      const params = {};
+      const res = onExecute(params);
+      if (res && typeof res === 'object') {
+        setResult(res as ActivityResult);
       }
-      return `+$${baseEarnings}`;
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (activity.money.type === 'spend') {
-      const cost = calculateMoneyCost(gameState, activity, params);
-      return `-$${cost}`;
+  // Transition from progress → outcome after progress bar completes
+  useEffect(() => {
+    if (phase === 'progress') {
+      const timer = setTimeout(() => setPhase('outcome'), 2800);
+      return () => clearTimeout(timer);
     }
+  }, [phase]);
 
-    return null;
+  const handleGo = () => {
+    executeAndProgress();
   };
 
-  const getStatGains = () => {
-    return activity.statGain.map((gain) => ({
-      stat: gain.stat,
-      amount: gain.per === 'hour'
-        ? `+${gain.amount}/h`
-        : `+${gain.amount}`,
-    }));
-  };
+  // Build result rows from the execution result
+  const resultRows: Array<{ icon: string; label: string; value: string; type: 'earn' | 'spend' | 'neutral' }> = [];
 
-  const handleExecute = () => {
-    onExecute(isVariableTime ? { hours } : {});
-  };
+  if (result?.delta) {
+    const d = result.delta;
+    if (d.player?.money && d.player.money > 0) {
+      resultRows.push({ icon: '💰', label: 'Money earned', value: `+$${d.player.money}`, type: 'earn' });
+    } else if (d.player?.money && d.player.money < 0) {
+      resultRows.push({ icon: '💰', label: 'Money spent', value: `-$${Math.abs(d.player.money)}`, type: 'spend' });
+    }
+    if (d.player?.energy && d.player.energy < 0) {
+      resultRows.push({ icon: '⚡', label: 'Energy spent', value: `${d.player.energy}`, type: 'spend' });
+    } else if (d.player?.energy && d.player.energy > 0) {
+      resultRows.push({ icon: '⚡', label: 'Energy recovered', value: `+${d.player.energy}`, type: 'earn' });
+    }
+    if (d.time?.hours) {
+      resultRows.push({ icon: '⏱', label: 'Time elapsed', value: `${d.time.hours} hr${d.time.hours !== 1 ? 's' : ''}`, type: 'neutral' });
+    }
+    if (d.stats) {
+      for (const [stat, gain] of Object.entries(d.stats)) {
+        if (gain && gain !== 0) {
+          const statName = stat.charAt(0).toUpperCase() + stat.slice(1);
+          resultRows.push({ icon: '💪', label: statName, value: `+${gain.toFixed(2)}`, type: 'earn' });
+        }
+      }
+    }
+  }
 
-  const currentEnergy = gameState.player.energy;
-  const estimatedEnergyStr = getEstimatedEnergy();
-  const estimatedMoney = getEstimatedMoney();
-  const statGains = getStatGains();
+  // Fallback: if no structured result, show narrative
+  if (resultRows.length === 0 && result?.narrative) {
+    resultRows.push({ icon: '📋', label: result.narrative, value: '', type: 'neutral' });
+  }
+  if (resultRows.length === 0 && result?.error) {
+    resultRows.push({ icon: '❌', label: result.error, value: '', type: 'spend' });
+  }
+
+  // If no result data at all (onExecute returned void), show time as the only row
+  if (resultRows.length === 0) {
+    resultRows.push({ icon: '⏱', label: 'Time elapsed', value: `${actualHours} hr${actualHours !== 1 ? 's' : ''}`, type: 'neutral' });
+  }
 
   return (
-    <div className="activity-modal-overlay" onClick={onCancel}>
+    <div className="activity-modal-overlay" onClick={phase === 'outcome' ? onClose : undefined}>
       <div className="activity-modal" onClick={(e) => e.stopPropagation()}>
-        <h2 className="modal-title">{activity.name}</h2>
-        <p className="modal-description">{activity.description}</p>
 
-        {isVariableTime && (
-          <div className="hours-selector">
-            <label>Duration: {hours} hour{hours > 1 ? 's' : ''}</label>
-            <input
-              type="range"
-              min={minHours}
-              max={maxHours}
-              value={hours}
-              onChange={(e) => setHours(Number(e.target.value))}
-            />
-            <div className="hours-range">
-              <span>{minHours}h</span>
-              <span>{maxHours}h</span>
+        {/* ── Phase: Hours Picker (variable-time only) ── */}
+        {phase === 'hours' && (
+          <div className="modal-hours">
+            <div className="modal-hours__title">{activity.name}</div>
+            <div className="modal-hours__desc">{activity.description}</div>
+            <div className="modal-hours__slider">
+              <label className="modal-hours__label">
+                {hours} hour{hours !== 1 ? 's' : ''}
+              </label>
+              <input
+                type="range"
+                min={minHours}
+                max={maxHours}
+                value={hours}
+                onChange={(e) => setHours(Number(e.target.value))}
+                className="modal-hours__input"
+              />
+              <div className="modal-hours__range">
+                <span>{minHours}h</span>
+                <span>{maxHours}h</span>
+              </div>
+            </div>
+            <div className="modal-hours__buttons">
+              <button className="modal-hours__cancel btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="modal-hours__go btn-primary" onClick={handleGo}>Go</button>
             </div>
           </div>
         )}
 
-        <div className="estimated-costs">
-          <div className="cost-row">
-            <span className="cost-label">Time</span>
-            <span className="cost-value">
-              {isVariableTime ? hours : activity.time.hours} hour{(isVariableTime ? hours : activity.time.hours ?? 1) > 1 ? 's' : ''}
-            </span>
-          </div>
-
-          <div className="cost-row">
-            <span className="cost-label">Energy</span>
-            <span className="cost-value energy">
-              {estimatedEnergyStr} ⚡
-              <span className="current">(have {currentEnergy})</span>
-            </span>
-          </div>
-
-          {estimatedMoney && (
-            <div className="cost-row">
-              <span className="cost-label">Money</span>
-              <span className={`cost-value ${activity.money.type === 'earn' ? 'earn' : 'spend'}`}>
-                {estimatedMoney}
-              </span>
+        {/* ── Phase: Progress Bar ── */}
+        {phase === 'progress' && (
+          <div className="modal-progress">
+            <div className="modal-progress__title">{activity.name}</div>
+            <div className="modal-progress__desc">
+              {activity.description.replace(/\.$/, '...')}
             </div>
-          )}
-
-          {statGains.length > 0 && (
-            <div className="cost-row">
-              <span className="cost-label">Stats</span>
-              <span className="cost-value stats">
-                {statGains.map((g) => `${g.amount} ${g.stat}`).join(', ')}
-              </span>
+            <div className="modal-progress__bar-track">
+              <div className="modal-progress__bar-fill" />
             </div>
-          )}
-        </div>
+            <div className="modal-progress__time">
+              {actualHours} hour{actualHours !== 1 ? 's' : ''} passing...
+            </div>
+          </div>
+        )}
 
-        <p className="estimated-note">(estimated - actual results may vary)</p>
+        {/* ── Phase: Outcome ── */}
+        {phase === 'outcome' && (
+          <div className="modal-outcome">
+            <div className="modal-outcome__title">{activity.name}</div>
+            <div className="modal-outcome__subtitle">
+              {actualHours} hour{actualHours !== 1 ? 's' : ''} completed
+            </div>
+            <div className="modal-outcome__divider" />
 
-        <div className="modal-buttons">
-          <button className="cancel-button" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="execute-button" onClick={handleExecute}>
-            Do It
-          </button>
-        </div>
+            <div className="modal-outcome__results">
+              {resultRows.map((row, i) => (
+                <div
+                  key={i}
+                  className="modal-outcome__result"
+                  style={{ animationDelay: `${0.1 + i * 0.2}s` }}
+                >
+                  <span className="modal-outcome__result-icon">{row.icon}</span>
+                  <span className="modal-outcome__result-label">{row.label}</span>
+                  {row.value && (
+                    <span className={`modal-outcome__result-value modal-outcome__result-value--${row.type}`}>
+                      {row.value}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <button
+              className="modal-outcome__close btn-primary"
+              style={{ animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s` }}
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

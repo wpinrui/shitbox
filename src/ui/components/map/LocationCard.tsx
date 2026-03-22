@@ -1,42 +1,11 @@
 import {
-  Warehouse,
-  Wrench,
-  Cog,
-  Fuel,
-  Landmark,
-  GraduationCap,
-  Droplets,
-  Gavel,
-  Car,
-  Building2,
-  ParkingCircle,
-  type LucideIcon,
-} from 'lucide-react';
-import {
   type LocationDefinition,
   type GridPosition,
   calculateDistanceMeters,
   calculateTravelTime,
-  formatDistance,
-  formatTravelTime,
   getWalkingCost,
 } from '@engine/index';
 import './LocationCard.css';
-
-// Map icon names to components
-const iconMap: Record<string, LucideIcon> = {
-  Warehouse,
-  Wrench,
-  Cog,
-  Fuel,
-  Landmark,
-  GraduationCap,
-  Droplets,
-  Gavel,
-  Car,
-  Building2,
-  ParkingCircle,
-};
 
 interface LocationCardProps {
   location: LocationDefinition;
@@ -57,60 +26,57 @@ export function LocationCard({
   onWalk,
   onDrive,
 }: LocationCardProps) {
-  const Icon = iconMap[location.icon] ?? Warehouse;
-
   const distanceMeters = calculateDistanceMeters(playerPosition, location.position);
   const walkTime = calculateTravelTime(playerPosition, location.position, 'walk');
   const driveTime = calculateTravelTime(playerPosition, location.position, 'drive');
   const walkCost = getWalkingCost(playerPosition, location.position, playerFitness);
 
+  const distanceKm = (distanceMeters / 1000).toFixed(1);
+  const walkMinutes = Math.round(walkTime * 60);
+  const driveMinutes = Math.round(driveTime * 60);
+
+  const handleClick = () => {
+    if (isCurrentLocation) return;
+    // Default action: walk if no car, drive if car available
+    if (hasCarHere) {
+      onDrive();
+    } else {
+      onWalk();
+    }
+  };
+
   return (
-    <div className={`location-card ${isCurrentLocation ? 'current' : ''}`}>
-      <div className="location-card-header">
-        <div className="location-icon">
-          <Icon size={24} />
+    <div
+      className={`loc ${isCurrentLocation ? 'loc--current' : ''}`}
+      onClick={handleClick}
+    >
+      {isCurrentLocation && <div className="loc__badge">You are here</div>}
+
+      <div
+        className="loc__photo"
+        style={{ backgroundImage: `url('/assets/backgrounds/${location.backgroundImage}')` }}
+      />
+
+      <div className="loc__body">
+        <div className="loc__name">{location.name}</div>
+        <div className="loc__desc">{location.description}</div>
+
+        <div className="loc__tags">
+          {location.summary.map((tag, i) => (
+            <span key={i} className="loc__tag">{tag}</span>
+          ))}
         </div>
-        <div className="location-title">
-          <h3 className="location-name">{location.name}</h3>
-          <p className="location-address">{location.address}</p>
-        </div>
-        {isCurrentLocation && (
-          <span className="current-badge">You are here</span>
+
+        {!isCurrentLocation && (
+          <div className="loc__travel">
+            <span>{distanceKm} km</span>
+            <span className="loc__travel-sep">·</span>
+            <span>🚶 {walkMinutes} min · ⚡{walkCost.energyCost}</span>
+            <span className="loc__travel-sep">·</span>
+            <span>🚗 {driveMinutes} min</span>
+          </div>
         )}
       </div>
-
-      <ul className="location-summary">
-        {location.summary.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-
-      {!isCurrentLocation && (
-        <div className="location-travel">
-          <div className="travel-stats">
-            <span className="distance">{formatDistance(distanceMeters)}</span>
-            <span className="travel-time">
-              Walk: {formatTravelTime(walkTime)} (-{walkCost.energyCost} energy)
-            </span>
-            <span className="travel-time">
-              Drive: {formatTravelTime(driveTime)}
-            </span>
-          </div>
-          <div className="travel-buttons">
-            <button className="walk-button" onClick={onWalk}>
-              Walk
-            </button>
-            <button
-              className="drive-button"
-              onClick={onDrive}
-              disabled={!hasCarHere}
-              title={!hasCarHere ? 'No car at your location' : ''}
-            >
-              Drive
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "3.0.0",
   "townName": "Greymont",
   "gridSize": 200,
   "metersPerTile": 100,
@@ -7,9 +7,61 @@
   "driveSpeed": 30,
   "towCost": 50,
 
-  "regions": ["Central", "North", "South", "East", "West"],
+  "regions": ["North", "West", "East", "South"],
 
   "locations": [
+    {
+      "id": "school",
+      "name": "Driving School",
+      "description": "Get your licenses. Study for tests.",
+      "summary": ["Lessons", "License tests", "Study"],
+      "icon": "GraduationCap",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 76, "y": 24 },
+      "address": "45 Learner Lane, North Greymont",
+      "activitiesFile": "school",
+      "backgroundImage": "school.jpg"
+    },
+    {
+      "id": "bank",
+      "name": "Bank",
+      "description": "Save money, take loans, invest in index funds.",
+      "summary": ["Savings", "Loans", "Investments"],
+      "icon": "Landmark",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 128, "y": 22 },
+      "address": "100 Main Street, North Greymont",
+      "activitiesFile": "bank",
+      "backgroundImage": "bank.jpg"
+    },
+    {
+      "id": "gym",
+      "name": "Gym",
+      "description": "Train your fitness stat.",
+      "summary": ["Fitness training", "Workouts"],
+      "icon": "Dumbbell",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 72, "y": 30 },
+      "address": "12 Iron Street, North Greymont",
+      "activitiesFile": "gym",
+      "backgroundImage": "gym.jpg"
+    },
+    {
+      "id": "film_school",
+      "name": "Film School",
+      "description": "Cinematography training and equipment rental.",
+      "summary": ["Courses", "Equipment"],
+      "icon": "Film",
+      "category": "Commercial",
+      "region": "North",
+      "position": { "x": 73, "y": 27 },
+      "address": "8 Studio Boulevard, North Greymont",
+      "activitiesFile": "film_school",
+      "backgroundImage": "film_school.jpg"
+    },
     {
       "id": "scrapyard",
       "name": "Scrapyard",
@@ -17,94 +69,37 @@
       "summary": ["Work for cash", "Scavenge parts", "Buy junkers"],
       "icon": "Warehouse",
       "category": "Industrial",
-      "region": "Central",
+      "region": "West",
       "position": { "x": 100, "y": 100 },
-      "address": "1 Industrial Way, Central Greymont",
-      "activitiesFile": "scrapyard"
-    },
-    {
-      "id": "school",
-      "name": "Driving School",
-      "description": "Get your licenses. Study for tests.",
-      "summary": ["Driving lessons", "License tests", "Study"],
-      "icon": "GraduationCap",
-      "category": "Commercial",
-      "region": "North",
-      "position": { "x": 80, "y": 30 },
-      "address": "45 Learner Lane, North Greymont",
-      "activitiesFile": "school"
-    },
-    {
-      "id": "bank",
-      "name": "Bank",
-      "description": "Save money, take loans, invest in index funds.",
-      "summary": ["Savings account", "Loans", "Investments"],
-      "icon": "Landmark",
-      "category": "Commercial",
-      "region": "North",
-      "position": { "x": 125, "y": 25 },
-      "address": "100 Main Street, North Greymont",
-      "activitiesFile": "bank"
-    },
-    {
-      "id": "gas_station",
-      "name": "Gas Station",
-      "description": "Fill up your tank. Pay at the pump.",
-      "summary": ["Refuel your car"],
-      "icon": "Fuel",
-      "category": "Commercial",
-      "region": "East",
-      "position": { "x": 170, "y": 70 },
-      "address": "88 Highway Road, East Greymont",
-      "activitiesFile": "gas_station"
-    },
-    {
-      "id": "auction",
-      "name": "Auction House",
-      "description": "Buy and sell cars at auction. Special deals on auction days.",
-      "summary": ["Bid on cars", "Consign vehicles", "Auction schedule"],
-      "icon": "Gavel",
-      "category": "Commercial",
-      "region": "East",
-      "position": { "x": 180, "y": 120 },
-      "address": "120 Commerce Drive, East Greymont",
-      "activitiesFile": "auction"
-    },
-    {
-      "id": "showroom",
-      "name": "Showroom",
-      "description": "High-end car dealership. Work as a salesperson or browse luxury cars.",
-      "summary": ["Sales job", "Browse inventory", "Trade-ins"],
-      "icon": "Car",
-      "category": "Commercial",
-      "region": "East",
-      "position": { "x": 165, "y": 160 },
-      "address": "200 Luxury Lane, East Greymont",
-      "activitiesFile": "showroom"
+      "address": "1 Industrial Way, West Greymont",
+      "activitiesFile": "scrapyard",
+      "backgroundImage": "scrapyard.jpg"
     },
     {
       "id": "garage",
       "name": "Garage",
       "description": "Store and work on your cars. Basic repairs available.",
-      "summary": ["Store cars", "Basic repairs", "DIY work"],
+      "summary": ["Store cars", "DIY repairs"],
       "icon": "Wrench",
       "category": "Industrial",
       "region": "West",
-      "position": { "x": 25, "y": 85 },
+      "position": { "x": 82, "y": 90 },
       "address": "13 Wrecksford Road, West Greymont",
-      "activitiesFile": "garage"
+      "activitiesFile": "garage",
+      "backgroundImage": "garage.jpg"
     },
     {
       "id": "workshop",
       "name": "Workshop",
       "description": "Professional mechanic shop for major repairs.",
-      "summary": ["Major repairs", "Engine work", "Professional service"],
+      "summary": ["Engine work", "Major repairs"],
       "icon": "Cog",
       "category": "Industrial",
       "region": "West",
-      "position": { "x": 20, "y": 135 },
+      "position": { "x": 80, "y": 100 },
       "address": "27 Mechanic Street, West Greymont",
-      "activitiesFile": "workshop"
+      "activitiesFile": "workshop",
+      "backgroundImage": "workshop.jpg"
     },
     {
       "id": "car_wash",
@@ -114,33 +109,101 @@
       "icon": "Droplets",
       "category": "Commercial",
       "region": "West",
-      "position": { "x": 35, "y": 175 },
+      "position": { "x": 77, "y": 100 },
       "address": "55 Suds Avenue, West Greymont",
-      "activitiesFile": "car_wash"
+      "activitiesFile": "car_wash",
+      "backgroundImage": "car_wash.jpg"
+    },
+    {
+      "id": "gas_station",
+      "name": "Gas Station",
+      "description": "Fill up your tank. Pay at the pump.",
+      "summary": ["Refuel"],
+      "icon": "Fuel",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 121, "y": 79 },
+      "address": "88 Highway Road, East Greymont",
+      "activitiesFile": "gas_station",
+      "backgroundImage": "gas_station.jpg"
+    },
+    {
+      "id": "auction",
+      "name": "Auction House",
+      "description": "Buy and sell cars at auction.",
+      "summary": ["Bid on cars", "Consign", "Schedule"],
+      "icon": "Gavel",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 125, "y": 90 },
+      "address": "120 Commerce Drive, East Greymont",
+      "activitiesFile": "auction",
+      "backgroundImage": "auction.jpg"
+    },
+    {
+      "id": "showroom",
+      "name": "Showroom",
+      "description": "High-end dealership. Browse luxury cars.",
+      "summary": ["Sales job", "Browse inventory", "Trade-ins"],
+      "icon": "Car",
+      "category": "Commercial",
+      "region": "East",
+      "position": { "x": 127, "y": 100 },
+      "address": "200 Luxury Lane, East Greymont",
+      "activitiesFile": "showroom",
+      "backgroundImage": "showroom.jpg"
+    },
+    {
+      "id": "budget_housing",
+      "name": "Budget Housing",
+      "description": "Cheap roof over your head. Basic rest.",
+      "summary": ["Cheapest rent", "Poor sleep"],
+      "icon": "Home",
+      "category": "Residential",
+      "region": "South",
+      "position": { "x": 84, "y": 116 },
+      "address": "5 Bargain Lane, South Greymont",
+      "activitiesFile": "budget_housing",
+      "backgroundImage": "budget_house.jpg"
     },
     {
       "id": "apartments",
       "name": "Apartments",
-      "description": "Rent a place for better rest. Various quality levels.",
-      "summary": ["Rent apartment", "Better sleep quality"],
+      "description": "Mid-range housing. Decent rest quality.",
+      "summary": ["Mid-tier rent", "Good sleep"],
       "icon": "Building2",
       "category": "Residential",
       "region": "South",
-      "position": { "x": 95, "y": 170 },
+      "position": { "x": 100, "y": 121 },
       "address": "300 Residence Row, South Greymont",
-      "activitiesFile": "apartments"
+      "activitiesFile": "apartments",
+      "backgroundImage": "apartments.jpg"
+    },
+    {
+      "id": "penthouse",
+      "name": "Penthouse",
+      "description": "Luxury living. The best rest money can buy.",
+      "summary": ["Premium rent", "Best sleep", "Prestige"],
+      "icon": "Crown",
+      "category": "Residential",
+      "region": "South",
+      "position": { "x": 131, "y": 131 },
+      "address": "1 Skyline Tower, South Greymont",
+      "activitiesFile": "penthouse",
+      "backgroundImage": "penthouse.jpg"
     },
     {
       "id": "parking_lot",
       "name": "Parking Lot",
       "description": "Public parking. Tow trucks bring stranded cars here.",
-      "summary": ["Park your car", "Retrieve towed vehicles"],
+      "summary": ["Park your car", "Retrieve towed"],
       "icon": "ParkingCircle",
       "category": "Parking",
       "region": "South",
-      "position": { "x": 130, "y": 180 },
+      "position": { "x": 106, "y": 124 },
       "address": "15 Storage Lane, South Greymont",
-      "activitiesFile": null
+      "activitiesFile": null,
+      "backgroundImage": "parking_lot.jpg"
     }
   ]
 }
