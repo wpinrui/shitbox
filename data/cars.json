@@ -1,0 +1,369 @@
+{
+  "version": "1.0.0",
+
+  "scrapPricePerKg": 0.15,
+
+  "cars": [
+    {
+      "id": "shitbox_starter",
+      "make": "Holden",
+      "model": "Commodore VN",
+      "year": 1990,
+      "category": "economy",
+      "tier": 0,
+      "baseStats": {
+        "power": 80,
+        "topSpeed": 160,
+        "weight": 1350,
+        "fuelEfficiency": 12.5,
+        "capacity": { "passengers": 5, "cargo": 400 },
+        "prestige": 3
+      },
+      "marketValue": {
+        "excellent": 2500,
+        "good": 1500,
+        "fair": 800,
+        "poor": 300,
+        "scrap": 200
+      },
+      "repairCosts": {
+        "enginePerPercent": 15,
+        "bodyPerPercent": 10,
+        "engineReplacement": 1200
+      },
+      "fuelCapacity": 40,
+      "fuelCostPerKm": 0.10,
+      "imageUrl": "",
+      "bio": "A beaten-up Commodore with peeling paint and a cough that won't quit. It's yours, though."
+    },
+    {
+      "id": "civic_1995",
+      "make": "Honda",
+      "model": "Civic",
+      "year": 1995,
+      "category": "economy",
+      "tier": 0,
+      "baseStats": {
+        "power": 125,
+        "topSpeed": 180,
+        "weight": 1100,
+        "fuelEfficiency": 7.5,
+        "capacity": { "passengers": 4, "cargo": 300 },
+        "prestige": 10
+      },
+      "marketValue": {
+        "excellent": 4500,
+        "good": 3200,
+        "fair": 2000,
+        "poor": 800,
+        "scrap": 165
+      },
+      "repairCosts": {
+        "enginePerPercent": 25,
+        "bodyPerPercent": 15,
+        "engineReplacement": 1800
+      },
+      "fuelCapacity": 45,
+      "fuelCostPerKm": 0.09,
+      "imageUrl": "",
+      "bio": "The '95 Civic is legendary for reliability. Cheap to run, easy to fix, and surprisingly fun to drive."
+    },
+    {
+      "id": "corolla_1998",
+      "make": "Toyota",
+      "model": "Corolla",
+      "year": 1998,
+      "category": "economy",
+      "tier": 0,
+      "baseStats": {
+        "power": 120,
+        "topSpeed": 175,
+        "weight": 1150,
+        "fuelEfficiency": 7.2,
+        "capacity": { "passengers": 4, "cargo": 350 },
+        "prestige": 12
+      },
+      "marketValue": {
+        "excellent": 5000,
+        "good": 3500,
+        "fair": 2200,
+        "poor": 900,
+        "scrap": 172
+      },
+      "repairCosts": {
+        "enginePerPercent": 22,
+        "bodyPerPercent": 14,
+        "engineReplacement": 1600
+      },
+      "fuelCapacity": 50,
+      "fuelCostPerKm": 0.08,
+      "imageUrl": "",
+      "bio": "The Corolla refuses to die. Not exciting, but it will outlast you."
+    },
+    {
+      "id": "hilux_1988",
+      "make": "Toyota",
+      "model": "Hilux",
+      "year": 1988,
+      "category": "utility",
+      "tier": 0,
+      "baseStats": {
+        "power": 100,
+        "topSpeed": 150,
+        "weight": 1500,
+        "fuelEfficiency": 11.0,
+        "capacity": { "passengers": 2, "cargo": 800 },
+        "prestige": 8
+      },
+      "marketValue": {
+        "excellent": 6000,
+        "good": 4000,
+        "fair": 2500,
+        "poor": 1000,
+        "scrap": 225
+      },
+      "repairCosts": {
+        "enginePerPercent": 20,
+        "bodyPerPercent": 12,
+        "engineReplacement": 1500
+      },
+      "fuelCapacity": 65,
+      "fuelCostPerKm": 0.12,
+      "imageUrl": "",
+      "bio": "Indestructible. Top Gear tried to kill one and failed. Yours has seen worse."
+    },
+    {
+      "id": "miata_1993",
+      "make": "Mazda",
+      "model": "MX-5 Miata",
+      "year": 1993,
+      "category": "sports",
+      "tier": 1,
+      "baseStats": {
+        "power": 130,
+        "topSpeed": 195,
+        "weight": 950,
+        "fuelEfficiency": 8.0,
+        "capacity": { "passengers": 2, "cargo": 100 },
+        "prestige": 25
+      },
+      "marketValue": {
+        "excellent": 12000,
+        "good": 8000,
+        "fair": 5000,
+        "poor": 2000,
+        "scrap": 142
+      },
+      "repairCosts": {
+        "enginePerPercent": 35,
+        "bodyPerPercent": 25,
+        "engineReplacement": 2500
+      },
+      "fuelCapacity": 45,
+      "fuelCostPerKm": 0.10,
+      "imageUrl": "",
+      "bio": "Miata is always the answer. Light, nimble, and puts a grin on your face every time."
+    },
+    {
+      "id": "wrx_2002",
+      "make": "Subaru",
+      "model": "Impreza WRX",
+      "year": 2002,
+      "category": "sports",
+      "tier": 1,
+      "baseStats": {
+        "power": 227,
+        "topSpeed": 230,
+        "weight": 1390,
+        "fuelEfficiency": 10.5,
+        "capacity": { "passengers": 4, "cargo": 250 },
+        "prestige": 35
+      },
+      "marketValue": {
+        "excellent": 18000,
+        "good": 13000,
+        "fair": 8000,
+        "poor": 3500,
+        "scrap": 208
+      },
+      "repairCosts": {
+        "enginePerPercent": 45,
+        "bodyPerPercent": 30,
+        "engineReplacement": 4000
+      },
+      "fuelCapacity": 60,
+      "fuelCostPerKm": 0.14,
+      "imageUrl": "",
+      "bio": "The boxer rumble is unmistakable. Rally-bred and street-proven. Head gaskets optional."
+    },
+    {
+      "id": "e30_325i_1990",
+      "make": "BMW",
+      "model": "325i (E30)",
+      "year": 1990,
+      "category": "sports",
+      "tier": 2,
+      "baseStats": {
+        "power": 170,
+        "topSpeed": 215,
+        "weight": 1250,
+        "fuelEfficiency": 9.5,
+        "capacity": { "passengers": 4, "cargo": 300 },
+        "prestige": 45
+      },
+      "marketValue": {
+        "excellent": 35000,
+        "good": 25000,
+        "fair": 15000,
+        "poor": 6000,
+        "scrap": 187
+      },
+      "repairCosts": {
+        "enginePerPercent": 60,
+        "bodyPerPercent": 45,
+        "engineReplacement": 5500
+      },
+      "fuelCapacity": 55,
+      "fuelCostPerKm": 0.13,
+      "imageUrl": "",
+      "bio": "The E30 is the enthusiast's BMW. Perfectly balanced, beautifully analog, and appreciating fast."
+    },
+    {
+      "id": "supra_mk4_1994",
+      "make": "Toyota",
+      "model": "Supra (Mk4)",
+      "year": 1994,
+      "category": "sports",
+      "tier": 2,
+      "baseStats": {
+        "power": 320,
+        "topSpeed": 250,
+        "weight": 1510,
+        "fuelEfficiency": 11.5,
+        "capacity": { "passengers": 2, "cargo": 200 },
+        "prestige": 55
+      },
+      "marketValue": {
+        "excellent": 80000,
+        "good": 60000,
+        "fair": 40000,
+        "poor": 18000,
+        "scrap": 226
+      },
+      "repairCosts": {
+        "enginePerPercent": 80,
+        "bodyPerPercent": 55,
+        "engineReplacement": 8000
+      },
+      "fuelCapacity": 70,
+      "fuelCostPerKm": 0.16,
+      "imageUrl": "",
+      "bio": "The 2JZ is a legend. 1000hp on stock internals, they say. The car that launched a thousand builds."
+    },
+    {
+      "id": "porsche_911_1978",
+      "make": "Porsche",
+      "model": "911 SC",
+      "year": 1978,
+      "category": "sports",
+      "tier": 3,
+      "baseStats": {
+        "power": 180,
+        "topSpeed": 225,
+        "weight": 1120,
+        "fuelEfficiency": 12.0,
+        "capacity": { "passengers": 2, "cargo": 100 },
+        "prestige": 70
+      },
+      "marketValue": {
+        "excellent": 150000,
+        "good": 110000,
+        "fair": 70000,
+        "poor": 30000,
+        "scrap": 168
+      },
+      "repairCosts": {
+        "enginePerPercent": 200,
+        "bodyPerPercent": 150,
+        "engineReplacement": 25000
+      },
+      "fuelCapacity": 62,
+      "fuelCostPerKm": 0.18,
+      "imageUrl": "",
+      "bio": "Air-cooled perfection. The silhouette that defined a marque. Every collector's first love."
+    },
+    {
+      "id": "shelby_gt500_1967",
+      "make": "Shelby",
+      "model": "GT500",
+      "year": 1967,
+      "category": "muscle",
+      "tier": 3,
+      "baseStats": {
+        "power": 355,
+        "topSpeed": 210,
+        "weight": 1540,
+        "fuelEfficiency": 18.0,
+        "capacity": { "passengers": 2, "cargo": 150 },
+        "prestige": 80
+      },
+      "marketValue": {
+        "excellent": 250000,
+        "good": 180000,
+        "fair": 120000,
+        "poor": 50000,
+        "scrap": 231
+      },
+      "repairCosts": {
+        "enginePerPercent": 350,
+        "bodyPerPercent": 250,
+        "engineReplacement": 40000
+      },
+      "fuelCapacity": 65,
+      "fuelCostPerKm": 0.25,
+      "imageUrl": "",
+      "bio": "Carroll Shelby's masterpiece. 428ci of American thunder in a car that demands respect."
+    },
+    {
+      "id": "ferrari_250_gto",
+      "make": "Ferrari",
+      "model": "250 GTO",
+      "year": 1962,
+      "category": "hypercar",
+      "tier": 4,
+      "isVictoryCar": true,
+      "baseStats": {
+        "power": 300,
+        "topSpeed": 280,
+        "weight": 880,
+        "fuelEfficiency": 18.0,
+        "capacity": { "passengers": 2, "cargo": 50 },
+        "prestige": 100
+      },
+      "marketValue": {
+        "excellent": 70000000,
+        "good": 55000000,
+        "fair": 40000000,
+        "poor": 25000000,
+        "scrap": 50000
+      },
+      "repairCosts": {
+        "enginePerPercent": 50000,
+        "bodyPerPercent": 30000,
+        "engineReplacement": 2000000
+      },
+      "fuelCapacity": 120,
+      "fuelCostPerKm": 0.80,
+      "imageUrl": "",
+      "bio": "The Holy Grail. Only 36 were ever made. If you own this, you've won."
+    }
+  ],
+
+  "conditionRatings": {
+    "excellent": { "min": 90, "max": 100 },
+    "good": { "min": 70, "max": 89 },
+    "fair": { "min": 40, "max": 69 },
+    "poor": { "min": 10, "max": 39 },
+    "scrap": { "min": 0, "max": 9 }
+  }
+}

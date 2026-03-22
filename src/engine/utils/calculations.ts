@@ -15,6 +15,7 @@ export interface ActivityParams {
   hours?: number;
   targetCarId?: string;
   amount?: number;
+  selectedCarInstanceId?: string;
 }
 
 /**
