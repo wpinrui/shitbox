@@ -1,0 +1,38 @@
+{
+  "locationId": "car_wash",
+  "locationName": "Car Wash",
+  "activities": [
+    {
+      "id": "wash_cars",
+      "name": "Wash Cars",
+      "description": "Scrub and rinse customer cars for tips. Easy work, no experience needed.",
+      "category": "work",
+      "time": {
+        "type": "variable",
+        "minHours": 1,
+        "maxHours": 8,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "perHour",
+        "base": 8
+      },
+      "money": {
+        "type": "earn",
+        "mode": "perHour",
+        "base": 10,
+        "variance": 4
+      },
+      "prerequisites": [],
+      "outcomes": [],
+      "statGain": [
+        {
+          "stat": "charisma",
+          "amount": 0.01,
+          "per": "hour"
+        }
+      ],
+      "risks": []
+    }
+  ]
+}

@@ -256,7 +256,7 @@ export async function loadActivityDefinitions(locationId: string): Promise<Activ
  */
 export async function loadCoreActivities(): Promise<void> {
   await loadActivityDefinitions('misc');
-  const locationFiles = ['scrapyard', 'gas_station'];
+  const locationFiles = ['scrapyard', 'gas_station', 'car_wash'];
   const results = await Promise.allSettled(
     locationFiles.map((id) => loadActivityDefinitions(id))
   );
