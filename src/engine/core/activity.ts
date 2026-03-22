@@ -4,7 +4,7 @@
  * All functions are pure with no side effects.
  */
 
-import type { GameState, ActivityResult, StateDelta, GameEvent } from '../types';
+import type { GameState, ActivityResult, StateDelta, GameEvent, NewspaperContent } from '../types';
 import type { EconomyConfig } from '../data';
 import { getActivityDefinition, getEconomyConfig } from '../data';
 import { generateNewspaper } from '../systems/newspaper';
@@ -142,7 +142,7 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
   let enginePartsChange = 0;
   let bodyPartsChange = 0;
   const carUpdates: Array<{ instanceId: string; fuel?: number }> = [];
-  let generatedNewspaper: import('../types').NewspaperContent | null = null;
+  let generatedNewspaper: NewspaperContent | null = null;
 
   for (const outcome of activity.outcomes) {
     switch (outcome.type) {

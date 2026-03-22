@@ -101,6 +101,10 @@ export function GameScreen({
     return result;
   }, [takeGig, addToast]);
 
+  const handleCloseNewspaper = useCallback(() => {
+    setShowNewspaper(false);
+  }, []);
+
   const handleWalk = useCallback((location: LocationDefinition) => {
     const result = walkTo(location.position);
     if (result.success) {
@@ -343,7 +347,7 @@ export function GameScreen({
           newspaper={gameState.newspaper}
           currentDay={gameState.time.currentDay}
           onTakeGig={handleTakeGig}
-          onClose={() => setShowNewspaper(false)}
+          onClose={handleCloseNewspaper}
         />
       )}
 

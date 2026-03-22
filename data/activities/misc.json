@@ -51,6 +51,7 @@
       },
       "money": {
         "type": "spend",
+        "mode": "fixed",
         "base": 5
       },
       "prerequisites": [],
