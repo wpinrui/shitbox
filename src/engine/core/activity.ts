@@ -141,7 +141,8 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
   let foodCounterReset = false;
   let enginePartsChange = 0;
   let bodyPartsChange = 0;
-  const carUpdates: Array<{ instanceId: string; fuel?: number }> = [];
+  type CarUpdate = NonNullable<StateDelta['carUpdates']>[number];
+  const carUpdates: CarUpdate[] = [];
   let generatedNewspaper: NewspaperContent | null = null;
 
   for (const outcome of activity.outcomes) {
