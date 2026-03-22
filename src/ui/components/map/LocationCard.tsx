@@ -54,7 +54,7 @@ export function LocationCard({
 
       <div
         className="loc__photo"
-        style={{ backgroundImage: `url('./assets/backgrounds/${location.backgroundImage}')` }}
+        style={{ backgroundImage: `url('/assets/backgrounds/${location.backgroundImage}')` }}
       />
 
       <div className="loc__body">

@@ -139,7 +139,10 @@ export function ActivityModal({
                 <span>{maxHours}h</span>
               </div>
             </div>
-            <button className="modal-hours__go" onClick={handleGo}>Go</button>
+            <div className="modal-hours__buttons">
+              <button className="modal-hours__cancel" onClick={onClose}>Cancel</button>
+              <button className="modal-hours__go" onClick={handleGo}>Go</button>
+            </div>
           </div>
         )}
 
@@ -164,7 +167,7 @@ export function ActivityModal({
           <div className="modal-outcome">
             <div className="modal-outcome__title">{activity.name}</div>
             <div className="modal-outcome__subtitle">
-              {actualHours} hour{actualHours !== 1 ? 's' : ''} of work completed
+              {actualHours} hour{actualHours !== 1 ? 's' : ''} completed
             </div>
             <div className="modal-outcome__divider" />
 

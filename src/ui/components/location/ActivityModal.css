@@ -107,9 +107,39 @@
   color: var(--text-3);
 }
 
+.modal-hours__buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.modal-hours__cancel {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: var(--shadow-text);
+}
+
+.modal-hours__cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.20);
+  color: var(--text-1);
+}
+
+.modal-hours__cancel:active {
+  background: rgba(255, 255, 255, 0.10);
+  transform: scale(0.98);
+}
+
 .modal-hours__go {
-  display: block;
-  width: 100%;
+  flex: 1;
   padding: 12px 20px;
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.20);

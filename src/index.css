@@ -278,7 +278,7 @@ a:focus-visible {
   inset: -10%;
   width: 120%;
   height: 120%;
-  background: #000 url('') center/cover no-repeat;
+  background: #000 url('/assets/backgrounds/hero.jpg') center/cover no-repeat;
   z-index: 0;
   animation: kenBurns 30s ease-in-out infinite alternate;
 }
@@ -410,7 +410,7 @@ a:focus-visible {
   inset: -10%;
   width: 120%;
   height: 120%;
-  background: #000 url('') center/cover no-repeat;
+  background: #000 url('/assets/backgrounds/hero.jpg') center/cover no-repeat;
   z-index: 0;
   animation: kenBurns 30s ease-in-out infinite alternate;
 }

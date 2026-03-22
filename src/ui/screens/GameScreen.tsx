@@ -131,7 +131,7 @@ export function GameScreen({
       <div className="bg">
         <div
           className="bg__photo"
-          style={{ backgroundImage: `url('./assets/backgrounds/${bgImage}')` }}
+          style={{ backgroundImage: `url('/assets/backgrounds/${bgImage}')` }}
         />
         <div className="bg__vignette" />
       </div>
