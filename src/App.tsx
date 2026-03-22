@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame, GameScreen, GameOverScreen, PlaceholderScreen } from '@ui/screens';
 import { BackgroundSlideshow } from '@ui/components/common';
-import { loadEconomyData, loadCoreActivities, loadMapData, loadNewspaperTemplates } from '@engine/index';
+import { loadEconomyData, loadCoreActivities, loadMapData, loadNewspaperTemplates, loadCarData } from '@engine/index';
 import { useAudio } from './hooks/useAudio';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
@@ -19,6 +19,7 @@ function App() {
     async function loadData() {
       try {
         await loadEconomyData();
+        await loadCarData();
         await loadCoreActivities();
         await loadMapData();
         await loadNewspaperTemplates();
