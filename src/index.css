@@ -453,11 +453,15 @@ a:focus-visible {
    New Game Screen
    ========================================================================== */
 .new-game {
-  max-width: 600px;
-  margin: 0 auto;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
   position: relative;
   background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .new-game::before {
@@ -468,7 +472,7 @@ a:focus-visible {
   height: 120%;
   background: #000 url('/assets/backgrounds/hero.jpg') center/cover no-repeat;
   z-index: 0;
-  animation: kenBurns 30s ease-in-out infinite alternate;
+  animation: menuDriftA 30s ease-in-out infinite alternate;
 }
 
 .new-game::after {
@@ -476,8 +480,7 @@ a:focus-visible {
   position: absolute;
   inset: 0;
   background:
-    rgba(0, 0, 0, 0.65),
-    radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+    radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.6) 100%);
   z-index: 1;
 }
 
@@ -490,9 +493,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--divider);
+  margin-bottom: 1.5rem;
 }
 
 .back-button {
@@ -504,6 +505,7 @@ a:focus-visible {
   padding: 0.5rem;
   transition: all 0.2s ease;
   text-shadow: var(--shadow-text);
+  font-family: var(--font-sans);
 }
 
 .back-button:hover {
@@ -521,6 +523,7 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  width: 540px;
   background: var(--glass-1-bg);
   backdrop-filter: blur(var(--glass-1-blur));
   -webkit-backdrop-filter: blur(var(--glass-1-blur));
@@ -528,6 +531,7 @@ a:focus-visible {
   border-radius: var(--glass-1-radius);
   box-shadow: var(--glass-1-shadow);
   padding: 2rem;
+  animation: menuCardIn 0.8s ease-out;
 }
 
 .name-section label {
