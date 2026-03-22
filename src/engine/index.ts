@@ -106,6 +106,9 @@ export {
   type ExecuteActivityInput,
 } from './core/activity';
 
+// Newspaper system
+export { generateNewspaper } from './systems/newspaper';
+
 // Travel system
 export {
   getWalkingCost,
