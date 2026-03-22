@@ -716,7 +716,7 @@ a:focus-visible {
   border-radius: var(--glass-1-radius);
   box-shadow: var(--glass-1-shadow);
   padding: 32px;
-  max-width: 400px;
+  width: 420px;
   text-align: center;
   animation: modalIn 0.3s ease-out;
 }
