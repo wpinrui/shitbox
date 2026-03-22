@@ -125,12 +125,19 @@ export function useAudio() {
     if (jingleRef.current) jingleRef.current.muted = muted;
   }, [muted]);
 
-  // Stop audio when leaving game screen
+  // Switch to title music on non-game screens; stop jingles
   useEffect(() => {
     if (currentScreen !== 'game') {
-      bgmRef.current?.pause();
       jingleRef.current?.pause();
+      jinglePlaying.current = false;
       activePeriod.current = null;
+
+      const bgm = bgmRef.current;
+      if (!bgm) return;
+      bgm.src = '/assets/audio/late-night-radio.mp3';
+      bgm.currentTime = 0;
+      bgm.volume = 1;
+      bgm.play().catch(() => {});
     }
   }, [currentScreen]);
 
