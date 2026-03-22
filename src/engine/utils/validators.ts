@@ -78,7 +78,17 @@ function checkMoneyPrerequisite(
   state: GameState,
   prereq: Prerequisite
 ): ValidationResult {
-  const minimum = typeof prereq.minimum === 'number' ? prereq.minimum : 0;
+  if (typeof prereq.minimum === 'string') {
+    // Dynamic money prerequisites (e.g. "carPrice") require context that
+    // isn't available yet. Fail with a descriptive message rather than
+    // silently treating the minimum as 0.
+    return {
+      valid: false,
+      reason: `Cannot determine cost: ${prereq.minimum} is not yet available.`,
+    };
+  }
+
+  const minimum = prereq.minimum ?? 0;
 
   if (state.player.money < minimum) {
     return {
