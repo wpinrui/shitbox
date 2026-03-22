@@ -67,8 +67,22 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 
   // 4. Calculate costs
   const energyCost = calculateEnergyCost(state, activity, params);
-  const moneyCost = calculateMoneyCost(state, activity, params);
+  let moneyCost = calculateMoneyCost(state, activity, params);
   const timeCost = calculateTimeCost(activity, params);
+
+  // Override moneyCost for variable-mode activities whose real cost depends on runtime state.
+  // Must happen before the affordability check so the check uses the actual amount.
+  if (activity.outcomes.some((o) => o.type === 'refuelCar')) {
+    const carForRefuel = state.inventory.cars.find(
+      (c) =>
+        c.position.x === state.player.position.x &&
+        c.position.y === state.player.position.y
+    );
+    if (carForRefuel) {
+      const fuelNeeded = carForRefuel.fuelCapacity - carForRefuel.fuel;
+      moneyCost = Math.round(fuelNeeded * (activity.money.base ?? 2));
+    }
+  }
 
   // 5. Check affordability
   const energyCheck = checkEnergyAvailable(state, energyCost);
@@ -138,8 +152,10 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
         if (quantity > 0) {
           if (outcome.itemType === 'engine_part') {
             enginePartsChange += quantity;
+          } else if (outcome.itemType === 'body_part') {
+            bodyPartsChange += quantity;
           } else {
-            // random_part or body_part — split randomly
+            // random_part — split randomly between engine and body
             const engineCount = rng.randomInRange(0, quantity);
             enginePartsChange += engineCount;
             bodyPartsChange += quantity - engineCount;
@@ -160,21 +176,20 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
       }
 
       case 'refuelCar': {
-        // Find a car at the player's current position
+        // Cost was pre-computed in step 4 and checked in step 5.
+        // Here we just apply the car state change.
         const car = state.inventory.cars.find(
           (c) =>
             c.position.x === state.player.position.x &&
             c.position.y === state.player.position.y
         );
         if (car) {
-          const fuelNeeded = car.fuelCapacity - car.fuel;
-          const fuelCost = fuelNeeded * (activity.money.base ?? 2);
-          moneyChange = -fuelCost;
+          const fuelAdded = car.fuelCapacity - car.fuel;
           carUpdates.push({ instanceId: car.instanceId, fuel: car.fuelCapacity });
           events.push({
             type: 'car_refueled',
-            message: `Filled up ${Math.round(fuelNeeded)}L of fuel for $${fuelCost}.`,
-            data: { fuelAdded: fuelNeeded, cost: fuelCost },
+            message: `Filled up ${Math.round(fuelAdded)}L of fuel for $${Math.abs(moneyChange)}.`,
+            data: { fuelAdded, cost: Math.abs(moneyChange) },
           });
         }
         break;

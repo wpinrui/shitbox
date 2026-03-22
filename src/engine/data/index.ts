@@ -251,13 +251,20 @@ export async function loadActivityDefinitions(locationId: string): Promise<Activ
 
 /**
  * Load all core activity files.
- * Loads misc (universal) plus all location-specific files that exist.
+ * Loads misc (universal) plus a hardcoded list of location-specific files.
+ * Missing files are skipped with a console warning rather than throwing.
  */
 export async function loadCoreActivities(): Promise<void> {
   await loadActivityDefinitions('misc');
-  // Load location-specific activity files that exist
   const locationFiles = ['scrapyard', 'gas_station'];
-  await Promise.all(locationFiles.map((id) => loadActivityDefinitions(id)));
+  const results = await Promise.allSettled(
+    locationFiles.map((id) => loadActivityDefinitions(id))
+  );
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.warn(`[data] Failed to load activity file "${locationFiles[i]}":`, result.reason);
+    }
+  });
 }
 
 // ============================================================================
