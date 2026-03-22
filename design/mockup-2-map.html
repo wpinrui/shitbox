@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shitbox — Map Screen Mockup</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --glass-1-bg: rgba(0, 0, 0, 0.78);
+    --glass-1-blur: 16px;
+    --glass-1-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-1-radius: 16px;
+    --glass-1-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --glass-2-bg: rgba(255, 255, 255, 0.06);
+    --glass-2-border: 1px solid rgba(255, 255, 255, 0.10);
+    --glass-2-radius: 12px;
+    --glass-2-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    --accent: #2DD4BF;
+    --earn: #4ADE80;
+    --energy-color: #FBBF24;
+    --text-1: #F5F5F5;
+    --text-2: rgba(245, 245, 245, 0.7);
+    --text-3: rgba(245, 245, 245, 0.45);
+    --divider: rgba(255, 255, 255, 0.08);
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --shadow-text: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: var(--font-sans);
+    color: var(--text-1);
+    background: #000;
+  }
+
+  .bg { position: fixed; inset: 0; z-index: 0; }
+  .bg__photo {
+    position: absolute; inset: 0;
+    background: url('../src/assets/backgrounds/map.jpg') center/cover no-repeat;
+  }
+  .bg__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+  }
+
+  .shell {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    padding: 5vh 5vw;
+    width: 100%; height: 100vh;
+  }
+
+  .map-panel {
+    flex: 1;
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur));
+    -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border);
+    border-radius: var(--glass-1-radius);
+    box-shadow: var(--glass-1-shadow);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .map-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .map-header__left { display: flex; align-items: center; gap: 12px; }
+  .map-header__title {
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+  }
+  .map-header__subtitle {
+    font-size: 0.8rem; font-weight: 400;
+    color: var(--text-3);
+    margin-left: 12px;
+  }
+  .map-header__resources { display: flex; align-items: center; gap: 20px; }
+  .map-header__divider { width: 1px; height: 24px; background: var(--divider); }
+  .res {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 1rem; font-weight: 600;
+    text-shadow: var(--shadow-text);
+    color: var(--text-1);
+  }
+  .res__label {
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .energy { display: flex; align-items: center; gap: 8px; }
+  .energy__icon { color: var(--energy-color); font-size: 0.9rem; }
+  .energy__track {
+    width: 120px; height: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .energy__fill {
+    width: 72%; height: 100%;
+    background: linear-gradient(90deg, var(--earn), var(--energy-color));
+    border-radius: 4px;
+  }
+  .energy__text { font-size: 0.8rem; font-weight: 400; color: var(--text-2); }
+
+  /* Nav button */
+  .btn-nav {
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 0.85rem; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-shadow: var(--shadow-text);
+  }
+  .btn-nav:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .btn-nav:active {
+    background: rgba(255, 255, 255, 0.20);
+    transform: scale(0.98);
+    transition: all 0.1s ease;
+  }
+
+  /* ── Body wrapper ── */
+  .body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 0;
+  }
+  .body::-webkit-scrollbar { width: 8px; }
+  .body::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+  .body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── Player sub-card ── */
+  .player-card {
+    width: 240px;
+    min-width: 240px;
+    flex-shrink: 0;
+    align-self: stretch;
+    background: var(--glass-2-bg);
+    border: var(--glass-2-border);
+    border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow);
+    padding: 16px;
+    display: flex; flex-direction: column;
+  }
+  .player-card__name {
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+    margin-bottom: 12px;
+  }
+  .player-card__divider {
+    height: 1px;
+    background: var(--divider);
+    margin: 10px 0;
+  }
+  .player-card__label {
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .row-3 {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s ease;
+  }
+  .row-3:hover { background: rgba(255, 255, 255, 0.08); }
+  .row-3__label {
+    font-size: 0.8rem; font-weight: 400;
+    color: var(--text-2);
+    text-shadow: var(--shadow-text);
+  }
+  .row-3__value {
+    font-size: 0.85rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+  }
+  .row-3__icon { margin-right: 8px; font-size: 0.85rem; }
+  .btn-primary {
+    display: block; width: 100%;
+    padding: 10px 20px;
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 0.9rem; font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    text-shadow: var(--shadow-text);
+  }
+  .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .btn-primary:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.98);
+    transition: all 0.1s ease;
+  }
+
+  /* ── Grid body ── */
+  .map-body {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+    grid-auto-rows: auto;
+    gap: 10px;
+    justify-content: start;
+    align-content: start;
+  }
+
+  /* ── Region row labels ── */
+  .region-label {
+    grid-column: 1 / -1;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--text-1);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 8px 0 2px;
+    text-shadow: var(--shadow-text);
+  }
+  .region-label:first-child { padding-top: 0; }
+
+  /* ── Location card ── */
+  .loc {
+    width: 100%;
+    background: var(--glass-2-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-2-border);
+    border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .loc:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.20);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+    z-index: 10;
+  }
+  .loc:active {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.30);
+    transform: translateY(0) scale(0.99);
+    transition: all 0.1s ease;
+  }
+
+  .loc__photo {
+    width: 100%; height: 100px;
+    background-size: cover; background-position: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .loc__photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);
+  }
+
+  .loc__body { padding: 8px 10px 10px; }
+  .loc__name {
+    font-size: 1rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+    margin-bottom: 3px;
+  }
+  .loc__desc {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--text-2); line-height: 1.4;
+    text-shadow: var(--shadow-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .loc__tags {
+    display: flex; gap: 3px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .loc__tag {
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 3px; padding: 2px 6px;
+  }
+  .loc__travel {
+    display: flex; gap: 6px; align-items: center; margin-top: 4px;
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3); text-shadow: var(--shadow-text);
+  }
+  .loc__travel-sep { color: rgba(255,255,255,0.15); }
+  .loc__badge {
+    position: absolute; top: 5px; right: 5px;
+    font-size: 0.75rem; font-weight: 600;
+    color: #fff; background: var(--accent);
+    padding: 2px 6px; border-radius: 3px;
+    z-index: 2; text-shadow: none;
+  }
+  .loc--current {
+    background: rgba(45, 212, 191, 0.25);
+    cursor: default;
+  }
+  .loc--current:hover {
+    background: rgba(45, 212, 191, 0.25);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: var(--glass-2-shadow);
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg__photo"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<div class="shell">
+  <div class="map-panel">
+
+    <div class="map-header">
+      <div class="map-header__left">
+        <button class="btn-nav">Back</button>
+        <div class="map-header__title">Greymont</div>
+        <div class="map-header__subtitle">Choose a destination</div>
+      </div>
+      <div class="map-header__resources">
+        <div class="res"><span class="res__label">Day</span><span>14</span></div>
+        <div class="map-header__divider"></div>
+        <div class="res">8:30 AM</div>
+        <div class="map-header__divider"></div>
+        <div class="res">$1,247</div>
+        <div class="map-header__divider"></div>
+        <div class="energy">
+          <span class="energy__icon">⚡</span>
+          <div class="energy__track"><div class="energy__fill"></div></div>
+          <span class="energy__text">72</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <!-- Player sub-card -->
+      <div class="player-card">
+        <div class="player-card__name">Ivan</div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">STATS</div>
+        <div class="row-3"><span class="row-3__label">Charisma</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label">Mechanical</span><span class="row-3__value">5</span></div>
+        <div class="row-3"><span class="row-3__label">Fitness</span><span class="row-3__value">2</span></div>
+        <div class="row-3"><span class="row-3__label">Knowledge</span><span class="row-3__value">0</span></div>
+        <div class="row-3"><span class="row-3__label">Driving</span><span class="row-3__value">0</span></div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">INVENTORY</div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🔧</span>Parts</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🚗</span>Cars</span><span class="row-3__value">1</span></div>
+        <button class="btn-primary">Menu</button>
+      </div>
+
+      <div class="map-body">
+
+      <!-- NORTH -->
+      <div class="region-label">North</div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/school.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Driving School</div>
+          <div class="loc__desc">Get your licenses. Study for tests.</div>
+          <div class="loc__tags"><span class="loc__tag">Lessons</span><span class="loc__tag">License tests</span><span class="loc__tag">Study</span></div>
+          <div class="loc__travel"><span>2.4 km</span><span class="loc__travel-sep">·</span><span>🚶 30 min · ⚡8</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/bank.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Bank</div>
+          <div class="loc__desc">Save money, take loans, invest in index funds.</div>
+          <div class="loc__tags"><span class="loc__tag">Savings</span><span class="loc__tag">Loans</span><span class="loc__tag">Investments</span></div>
+          <div class="loc__travel"><span>2.8 km</span><span class="loc__travel-sep">·</span><span>🚶 35 min · ⚡9</span><span class="loc__travel-sep">·</span><span>🚗 6 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/gym.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Gym</div>
+          <div class="loc__desc">Train your fitness stat.</div>
+          <div class="loc__tags"><span class="loc__tag">Fitness training</span><span class="loc__tag">Workouts</span></div>
+          <div class="loc__travel"><span>2.2 km</span><span class="loc__travel-sep">·</span><span>🚶 28 min · ⚡7</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/film_school.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Film School</div>
+          <div class="loc__desc">Cinematography training and equipment rental.</div>
+          <div class="loc__tags"><span class="loc__tag">Courses</span><span class="loc__tag">Equipment</span></div>
+          <div class="loc__travel"><span>2.3 km</span><span class="loc__travel-sep">·</span><span>🚶 29 min · ⚡8</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+      <!-- WEST -->
+      <div class="region-label">West</div>
+
+      <div class="loc loc--current">
+        <div class="loc__badge">You are here</div>
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/scrapyard.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Scrapyard</div>
+          <div class="loc__desc">A sprawling junkyard full of old cars and salvage parts.</div>
+          <div class="loc__tags"><span class="loc__tag">Work for cash</span><span class="loc__tag">Scavenge parts</span><span class="loc__tag">Buy junkers</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/garage.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Garage</div>
+          <div class="loc__desc">Store and work on your cars. Basic repairs available.</div>
+          <div class="loc__tags"><span class="loc__tag">Store cars</span><span class="loc__tag">DIY repairs</span></div>
+          <div class="loc__travel"><span>1.8 km</span><span class="loc__travel-sep">·</span><span>🚶 22 min · ⚡6</span><span class="loc__travel-sep">·</span><span>🚗 4 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/workshop.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Workshop</div>
+          <div class="loc__desc">Professional mechanic shop for major repairs.</div>
+          <div class="loc__tags"><span class="loc__tag">Engine work</span><span class="loc__tag">Major repairs</span></div>
+          <div class="loc__travel"><span>2.0 km</span><span class="loc__travel-sep">·</span><span>🚶 25 min · ⚡7</span><span class="loc__travel-sep">·</span><span>🚗 4 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/car_wash.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Car Wash</div>
+          <div class="loc__desc">Entry-level job washing cars.</div>
+          <div class="loc__tags"><span class="loc__tag">Work for tips</span><span class="loc__tag">Easy money</span></div>
+          <div class="loc__travel"><span>2.3 km</span><span class="loc__travel-sep">·</span><span>🚶 29 min · ⚡8</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+      <!-- EAST -->
+      <div class="region-label">East</div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/gas_station.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Gas Station</div>
+          <div class="loc__desc">Fill up your tank. Pay at the pump.</div>
+          <div class="loc__tags"><span class="loc__tag">Refuel</span></div>
+          <div class="loc__travel"><span>2.1 km</span><span class="loc__travel-sep">·</span><span>🚶 26 min · ⚡7</span><span class="loc__travel-sep">·</span><span>🚗 4 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/auction.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Auction House</div>
+          <div class="loc__desc">Buy and sell cars at auction.</div>
+          <div class="loc__tags"><span class="loc__tag">Bid on cars</span><span class="loc__tag">Consign</span><span class="loc__tag">Schedule</span></div>
+          <div class="loc__travel"><span>2.5 km</span><span class="loc__travel-sep">·</span><span>🚶 31 min · ⚡8</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/showroom.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Showroom</div>
+          <div class="loc__desc">High-end dealership. Browse luxury cars.</div>
+          <div class="loc__tags"><span class="loc__tag">Sales job</span><span class="loc__tag">Browse inventory</span><span class="loc__tag">Trade-ins</span></div>
+          <div class="loc__travel"><span>2.7 km</span><span class="loc__travel-sep">·</span><span>🚶 34 min · ⚡9</span><span class="loc__travel-sep">·</span><span>🚗 6 min</span></div>
+        </div>
+      </div>
+
+      <!-- SOUTH -->
+      <div class="region-label">South</div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/budget_house.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Budget Housing</div>
+          <div class="loc__desc">Cheap roof over your head. Basic rest.</div>
+          <div class="loc__tags"><span class="loc__tag">Cheapest rent</span><span class="loc__tag">Poor sleep</span></div>
+          <div class="loc__travel"><span>1.6 km</span><span class="loc__travel-sep">·</span><span>🚶 20 min · ⚡5</span><span class="loc__travel-sep">·</span><span>🚗 3 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/apartments.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Apartments</div>
+          <div class="loc__desc">Mid-range housing. Decent rest quality.</div>
+          <div class="loc__tags"><span class="loc__tag">Mid-tier rent</span><span class="loc__tag">Good sleep</span></div>
+          <div class="loc__travel"><span>2.1 km</span><span class="loc__travel-sep">·</span><span>🚶 26 min · ⚡7</span><span class="loc__travel-sep">·</span><span>🚗 4 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/penthouse.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Penthouse</div>
+          <div class="loc__desc">Luxury living. The best rest money can buy.</div>
+          <div class="loc__tags"><span class="loc__tag">Premium rent</span><span class="loc__tag">Best sleep</span><span class="loc__tag">Prestige</span></div>
+          <div class="loc__travel"><span>3.1 km</span><span class="loc__travel-sep">·</span><span>🚶 39 min · ⚡10</span><span class="loc__travel-sep">·</span><span>🚗 7 min</span></div>
+        </div>
+      </div>
+
+      <div class="loc">
+        <div class="loc__photo" style="background-image: url('../src/assets/backgrounds/parking_lot.jpg')"></div>
+        <div class="loc__body">
+          <div class="loc__name">Parking Lot</div>
+          <div class="loc__desc">Public parking. Tow trucks bring stranded cars here.</div>
+          <div class="loc__tags"><span class="loc__tag">Park your car</span><span class="loc__tag">Retrieve towed</span></div>
+          <div class="loc__travel"><span>2.4 km</span><span class="loc__travel-sep">·</span><span>🚶 30 min · ⚡8</span><span class="loc__travel-sep">·</span><span>🚗 5 min</span></div>
+        </div>
+      </div>
+
+    </div><!-- /map-body -->
+    </div><!-- /body -->
+  </div><!-- /map-panel -->
+</div><!-- /shell -->
+
+</body>
+</html>

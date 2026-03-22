@@ -1,41 +1,36 @@
+/* Animated Money — no longer used as standalone; money is inline in header */
+
 .animated-money {
   display: flex;
   align-items: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  font-weight: 600;
   transition: color 0.2s;
 }
 
 .animated-money .currency {
-  color: #888;
+  color: var(--text-2);
   margin-right: 0.1rem;
 }
 
 .animated-money .amount {
-  color: #88ff88;
+  color: var(--text-1);
 }
 
 .animated-money.up .amount {
-  color: #00ff00;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  color: var(--earn);
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
   animation: moneyPulse 0.3s ease-out;
 }
 
 .animated-money.down .amount {
-  color: #ff4444;
-  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  color: var(--spend);
+  text-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
   animation: moneyPulse 0.3s ease-out;
 }
 
 @keyframes moneyPulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }

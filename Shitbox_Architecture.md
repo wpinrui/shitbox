@@ -75,94 +75,81 @@
 shitbox/
 ├── package.json
 ├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── index.html                  # Vite entry HTML
+├── .eslintrc.cjs
+├── yarn.lock
+├── README.md
+├── Shitbox_GDD.md
+├── Shitbox_Architecture.md
+├── Shitbox_Skills.md
+│
 ├── electron/
 │   ├── main.ts                 # Electron main process
-│   ├── preload.ts              # IPC bridge
-│   └── fileSystem.ts           # Save/load helpers
+│   └── preload.ts              # IPC bridge
 │
 ├── src/
 │   ├── index.tsx               # React entry point
+│   ├── index.css               # Global styles
+│   ├── tokens.css              # CSS custom properties (design tokens)
 │   ├── App.tsx                 # Root component, router
+│   ├── vite-env.d.ts
+│   │
+│   ├── assets/
+│   │   └── backgrounds/        # 18 location/UI background photos (JPG)
 │   │
 │   ├── engine/                 # PURE GAME LOGIC (no React)
 │   │   ├── index.ts            # Public API
 │   │   ├── types.ts            # All TypeScript interfaces
-│   │   ├── constants.ts        # Derived constants from data
 │   │   ├── core/
-│   │   │   ├── gameLoop.ts     # Main update function
 │   │   │   ├── activity.ts     # Activity execution
-│   │   │   ├── time.ts         # Time advancement
-│   │   │   └── resources.ts    # Resource calculations
+│   │   │   └── time.ts         # Time advancement
+│   │   ├── data/
+│   │   │   ├── index.ts        # Data loading
+│   │   │   └── map.ts          # Map data helpers
 │   │   ├── systems/
-│   │   │   ├── negotiation.ts  # Negotiation logic
-│   │   │   ├── roadtrip.ts     # Road trip content creation
-│   │   │   ├── economy.ts      # Prices, markets, interest
-│   │   │   ├── cars.ts         # Car operations
-│   │   │   ├── npcs.ts         # NPC generation, traits
-│   │   │   ├── newspaper.ts    # Daily content generation
-│   │   │   └── events.ts       # Random events, risks
-│   │   ├── utils/
-│   │   │   ├── rng.ts          # Seeded random number generator
-│   │   │   ├── validators.ts   # Prerequisite checking
-│   │   │   └── calculations.ts # Shared math helpers
-│   │   └── __tests__/          # Engine unit tests
+│   │   │   └── travel.ts       # Travel logic
+│   │   └── utils/
+│   │       ├── rng.ts          # Seeded random number generator
+│   │       ├── validators.ts   # Prerequisite checking
+│   │       └── calculations.ts # Shared math helpers
 │   │
 │   ├── store/                  # STATE MANAGEMENT
-│   │   ├── index.ts            # Zustand store definition
-│   │   ├── actions.ts          # Action creators
-│   │   ├── selectors.ts        # Derived state selectors
-│   │   └── persistence.ts      # Save/load logic
+│   │   └── index.ts            # Zustand store definition
 │   │
-│   ├── ui/                     # REACT COMPONENTS
-│   │   ├── components/
-│   │   │   ├── common/         # Buttons, modals, cards
-│   │   │   ├── hud/            # Resource bars, clock, stats
-│   │   │   ├── map/            # World map, location nodes
-│   │   │   ├── location/       # Location menus, activity lists
-│   │   │   ├── negotiation/    # Negotiation UI
-│   │   │   ├── roadtrip/       # Road trip content UI
-│   │   │   ├── cars/           # Car cards, garage view
-│   │   │   ├── bank/           # Banking interface
-│   │   │   └── newspaper/      # Newspaper reader
-│   │   ├── screens/
-│   │   │   ├── MainMenu.tsx
-│   │   │   ├── NewGame.tsx     # Stat allocation
-│   │   │   ├── GameScreen.tsx  # Main gameplay
-│   │   │   ├── GameOver.tsx
-│   │   │   └── Victory.tsx
-│   │   ├── hooks/              # Custom React hooks
-│   │   └── styles/             # CSS/Tailwind
-│   │
-│   └── assets/                 # Static assets
-│       ├── images/
-│       └── fonts/
+│   └── ui/                     # REACT COMPONENTS
+│       ├── components/
+│       │   ├── common/         # ConfirmDialog, FadeTransition, HoursSlider, LoadGameDialog, PauseMenu, Toast
+│       │   ├── game/           # ActivityPanel, EventLog, GameHeader, GameHUD
+│       │   ├── hud/            # AnimatedClock, AnimatedEnergy, AnimatedMoney, Sidebar
+│       │   ├── location/       # ActivityCard, ActivityModal
+│       │   └── map/            # LocationCard, LocationList
+│       └── screens/
+│           ├── MainMenu.tsx
+│           ├── NewGame.tsx     # Stat allocation
+│           ├── GameScreen.tsx  # Main gameplay
+│           ├── GameOverScreen.tsx
+│           └── PlaceholderScreen.tsx
 │
 ├── data/                       # JSON CONFIG FILES
 │   ├── economy.json            # Base economic values
-│   ├── activities/
-│   │   ├── scrapyard.json
-│   │   ├── garage.json
-│   │   ├── workshop.json
-│   │   ├── apartments.json
-│   │   ├── auction.json
-│   │   ├── roadtrip.json
-│   │   ├── school.json
-│   │   ├── showroom.json
-│   │   ├── bank.json
-│   │   ├── driving.json
-│   │   └── misc.json
-│   ├── cars.json               # Car database
-│   ├── traits.json             # NPC personality traits
-│   ├── stunts.json             # Road trip stunt definitions
-│   ├── properties.json         # Apartments, houses, commercial
-│   ├── licenses.json           # License requirements
-│   ├── loans.json              # Loan products
-│   └── newspaper-templates.json # Content generation templates
+│   ├── map.json                # Location definitions, regions, travel costs
+│   └── activities/
+│       ├── scrapyard.json
+│       ├── gas_station.json
+│       └── misc.json           # Universal activities (nap, sleep, etc.)
+│
+├── design/                     # UI DESIGN REFERENCE
+│   ├── brand-guide.md          # Brand & design guide for implementers
+│   ├── mockup-1-scrapyard.html # Location screen mockup
+│   ├── mockup-2-map.html       # Map screen mockup
+│   ├── mockup-3-pause.html     # Pause menu mockup
+│   └── mockup-4-activity.html  # Activity modal mockup
 │
 ├── saves/                      # Player save files (gitignored)
 │
 └── tools/                      # Dev tools
-    ├── balance-tester.ts       # Automated playthrough simulation
     └── data-validator.ts       # JSON schema validation
 ```
 

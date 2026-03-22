@@ -1,3 +1,5 @@
+/* Animated Energy — no longer used as standalone; energy bar is inline in header */
+
 .animated-energy {
   display: flex;
   align-items: center;
@@ -17,37 +19,29 @@
 .energy-bar-container {
   flex: 1;
   height: 0.8rem;
-  background-color: #333;
-  border-radius: 0.4rem;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #444;
 }
 
 .energy-bar-fill {
   height: 100%;
   transition: width 0.1s linear, background-color 0.3s;
-  border-radius: 0.4rem;
+  border-radius: 4px;
 }
 
 .energy-value {
-  font-size: 0.9rem;
-  font-weight: bold;
-  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  font-weight: 600;
   min-width: 1.8rem;
   text-align: right;
+  color: var(--text-1);
 }
 
 @keyframes emojiWobble {
-  0%, 100% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.2);
-  }
-  50% {
-    transform: scale(0.9);
-  }
-  75% {
-    transform: scale(1.1);
-  }
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  75% { transform: scale(1.1); }
 }

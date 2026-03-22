@@ -100,13 +100,18 @@ The world is presented as a **point-and-click map**. Players click locations to 
 | **Scrapyard** | Scavenge for parts (body/engine), sell scrap, find cheap project cars, manual labor jobs |
 | **Garage** | Store cars, perform basic repairs (if owned), view owned vehicles |
 | **Workshop** | Major repairs (engine replacement), equipment storage, can rent bench time if not owned, work as mechanic |
-| **Apartments** | Rent or buy housing. Better shelter = better rest quality = more efficient energy recovery |
-| **Auction Lot** | Car auctions (twice weekly). Browse, bid, buy. Higher volume, less negotiation flexibility |
+| **Apartments** | Mid-tier housing. Rent or buy. Better shelter = better rest quality = more efficient energy recovery |
+| **Auction House** | Car auctions (twice weekly). Browse, bid, buy. Higher volume, less negotiation flexibility |
 | **Film School** | Cinematography training, equipment rental, content creation courses |
 | **Gym** | Fitness training |
 | **School / Library** | Training: spend time + money to increase stats. Get licenses (driver's, taxi, truck) |
 | **Showroom** | Buy new cars at list price (no negotiation). Later: work as salesperson, become dealer |
 | **Bank** | Savings account, index fund investment, loans |
+| **Gas Station** | Fill up your tank. Pay at the pump. Refuel your car |
+| **Car Wash** | Entry-level job washing cars. Work for tips, easy money |
+| **Parking Lot** | Public parking. Tow trucks bring stranded cars here. Park your car, retrieve towed vehicles |
+| **Budget Housing** | Cheap roof over your head. Basic rest. Cheapest rent, poor sleep quality |
+| **Penthouse** | Luxury living. The best rest money can buy. Premium rent, best sleep quality, prestige |
 
 ---
 
@@ -308,11 +313,11 @@ One core loop: *Activity(parameters, context) → {Δmoney, Δenergy, Δtime, ou
 
 ### 13.4 Visual Design
 
-- Point-and-click map (location nodes)
-- Menu overlays for activities
+- Card grid map grouped by compass region (North/West/East/South)
+- Glassmorphic single-panel layout with activity cards
+- Per-location background photography with frosted glass UI panels
 - Car cards with Wikipedia-sourced images
 - Time-of-day visual changes on map
-- Minimal art assets overall
 
 ### 13.5 Audio
 

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shitbox — Activity Progress & Outcome Mockup</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --glass-1-bg: rgba(0, 0, 0, 0.78);
+    --glass-1-blur: 16px;
+    --glass-1-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-1-radius: 16px;
+    --glass-1-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --glass-2-bg: rgba(255, 255, 255, 0.06);
+    --glass-2-border: 1px solid rgba(255, 255, 255, 0.10);
+    --glass-2-radius: 12px;
+    --glass-2-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+    --glass-3-bg: rgba(255, 255, 255, 0.04);
+    --glass-3-border: 1px solid rgba(255, 255, 255, 0.06);
+    --glass-3-radius: 8px;
+
+    --accent: #2DD4BF;
+    --earn: #4ADE80;
+    --spend: #F87171;
+    --energy-color: #FBBF24;
+
+    --text-1: #F5F5F5;
+    --text-2: rgba(245, 245, 245, 0.7);
+    --text-3: rgba(245, 245, 245, 0.45);
+
+    --divider: rgba(255, 255, 255, 0.08);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --shadow-text: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: var(--font-sans);
+    color: var(--text-1);
+    background: #000;
+  }
+
+  /* ── Background ── */
+  .bg { position: fixed; inset: 0; z-index: 0; }
+  .bg__photo {
+    position: absolute; inset: 0;
+    background: url('../src/assets/backgrounds/scrapyard.jpg') center/cover no-repeat;
+  }
+  .bg__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* ── Game screen (dimmed behind) ── */
+  .shell {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    padding: 5vh 5vw;
+    width: 100%; height: 100vh;
+  }
+  .panel {
+    flex: 1;
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur));
+    -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border);
+    border-radius: var(--glass-1-radius);
+    box-shadow: var(--glass-1-shadow);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .header__left { display: flex; align-items: center; gap: 12px; }
+  .header__title {
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+  }
+  .header__subtitle {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--text-2);
+    margin-left: 4px;
+  }
+  .header__resources { display: flex; align-items: center; gap: 20px; }
+  .header__divider { width: 1px; height: 24px; background: var(--divider); }
+  .res {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 1rem; font-weight: 600;
+    text-shadow: var(--shadow-text);
+    color: var(--text-1);
+  }
+  .res__label {
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .energy { display: flex; align-items: center; gap: 8px; }
+  .energy__icon { color: var(--energy-color); font-size: 0.9rem; }
+  .energy__track {
+    width: 120px; height: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .energy__fill {
+    width: 72%; height: 100%;
+    background: linear-gradient(90deg, var(--earn), var(--energy-color));
+    border-radius: 4px;
+  }
+  .energy__text { font-size: 0.8rem; font-weight: 400; color: var(--text-2); }
+
+  .body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 0;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .player-card {
+    width: 240px; min-width: 240px; flex-shrink: 0;
+    background: var(--glass-2-bg);
+    border: var(--glass-2-border);
+    border-radius: var(--glass-2-radius);
+    padding: 16px;
+    display: flex; flex-direction: column;
+    align-self: stretch;
+  }
+  .player-card__name {
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+    margin-bottom: 12px;
+  }
+  .player-card__divider {
+    height: 1px;
+    background: var(--divider);
+    margin: 10px 0;
+  }
+  .player-card__label {
+    font-size: 0.75rem; font-weight: 400;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .row-3 {
+    background: var(--glass-3-bg);
+    border: var(--glass-3-border);
+    border-radius: var(--glass-3-radius);
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .row-3__label {
+    font-size: 0.8rem; font-weight: 400;
+    color: var(--text-2);
+    text-shadow: var(--shadow-text);
+  }
+  .row-3__value {
+    font-size: 0.85rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+  }
+  .row-3__icon { margin-right: 8px; font-size: 0.85rem; }
+  .btn-menu {
+    display: block; width: 100%;
+    padding: 10px 20px;
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 0.9rem; font-weight: 600;
+    cursor: pointer;
+    text-shadow: var(--shadow-text);
+  }
+  .activities { flex: 1; min-width: 0; }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    align-content: start;
+  }
+  .section-divider {
+    height: 1px;
+    background: var(--divider);
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--glass-2-bg);
+    border: var(--glass-2-border);
+    border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow);
+    padding: 20px;
+  }
+  .card__name {
+    font-size: 1rem; font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 8px;
+    text-shadow: var(--shadow-text);
+  }
+  .card__desc {
+    font-size: 0.9rem; font-weight: 400;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    text-shadow: var(--shadow-text);
+  }
+  .card__divider {
+    height: 1px;
+    background: var(--divider);
+    margin-bottom: 12px;
+  }
+  .card__cost {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .card__cost:last-child { margin-bottom: 0; }
+  .card__cost-icon {
+    font-size: 0.85rem;
+    width: 18px; text-align: center;
+  }
+  .card__cost-icon--time { color: var(--text-2); }
+  .card__cost-icon--energy { color: var(--energy-color); }
+  .card__cost-icon--earn { color: var(--earn); }
+  .card__cost-text {
+    font-size: 0.85rem; font-weight: 400;
+    text-shadow: var(--shadow-text);
+  }
+  .card__cost-text--neutral { color: var(--text-2); }
+  .card__cost-text--earn { color: var(--earn); }
+
+  /* ═══ MODAL OVERLAY ═══ */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal {
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur));
+    -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border);
+    border-radius: var(--glass-1-radius);
+    box-shadow: var(--glass-1-shadow);
+    width: 420px;
+    padding: 32px;
+    display: flex; flex-direction: column;
+    gap: 0;
+    animation: modalIn 0.3s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ── Progress state ── */
+  .progress {
+    text-align: center;
+    animation: progressFade 2.5s ease-in-out forwards;
+  }
+  @keyframes progressFade {
+    0% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; height: 0; overflow: hidden; margin: 0; padding: 0; }
+  }
+  .progress__title {
+    font-size: 1.2rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+    margin-bottom: 8px;
+  }
+  .progress__desc {
+    font-size: 0.9rem; font-weight: 400;
+    color: var(--text-2);
+    text-shadow: var(--shadow-text);
+    margin-bottom: 20px;
+  }
+  .progress__bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress__bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--text-1);
+    border-radius: 3px;
+    animation: barFill 2.2s ease-in-out forwards;
+  }
+  @keyframes barFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
+  .progress__time {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--text-3);
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Outcome state ── */
+  .outcome {
+    opacity: 0;
+    animation: outcomeIn 0.4s ease-out 2.8s forwards;
+  }
+  @keyframes outcomeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .outcome__title {
+    font-size: 1.2rem; font-weight: 600;
+    color: var(--text-1);
+    text-shadow: var(--shadow-text);
+    text-align: center;
+    margin-bottom: 6px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: slideUp 0.35s ease-out 2.8s forwards;
+  }
+  .outcome__subtitle {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--text-2);
+    text-shadow: var(--shadow-text);
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: slideUp 0.35s ease-out 3.0s forwards;
+  }
+
+  .outcome__divider {
+    height: 1px;
+    background: var(--divider);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out 3.1s forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Result rows */
+  .result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: var(--glass-3-bg);
+    border: var(--glass-3-border);
+    border-radius: var(--glass-3-radius);
+    margin-bottom: 8px;
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .result__icon {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .result__label {
+    font-size: 0.9rem; font-weight: 400;
+    color: var(--text-2);
+    text-shadow: var(--shadow-text);
+    flex: 1;
+  }
+  .result__value {
+    font-size: 0.95rem; font-weight: 600;
+    text-shadow: var(--shadow-text);
+  }
+  .result__value--earn { color: var(--earn); }
+  .result__value--spend { color: var(--spend); }
+  .result__value--neutral { color: var(--text-1); }
+
+  /* Staggered slide-up for each result row */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result:nth-child(1) { animation: slideUp 0.4s ease-out 3.2s forwards; }
+  .result:nth-child(2) { animation: slideUp 0.4s ease-out 3.4s forwards; }
+  .result:nth-child(3) { animation: slideUp 0.4s ease-out 3.6s forwards; }
+  .result:nth-child(4) { animation: slideUp 0.4s ease-out 3.8s forwards; }
+
+  .outcome__results {
+    margin-bottom: 8px;
+  }
+
+  /* Close button */
+  .outcome__close {
+    display: block; width: 100%;
+    padding: 12px 20px;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-shadow: var(--shadow-text);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: slideUp 0.4s ease-out 4.1s forwards;
+  }
+  .outcome__close:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .outcome__close:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.98);
+    transition: all 0.1s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg">
+  <div class="bg__photo"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<!-- Game screen (dimmed) -->
+<div class="shell">
+  <div class="panel">
+    <div class="header">
+      <div class="header__left">
+        <div class="header__title">Scrapyard</div>
+        <div class="header__subtitle">A sprawling junkyard full of old cars and salvage parts.</div>
+      </div>
+      <div class="header__resources">
+        <div class="res"><span class="res__label">Day</span><span>14</span></div>
+        <div class="header__divider"></div>
+        <div class="res">8:30 AM</div>
+        <div class="header__divider"></div>
+        <div class="res">$1,247</div>
+        <div class="header__divider"></div>
+        <div class="energy">
+          <span class="energy__icon">⚡</span>
+          <div class="energy__track"><div class="energy__fill"></div></div>
+          <span class="energy__text">72</span>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="player-card">
+        <div class="player-card__name">Ivan</div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">STATS</div>
+        <div class="row-3"><span class="row-3__label">Charisma</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label">Mechanical</span><span class="row-3__value">5</span></div>
+        <div class="row-3"><span class="row-3__label">Fitness</span><span class="row-3__value">2</span></div>
+        <div class="row-3"><span class="row-3__label">Knowledge</span><span class="row-3__value">0</span></div>
+        <div class="row-3"><span class="row-3__label">Driving</span><span class="row-3__value">0</span></div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">INVENTORY</div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🔧</span>Parts</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🚗</span>Cars</span><span class="row-3__value">1</span></div>
+        <button class="btn-menu">Menu</button>
+      </div>
+      <div class="activities">
+        <div class="cards">
+          <div class="card">
+            <div class="card__name">Manual Labor</div>
+            <div class="card__desc">Haul scrap metal and sort materials for pay.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–8 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">15 / hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$8 / hr</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Scavenge Parts</div>
+            <div class="card__desc">Search the yard for usable engine and body parts.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–4 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">10 / hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔧</span><span class="card__cost-text card__cost-text--neutral">Find parts</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Sell Scrap</div>
+            <div class="card__desc">Sell collected scrap metal and junk for quick cash.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1 hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">5</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$ varies</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Browse Junk Cars</div>
+            <div class="card__desc">Search for cheap project cars in the scrapyard lot.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">0.5 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">5</span></div>
+          </div>
+        </div>
+        <div class="section-divider"></div>
+        <div class="cards">
+          <div class="card"><div class="card__name">Nap</div><div class="card__desc">Take a short rest anywhere.</div></div>
+          <div class="card"><div class="card__name">Sleep</div><div class="card__desc">Rest in your shitbox to recover energy.</div></div>
+          <div class="card"><div class="card__name">Leave</div><div class="card__desc">Open the map and travel to another location.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACTIVITY MODAL ═══ -->
+<div class="modal-backdrop">
+  <div class="modal">
+
+    <!-- Phase 1: In progress (fades out after bar fills) -->
+    <div class="progress">
+      <div class="progress__title">Manual Labor</div>
+      <div class="progress__desc">Hauling scrap metal and sorting materials...</div>
+      <div class="progress__bar-track">
+        <div class="progress__bar-fill"></div>
+      </div>
+      <div class="progress__time">4 hours passing...</div>
+    </div>
+
+    <!-- Phase 2: Outcome (slides in after progress fades) -->
+    <div class="outcome">
+      <div class="outcome__title">Manual Labor</div>
+      <div class="outcome__subtitle">4 hours of work completed</div>
+      <div class="outcome__divider"></div>
+
+      <div class="outcome__results">
+        <div class="result">
+          <span class="result__icon">💰</span>
+          <span class="result__label">Money earned</span>
+          <span class="result__value result__value--earn">+$32</span>
+        </div>
+        <div class="result">
+          <span class="result__icon">⚡</span>
+          <span class="result__label">Energy spent</span>
+          <span class="result__value result__value--spend">-60</span>
+        </div>
+        <div class="result">
+          <span class="result__icon">⏱</span>
+          <span class="result__label">Time elapsed</span>
+          <span class="result__value result__value--neutral">4 hrs</span>
+        </div>
+        <div class="result">
+          <span class="result__icon">💪</span>
+          <span class="result__label">Fitness</span>
+          <span class="result__value result__value--earn">+0.08</span>
+        </div>
+      </div>
+
+      <button class="outcome__close">Close</button>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
