@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { MainMenu, NewGame, GameScreen, GameOverScreen, PlaceholderScreen } from '@ui/screens';
+import { BackgroundSlideshow } from '@ui/components/common';
 import { loadEconomyData, loadCoreActivities, loadMapData } from '@engine/index';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
@@ -40,6 +41,9 @@ function App() {
       document.addEventListener('keydown', start);
     });
   }, []);
+
+  // Show slideshow behind menu screens (persists across main_menu ↔ new_game)
+  const showSlideshow = currentScreen === 'main_menu' || currentScreen === 'new_game';
 
   if (dataStatus === 'loading') {
     return (
@@ -86,6 +90,7 @@ function App() {
       <audio id="bgm" loop preload="auto">
         <source src="/assets/audio/late-night-radio.mp3" type="audio/mpeg" />
       </audio>
+      {showSlideshow && <BackgroundSlideshow />}
       {renderScreen()}
     </div>
   );
