@@ -140,8 +140,8 @@ export function ActivityModal({
               </div>
             </div>
             <div className="modal-hours__buttons">
-              <button className="modal-hours__cancel" onClick={onClose}>Cancel</button>
-              <button className="modal-hours__go" onClick={handleGo}>Go</button>
+              <button className="modal-hours__cancel btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="modal-hours__go btn-primary" onClick={handleGo}>Go</button>
             </div>
           </div>
         )}
@@ -190,7 +190,7 @@ export function ActivityModal({
             </div>
 
             <button
-              className="modal-outcome__close"
+              className="modal-outcome__close btn-primary"
               style={{ animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s` }}
               onClick={onClose}
             >

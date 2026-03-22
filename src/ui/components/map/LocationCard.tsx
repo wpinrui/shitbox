@@ -32,8 +32,8 @@ export function LocationCard({
   const walkCost = getWalkingCost(playerPosition, location.position, playerFitness);
 
   const distanceKm = (distanceMeters / 1000).toFixed(1);
-  const walkMinutes = Math.round(walkTime);
-  const driveMinutes = Math.round(driveTime);
+  const walkMinutes = Math.round(walkTime * 60);
+  const driveMinutes = Math.round(driveTime * 60);
 
   const handleClick = () => {
     if (isCurrentLocation) return;

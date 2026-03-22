@@ -139,7 +139,7 @@ export function NewGame() {
         </section>
 
         <button
-          className="start-button"
+          className="btn-primary"
           onClick={handleStartGame}
           disabled={!canStart}
         >

@@ -18,7 +18,7 @@ export function GameOverScreen({ events }: { events: GameEvent[] }) {
     <div className="screen game-over-screen">
       <h1>Game Over</h1>
       <p className="death-reason">{deathReason}</p>
-      <button onClick={handleReturn}>Return to Menu</button>
+      <button className="btn-primary" onClick={handleReturn}>Return to Menu</button>
     </div>
   );
 }

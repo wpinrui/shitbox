@@ -136,10 +136,10 @@ a:focus-visible {
   display: block;
   width: 100%;
   padding: 10px 20px;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(var(--danger-rgb), 0.12);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   border-radius: 8px;
-  color: #F87171;
+  color: var(--spend);
   font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 600;
@@ -149,14 +149,14 @@ a:focus-visible {
   text-align: center;
 }
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #FCA5A5;
+  background: rgba(var(--danger-rgb), 0.22);
+  border-color: rgba(var(--danger-rgb), 0.5);
+  color: var(--spend-light);
 }
 .btn-danger:active {
-  background: rgba(239, 68, 68, 0.32);
-  border-color: rgba(239, 68, 68, 0.7);
-  color: #fff;
+  background: rgba(var(--danger-rgb), 0.32);
+  border-color: rgba(var(--danger-rgb), 0.7);
+  color: var(--text-1);
   transform: scale(0.98);
   transition: all 0.1s ease;
 }
@@ -218,7 +218,7 @@ a:focus-visible {
 /* ── Badge ── */
 .badge {
   background: var(--accent);
-  color: #fff;
+  color: var(--text-1);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 6px;
@@ -374,68 +374,11 @@ a:focus-visible {
   width: 100%;
 }
 
-.main-menu__btn {
-  display: block;
-  width: 100%;
+.main-menu__buttons .btn-primary,
+.main-menu__buttons .btn-secondary,
+.main-menu__buttons .btn-danger {
   padding: 14px 20px;
-  border-radius: 8px;
-  font-family: var(--font-sans);
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  text-align: center;
-}
-
-.main-menu__btn--primary {
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-.main-menu__btn--primary:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-.main-menu__btn--primary:active {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: scale(0.98);
-  transition: all 0.1s ease;
-}
-
-.main-menu__btn--secondary {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-2);
-}
-.main-menu__btn--secondary:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-.main-menu__btn--secondary:active {
-  background: rgba(255, 255, 255, 0.10);
-  transform: scale(0.98);
-  transition: all 0.1s ease;
-}
-
-.main-menu__btn--danger {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #F87171;
-}
-.main-menu__btn--danger:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #FCA5A5;
-}
-.main-menu__btn--danger:active {
-  background: rgba(239, 68, 68, 0.32);
-  border-color: rgba(239, 68, 68, 0.7);
-  color: #fff;
-  transform: scale(0.98);
-  transition: all 0.1s ease;
 }
 
 .main-menu__version {
@@ -573,20 +516,20 @@ a:focus-visible {
 }
 
 .points-remaining {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--danger-rgb), 0.15);
   color: var(--spend);
   padding: 0.3rem 0.8rem;
   border-radius: var(--glass-3-radius);
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   transition: all 0.2s ease;
 }
 
 .points-remaining.complete {
-  background: rgba(74, 222, 128, 0.15);
+  background: rgba(var(--earn-rgb), 0.15);
   color: var(--earn);
-  border-color: rgba(74, 222, 128, 0.3);
+  border-color: rgba(var(--earn-rgb), 0.3);
 }
 
 .stats-grid {
@@ -664,34 +607,6 @@ a:focus-visible {
   color: var(--text-1);
 }
 
-.start-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  font-family: var(--font-sans);
-}
-
-.start-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.start-button:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(0.98);
-}
-
-.start-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
 
 /* ==========================================================================
    Confirm Dialog
@@ -742,39 +657,10 @@ a:focus-visible {
   justify-content: center;
 }
 
-.confirm-dialog-cancel,
-.confirm-dialog-confirm {
+.confirm-dialog-buttons .btn-primary,
+.confirm-dialog-buttons .btn-secondary {
   padding: 12px 20px;
   font-size: 0.95rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  font-family: var(--font-sans);
-}
-
-.confirm-dialog-cancel {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-2);
-}
-
-.confirm-dialog-cancel:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-
-.confirm-dialog-confirm {
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-
-.confirm-dialog-confirm:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================================================
@@ -812,74 +698,11 @@ a:focus-visible {
   gap: 16px;
 }
 
-.pause-menu-button {
-  display: block;
-  width: 100%;
+.pause-menu-buttons .btn-primary,
+.pause-menu-buttons .btn-secondary,
+.pause-menu-buttons .btn-danger {
   padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
   font-size: 0.95rem;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  text-align: center;
-  font-family: var(--font-sans);
-  /* Default: primary */
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-
-.pause-menu-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.pause-menu-button:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(0.98);
-  transition: all 0.1s ease;
-}
-
-.pause-menu-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.pause-menu-button.secondary {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-2);
-}
-
-.pause-menu-button.secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-
-.pause-menu-button.secondary:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.10);
-  transform: scale(0.98);
-}
-
-.pause-menu-button.danger {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #F87171;
-}
-
-.pause-menu-button.danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #FCA5A5;
-}
-
-.pause-menu-button.danger:active:not(:disabled) {
-  background: rgba(239, 68, 68, 0.32);
-  border-color: rgba(239, 68, 68, 0.7);
-  color: #fff;
-  transform: scale(0.98);
 }
 
 .pause-menu-divider {
@@ -987,8 +810,8 @@ a:focus-visible {
 
 .save-item-delete:hover {
   color: var(--spend);
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(var(--danger-rgb), 0.3);
+  background: rgba(var(--danger-rgb), 0.08);
 }
 
 .save-delete-confirm {
@@ -998,7 +821,7 @@ a:focus-visible {
   align-items: center;
   padding: 0.75rem 1rem;
   background: var(--glass-3-bg);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   border-radius: var(--glass-3-radius);
   color: var(--text-2);
 }
@@ -1022,14 +845,14 @@ a:focus-visible {
 }
 
 .save-delete-buttons button:first-child {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #F87171;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  color: var(--spend);
 }
 
 .save-delete-buttons button:first-child:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #FCA5A5;
+  background: rgba(var(--danger-rgb), 0.22);
+  border-color: rgba(var(--danger-rgb), 0.5);
+  color: var(--spend-light);
 }
 
 /* ==========================================================================
@@ -1074,23 +897,10 @@ a:focus-visible {
   line-height: 1.5;
 }
 
-.game-over-screen button {
+.game-over-screen .btn-primary {
   padding: 12px 20px;
   font-size: 0.95rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  font-family: var(--font-sans);
-}
-
-.game-over-screen button:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
+  width: auto;
 }
 
 /* ==========================================================================
@@ -1119,9 +929,9 @@ a:focus-visible {
 }
 
 .quit-button:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #FCA5A5;
+  background: rgba(var(--danger-rgb), 0.22);
+  border-color: rgba(var(--danger-rgb), 0.5);
+  color: var(--spend-light);
 }
 
 .placeholder-screen {

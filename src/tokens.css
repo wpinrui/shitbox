@@ -24,10 +24,15 @@
 
   /* ── Colours ── */
   --accent: #2DD4BF;
+  --accent-rgb: 45, 212, 191;
   --earn: #4ADE80;
+  --earn-rgb: 74, 222, 128;
   --spend: #F87171;
+  --spend-light: #FCA5A5;
+  --spend-rgb: 248, 113, 113;
   --energy-color: #FBBF24;
   --danger: #EF4444;
+  --danger-rgb: 239, 68, 68;
 
   /* ── Text ── */
   --text-1: #F5F5F5;

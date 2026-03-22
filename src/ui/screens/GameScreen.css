@@ -255,33 +255,6 @@
   margin: 20px 0;
 }
 
-/* ── Map Body Grid ── */
-.map-body {
-  flex: 1;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
-  grid-auto-rows: auto;
-  gap: 10px;
-  justify-content: start;
-  align-content: start;
-}
-
-.region-label {
-  grid-column: 1 / -1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-1);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  padding: 8px 0 2px;
-  text-shadow: var(--shadow-text);
-}
-
-.region-label:first-child {
-  padding-top: 0;
-}
-
 /* ── Stranded notice ── */
 .stranded-notice {
   padding: 1.6rem;

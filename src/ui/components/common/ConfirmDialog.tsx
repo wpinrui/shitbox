@@ -21,10 +21,10 @@ export function ConfirmDialog({
         <h3>{title}</h3>
         <p>{message}</p>
         <div className="confirm-dialog-buttons">
-          <button className="confirm-dialog-cancel" onClick={onCancel}>
+          <button className="btn-secondary" onClick={onCancel}>
             {cancelText}
           </button>
-          <button className="confirm-dialog-confirm" onClick={onConfirm}>
+          <button className="btn-primary" onClick={onConfirm}>
             {confirmText}
           </button>
         </div>

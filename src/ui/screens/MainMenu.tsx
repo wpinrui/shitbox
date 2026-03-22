@@ -22,19 +22,19 @@ export function MainMenu() {
 
           <div className="main-menu__buttons">
             <button
-              className="main-menu__btn main-menu__btn--primary"
+              className="btn-primary"
               onClick={() => setScreen('new_game')}
             >
               New Game
             </button>
             <button
-              className="main-menu__btn main-menu__btn--secondary"
+              className="btn-secondary"
               onClick={() => setShowLoadDialog(true)}
             >
               Load Game
             </button>
             <button
-              className="main-menu__btn main-menu__btn--danger"
+              className="btn-danger"
               onClick={() => window.electronAPI.quitApp()}
             >
               Quit

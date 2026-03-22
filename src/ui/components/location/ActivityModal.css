@@ -112,56 +112,9 @@
   gap: 16px;
 }
 
-.modal-hours__cancel {
-  flex: 1;
-  padding: 12px 20px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: var(--text-2);
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-}
-
-.modal-hours__cancel:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.20);
-  color: var(--text-1);
-}
-
-.modal-hours__cancel:active {
-  background: rgba(255, 255, 255, 0.10);
-  transform: scale(0.98);
-}
-
+.modal-hours__cancel,
 .modal-hours__go {
   flex: 1;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  border-radius: 8px;
-  color: var(--text-1);
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-}
-
-.modal-hours__go:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.modal-hours__go:active {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(0.98);
-  transition: all 0.1s ease;
 }
 
 /* ── Phase: Progress ── */
@@ -282,33 +235,8 @@
 .modal-outcome__result-value--neutral { color: var(--text-1); }
 
 .modal-outcome__close {
-  display: block;
-  width: 100%;
-  padding: 12px 20px;
   margin-top: 12px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  border-radius: 8px;
-  color: var(--text-1);
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: var(--shadow-text);
-  text-align: center;
   opacity: 0;
   transform: translateY(12px);
   animation: slideUp 0.4s ease-out forwards;
-}
-
-.modal-outcome__close:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.modal-outcome__close:active {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(0.98);
-  transition: all 0.1s ease;
 }
