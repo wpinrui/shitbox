@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shitbox — Newspaper Feature (Mockup 6)</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --glass-1-bg: rgba(0, 0, 0, 0.78);
+    --glass-1-blur: 16px;
+    --glass-1-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-1-radius: 16px;
+    --glass-1-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --glass-2-bg: rgba(255, 255, 255, 0.06);
+    --glass-2-blur: 16px;
+    --glass-2-border: 1px solid rgba(255, 255, 255, 0.10);
+    --glass-2-radius: 12px;
+    --glass-2-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+    --glass-3-bg: rgba(255, 255, 255, 0.04);
+    --glass-3-border: 1px solid rgba(255, 255, 255, 0.06);
+    --glass-3-radius: 8px;
+
+    --accent: #2DD4BF;
+    --earn: #4ADE80;
+    --spend: #F87171;
+    --energy-color: #FBBF24;
+    --danger: #EF4444;
+
+    --text-1: #F5F5F5;
+    --text-2: rgba(245, 245, 245, 0.7);
+    --text-3: rgba(245, 245, 245, 0.45);
+
+    --divider: rgba(255, 255, 255, 0.08);
+    --shadow-text: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: var(--font-sans);
+    color: var(--text-1);
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Mockup nav ── */
+  .mockup-nav {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 0 20px;
+    height: 44px;
+    z-index: 200;
+    position: relative;
+  }
+  .mockup-nav__label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+  .mockup-nav__steps { display: flex; gap: 4px; }
+  .mockup-step {
+    padding: 5px 13px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .mockup-step:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.65);
+    border-color: rgba(255, 255, 255, 0.20);
+  }
+  .mockup-step--active {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: var(--text-1);
+  }
+
+  /* ── Background ── */
+  .bg { position: fixed; inset: 0; z-index: 0; }
+  .bg__photo {
+    position: absolute; inset: 0;
+    background: url('../public/assets/backgrounds/scrapyard.jpg') center/cover no-repeat;
+  }
+  .bg__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%);
+  }
+
+  /* ── Shell ── */
+  .shell {
+    flex: 1;
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    padding: 3vh 5vw 5vh;
+    min-height: 0;
+  }
+  .panel {
+    flex: 1;
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur));
+    -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border);
+    border-radius: var(--glass-1-radius);
+    box-shadow: var(--glass-1-shadow);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .header__left { display: flex; align-items: center; gap: 12px; }
+  .header__title { font-size: 1.5rem; font-weight: 700; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .header__subtitle { font-size: 0.85rem; font-weight: 400; color: var(--text-2); margin-left: 4px; }
+  .header__resources { display: flex; align-items: center; gap: 20px; }
+  .header__divider { width: 1px; height: 24px; background: var(--divider); }
+  .res { display: flex; align-items: center; gap: 6px; font-size: 1rem; font-weight: 600; text-shadow: var(--shadow-text); color: var(--text-1); }
+  .res__label { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .energy { display: flex; align-items: center; gap: 8px; }
+  .energy__icon { color: var(--energy-color); font-size: 0.9rem; }
+  .energy__track { width: 120px; height: 8px; background: rgba(255, 255, 255, 0.12); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); }
+  .energy__fill { width: 72%; height: 100%; background: linear-gradient(90deg, var(--earn), var(--energy-color)); border-radius: 4px; }
+  .energy__text { font-size: 0.8rem; font-weight: 400; color: var(--text-2); }
+
+  /* ── Body ── */
+  .body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 0;
+    transition: opacity 0.25s ease;
+  }
+  .body::-webkit-scrollbar { width: 8px; }
+  .body::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+  .body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── Player card ── */
+  .player-card {
+    width: 240px; min-width: 240px; flex-shrink: 0;
+    background: var(--glass-2-bg);
+    border: var(--glass-2-border);
+    border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow);
+    padding: 16px;
+    display: flex; flex-direction: column;
+    align-self: stretch;
+  }
+  .player-card__name { font-size: 1.1rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); margin-bottom: 12px; }
+  .player-card__divider { height: 1px; background: var(--divider); margin: 10px 0; }
+  .player-card__label { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+  .row-3 {
+    background: var(--glass-3-bg); border: var(--glass-3-border); border-radius: var(--glass-3-radius);
+    padding: 8px 12px; margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s ease;
+  }
+  .row-3:hover { background: rgba(255, 255, 255, 0.08); }
+  .row-3__label { font-size: 0.8rem; font-weight: 400; color: var(--text-2); text-shadow: var(--shadow-text); }
+  .row-3__value { font-size: 0.85rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .row-3__icon { margin-right: 8px; font-size: 0.85rem; }
+  .btn-menu {
+    display: block; width: 100%; padding: 10px 20px; margin-top: auto;
+    background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px; color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); transition: all 0.2s ease; text-shadow: var(--shadow-text);
+  }
+  .btn-menu:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+  .btn-menu:active { transform: scale(0.98); transition: all 0.1s ease; }
+
+  /* ── Activity cards ── */
+  .activities { flex: 1; min-width: 0; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; align-content: start; }
+  .card {
+    background: var(--glass-2-bg);
+    backdrop-filter: blur(var(--glass-2-blur));
+    -webkit-backdrop-filter: blur(var(--glass-2-blur));
+    border: var(--glass-2-border); border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow); padding: 20px; cursor: pointer; transition: all 0.2s ease;
+  }
+  .card:hover {
+    background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.20);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transform: translateY(-1px);
+  }
+  .card:active { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.30); transform: translateY(0) scale(0.99); transition: all 0.1s ease; }
+  .card__name { font-size: 1rem; font-weight: 600; color: var(--text-1); margin-bottom: 8px; text-shadow: var(--shadow-text); }
+  .card__desc { font-size: 0.9rem; font-weight: 400; color: var(--text-2); line-height: 1.5; margin-bottom: 12px; text-shadow: var(--shadow-text); }
+  .card__desc:last-child { margin-bottom: 0; }
+  .card__divider { height: 1px; background: var(--divider); margin-bottom: 12px; }
+  .card__cost { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .card__cost:last-child { margin-bottom: 0; }
+  .card__cost-icon { font-size: 0.85rem; width: 18px; text-align: center; }
+  .card__cost-icon--time { color: var(--text-2); }
+  .card__cost-icon--energy { color: var(--energy-color); }
+  .card__cost-icon--spend { color: var(--spend); }
+  .card__cost-icon--earn { color: var(--earn); }
+  .card__cost-text { font-size: 0.85rem; font-weight: 400; text-shadow: var(--shadow-text); }
+  .card__cost-text--neutral { color: var(--text-2); }
+  .card__cost-text--earn { color: var(--earn); }
+  .card__cost-text--spend { color: var(--spend); }
+  .section-divider { height: 1px; background: var(--divider); margin: 20px 0; }
+
+  /* ── State: card visibility ── */
+  .card--read-newspaper { display: none; }
+  [data-state="purchased"] .card--buy-newspaper { display: none; }
+  [data-state="purchased"] .card--read-newspaper { display: block; }
+
+  /* ── State: body dimming ── */
+  [data-state="buying"] .body,
+  [data-state="reading"] .body {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* ── Modal backdrop ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+    display: none;
+    align-items: center; justify-content: center;
+  }
+  [data-state="buying"] .activity-backdrop { display: flex; }
+  [data-state="reading"] .newspaper-backdrop { display: flex; }
+
+  /* ── Activity modal ── */
+  .activity-modal {
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur)); -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border); border-radius: var(--glass-1-radius); box-shadow: var(--glass-1-shadow);
+    width: 420px; padding: 32px;
+    display: flex; flex-direction: column;
+    animation: modalIn 0.3s ease-out;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes barFill { 0% { width: 0%; } 100% { width: 100%; } }
+  @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes progressFade { 0% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+  .progress { text-align: center; animation: progressFade 2.5s ease-in-out forwards; }
+  .progress__title { font-size: 1.2rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); margin-bottom: 8px; }
+  .progress__desc { font-size: 0.9rem; font-weight: 400; color: var(--text-2); text-shadow: var(--shadow-text); margin-bottom: 20px; }
+  .progress__bar-track { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+  .progress__bar-fill { height: 100%; width: 0%; background: var(--text-1); border-radius: 3px; animation: barFill 2.2s ease-in-out forwards; }
+  .progress__time { font-size: 0.85rem; font-weight: 400; color: var(--text-3); animation: pulse 1s ease-in-out infinite; }
+
+  .outcome { opacity: 0; animation: fadeIn 0.4s ease-out 2.8s forwards; }
+  .outcome__title { font-size: 1.2rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); text-align: center; margin-bottom: 6px; opacity: 0; transform: translateY(8px); animation: slideUp 0.35s ease-out 2.8s forwards; }
+  .outcome__subtitle { font-size: 0.85rem; font-weight: 400; color: var(--text-2); text-shadow: var(--shadow-text); text-align: center; margin-bottom: 20px; opacity: 0; transform: translateY(8px); animation: slideUp 0.35s ease-out 3.0s forwards; }
+  .outcome__divider { height: 1px; background: var(--divider); margin-bottom: 16px; opacity: 0; animation: fadeIn 0.3s ease-out 3.1s forwards; }
+  .outcome__results { margin-bottom: 8px; }
+
+  .result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: var(--glass-3-bg); border: var(--glass-3-border); border-radius: var(--glass-3-radius);
+    margin-bottom: 8px;
+    opacity: 0; transform: translateY(12px);
+  }
+  .result__icon { font-size: 1.1rem; width: 24px; text-align: center; flex-shrink: 0; }
+  .result__label { font-size: 0.9rem; font-weight: 400; color: var(--text-2); text-shadow: var(--shadow-text); flex: 1; }
+  .result__value { font-size: 0.95rem; font-weight: 600; text-shadow: var(--shadow-text); }
+  .result__value--earn { color: var(--earn); }
+  .result__value--spend { color: var(--spend); }
+  .result__value--neutral { color: var(--text-1); }
+  .result:nth-child(1) { animation: slideUp 0.4s ease-out 3.2s forwards; }
+  .result:nth-child(2) { animation: slideUp 0.4s ease-out 3.4s forwards; }
+  .result:nth-child(3) { animation: slideUp 0.4s ease-out 3.6s forwards; }
+
+  .outcome__actions {
+    display: flex; gap: 8px; margin-top: 12px;
+    opacity: 0; transform: translateY(12px);
+    animation: slideUp 0.4s ease-out 3.9s forwards;
+  }
+  .btn-modal {
+    flex: 1; padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px; color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-shadow: var(--shadow-text); text-align: center;
+  }
+  .btn-modal:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+  .btn-modal:active { transform: scale(0.98); transition: all 0.1s ease; }
+  .btn-modal--secondary { background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--text-2); }
+  .btn-modal--secondary:hover { background: rgba(255, 255, 255, 0.06); color: var(--text-1); }
+
+  /* ── Newspaper modal ── */
+  .newspaper-modal {
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur)); -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border); border-radius: var(--glass-1-radius); box-shadow: var(--glass-1-shadow);
+    width: 520px; max-height: 80vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    animation: modalIn 0.3s ease-out;
+  }
+  .newspaper-masthead {
+    flex-shrink: 0;
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--divider);
+    background: var(--glass-3-bg);
+  }
+  .newspaper-masthead__title {
+    font-size: 1.35rem; font-weight: 700;
+    color: var(--text-1); text-shadow: var(--shadow-text);
+  }
+  .newspaper-masthead__date {
+    font-size: 0.8rem; font-weight: 400;
+    color: var(--text-3); text-shadow: var(--shadow-text);
+  }
+  .newspaper-content {
+    flex: 1;
+    padding: 20px 28px 28px;
+    overflow-y: auto;
+  }
+  .newspaper-content::-webkit-scrollbar { width: 6px; }
+  .newspaper-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  .newspaper-section-label {
+    font-size: 0.7rem; font-weight: 600;
+    color: var(--text-3); text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 10px;
+  }
+  .headlines { margin-bottom: 4px; }
+  .headline { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
+  .headline__bullet { color: var(--text-3); font-size: 0.75rem; margin-top: 3px; flex-shrink: 0; }
+  .headline__text { font-size: 0.9rem; font-weight: 400; color: var(--text-2); line-height: 1.45; text-shadow: var(--shadow-text); }
+
+  .newspaper-divider { height: 1px; background: var(--divider); margin: 18px 0; }
+
+  .gigs { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .gig-card {
+    background: var(--glass-2-bg); border: var(--glass-2-border); border-radius: var(--glass-2-radius);
+    box-shadow: var(--glass-2-shadow); padding: 16px;
+  }
+  .gig-card__name { font-size: 1rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); margin-bottom: 6px; }
+  .gig-card__desc { font-size: 0.85rem; font-weight: 400; color: var(--text-2); line-height: 1.45; text-shadow: var(--shadow-text); margin-bottom: 12px; }
+  .gig-card__divider { height: 1px; background: var(--divider); margin-bottom: 12px; }
+  .gig-card__costs { display: flex; align-items: center; gap: 20px; margin-bottom: 14px; }
+  .gig-card__cost { display: flex; align-items: center; gap: 6px; }
+  .gig-card__cost-icon { font-size: 0.85rem; }
+  .gig-card__cost-text { font-size: 0.875rem; font-weight: 600; text-shadow: var(--shadow-text); }
+  .gig-card__cost-text--earn { color: var(--earn); }
+  .gig-card__cost-text--time { color: var(--text-2); }
+
+  .btn-gig {
+    display: block; width: 100%; padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px; color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    text-shadow: var(--shadow-text); text-align: center;
+  }
+  .btn-gig:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+  .btn-gig:active { transform: scale(0.98); transition: all 0.1s ease; }
+  .btn-gig--taken {
+    background: transparent; border: 1px solid rgba(255, 255, 255, 0.10);
+    color: var(--text-3); cursor: default; pointer-events: none;
+  }
+  .btn-gig--expired {
+    background: transparent; border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(245, 245, 245, 0.25); cursor: default; pointer-events: none;
+  }
+
+  .newspaper-close {
+    display: block; width: 100%; padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px; color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    text-shadow: var(--shadow-text); text-align: center;
+  }
+  .newspaper-close:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+  .newspaper-close:active { transform: scale(0.98); transition: all 0.1s ease; }
+</style>
+</head>
+<body data-state="idle">
+
+<!-- ── Mockup navigation ── -->
+<div class="mockup-nav">
+  <span class="mockup-nav__label">Flow</span>
+  <div class="mockup-nav__steps">
+    <button class="mockup-step mockup-step--active" data-target="idle">1 · Activity screen</button>
+    <button class="mockup-step" data-target="buying">2 · Buying newspaper</button>
+    <button class="mockup-step" data-target="reading">3 · Reading newspaper</button>
+    <button class="mockup-step" data-target="purchased">4 · After reading</button>
+  </div>
+</div>
+
+<!-- ── Background ── -->
+<div class="bg">
+  <div class="bg__photo"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<!-- ── Game shell ── -->
+<div class="shell">
+  <div class="panel">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header__left">
+        <div class="header__title">Scrapyard</div>
+        <div class="header__subtitle">A sprawling junkyard full of old cars and salvage parts.</div>
+      </div>
+      <div class="header__resources">
+        <div class="res"><span class="res__label">Day</span><span>14</span></div>
+        <div class="header__divider"></div>
+        <div class="res" id="time-display">8:30 AM</div>
+        <div class="header__divider"></div>
+        <div class="res" id="money-display">$1,247</div>
+        <div class="header__divider"></div>
+        <div class="energy">
+          <span class="energy__icon">⚡</span>
+          <div class="energy__track"><div class="energy__fill"></div></div>
+          <span class="energy__text">72</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+      <!-- Player card -->
+      <div class="player-card">
+        <div class="player-card__name">Ivan</div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">STATS</div>
+        <div class="row-3"><span class="row-3__label">Charisma</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label">Mechanical</span><span class="row-3__value">5</span></div>
+        <div class="row-3"><span class="row-3__label">Fitness</span><span class="row-3__value">2</span></div>
+        <div class="row-3"><span class="row-3__label">Knowledge</span><span class="row-3__value">0</span></div>
+        <div class="row-3"><span class="row-3__label">Driving</span><span class="row-3__value">0</span></div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">INVENTORY</div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🔧</span>Parts</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🚗</span>Cars</span><span class="row-3__value">1</span></div>
+        <button class="btn-menu">Menu</button>
+      </div>
+
+      <!-- Activities -->
+      <div class="activities">
+
+        <!-- Location activities -->
+        <div class="cards">
+          <div class="card">
+            <div class="card__name">Manual Labor</div>
+            <div class="card__desc">Haul scrap metal and sort materials for pay.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–8 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">15 / hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$8 / hr</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Scavenge Parts</div>
+            <div class="card__desc">Search the yard for usable engine and body parts.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–4 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">10 / hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔧</span><span class="card__cost-text card__cost-text--neutral">Find parts</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Sell Scrap</div>
+            <div class="card__desc">Sell collected scrap metal and junk for quick cash.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1 hr</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">5</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$ varies</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Browse Junk Cars</div>
+            <div class="card__desc">Search for cheap project cars in the scrapyard lot.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">0.5 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--neutral">5</span></div>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Universal actions -->
+        <div class="cards">
+          <div class="card">
+            <div class="card__name">Nap</div>
+            <div class="card__desc">Take a short rest anywhere. Less effective than sleeping in a car.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–8 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--earn">+2 / hr</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Sleep</div>
+            <div class="card__desc">Rest in your shitbox to recover energy. Requires a car at your location.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–12 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--earn">+4 / hr</span></div>
+          </div>
+          <div class="card">
+            <div class="card__name">Leave</div>
+            <div class="card__desc">Open the map and travel to another location.</div>
+          </div>
+
+          <!-- Buy Newspaper — pre-purchase (click triggers buying flow) -->
+          <div class="card card--buy-newspaper" id="buy-newspaper-card">
+            <div class="card__name">Buy Newspaper</div>
+            <div class="card__desc">Pick up today's paper. Find out what's happening — and whether any gigs are worth chasing.</div>
+            <div class="card__divider"></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">0.5 hrs</span></div>
+            <div class="card__cost"><span class="card__cost-icon card__cost-icon--spend">💰</span><span class="card__cost-text card__cost-text--spend">-$5</span></div>
+          </div>
+
+          <!-- Read Newspaper — post-purchase (click re-opens modal) -->
+          <div class="card card--read-newspaper" id="read-newspaper-card">
+            <div class="card__name">Read Newspaper</div>
+            <div class="card__desc">You have today's paper. Check for gigs before you head out.</div>
+          </div>
+        </div>
+
+      </div><!-- /activities -->
+    </div><!-- /body -->
+  </div><!-- /panel -->
+</div><!-- /shell -->
+
+<!-- ── Activity modal (state: buying) ── -->
+<div class="modal-backdrop activity-backdrop">
+  <div class="activity-modal">
+
+    <!-- Phase 1: Progress -->
+    <div class="progress">
+      <div class="progress__title">Buy Newspaper</div>
+      <div class="progress__desc">Heading to the stand on the corner...</div>
+      <div class="progress__bar-track"><div class="progress__bar-fill"></div></div>
+      <div class="progress__time">30 minutes passing...</div>
+    </div>
+
+    <!-- Phase 2: Outcome -->
+    <div class="outcome">
+      <div class="outcome__title">Buy Newspaper</div>
+      <div class="outcome__subtitle">You picked up today's paper.</div>
+      <div class="outcome__divider"></div>
+      <div class="outcome__results">
+        <div class="result">
+          <span class="result__icon">📰</span>
+          <span class="result__label">Newspaper</span>
+          <span class="result__value result__value--neutral">Purchased</span>
+        </div>
+        <div class="result">
+          <span class="result__icon">💰</span>
+          <span class="result__label">Money spent</span>
+          <span class="result__value result__value--spend">-$5</span>
+        </div>
+        <div class="result">
+          <span class="result__icon">⏱</span>
+          <span class="result__label">Time elapsed</span>
+          <span class="result__value result__value--neutral">0.5 hrs</span>
+        </div>
+      </div>
+      <div class="outcome__actions">
+        <button class="btn-modal" id="btn-read-now">Read Newspaper</button>
+        <button class="btn-modal btn-modal--secondary" id="btn-later">Later</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Newspaper modal (state: reading) ── -->
+<div class="modal-backdrop newspaper-backdrop">
+  <div class="newspaper-modal">
+
+    <div class="newspaper-masthead">
+      <span class="newspaper-masthead__title">The Daily Shitbox</span>
+      <span class="newspaper-masthead__date">Day 14</span>
+    </div>
+
+    <div class="newspaper-content">
+
+      <div class="newspaper-section-label">HEADLINES</div>
+      <div class="headlines">
+        <div class="headline">
+          <span class="headline__bullet">·</span>
+          <span class="headline__text">Council extends parking restrictions for the fourth year running. Nobody particularly surprised.</span>
+        </div>
+        <div class="headline">
+          <span class="headline__bullet">·</span>
+          <span class="headline__text">Local man reportedly spotted the same stray cat in three different suburbs this week.</span>
+        </div>
+        <div class="headline">
+          <span class="headline__bullet">·</span>
+          <span class="headline__text">Weather bureau forecasts "broadly unchanged conditions" for the eleventh consecutive week.</span>
+        </div>
+      </div>
+
+      <div class="newspaper-divider"></div>
+
+      <div class="newspaper-section-label">GIGS TODAY</div>
+      <div class="gigs">
+
+        <!-- Gig 1: Available — click to take -->
+        <div class="gig-card">
+          <div class="gig-card__name">Moving crew needs an extra pair of hands</div>
+          <div class="gig-card__desc">Bigfoot Removals is short-staffed. Heavy lifting, nothing glamorous. Cash in hand at end of day.</div>
+          <div class="gig-card__divider"></div>
+          <div class="gig-card__costs">
+            <div class="gig-card__cost">
+              <span class="gig-card__cost-icon">💰</span>
+              <span class="gig-card__cost-text gig-card__cost-text--earn">+$120</span>
+            </div>
+            <div class="gig-card__cost">
+              <span class="gig-card__cost-icon">⏱</span>
+              <span class="gig-card__cost-text gig-card__cost-text--time">6 hrs</span>
+            </div>
+          </div>
+          <button class="btn-gig">Take the gig</button>
+        </div>
+
+        <!-- Gig 2: Already taken — disabled state -->
+        <div class="gig-card">
+          <div class="gig-card__name">Sandwich board, Main Street</div>
+          <div class="gig-card__desc">New gym opening. Walk the block holding their sign for a few hours. Mind-numbing, but they pay on the spot.</div>
+          <div class="gig-card__divider"></div>
+          <div class="gig-card__costs">
+            <div class="gig-card__cost">
+              <span class="gig-card__cost-icon">💰</span>
+              <span class="gig-card__cost-text gig-card__cost-text--earn">+$80</span>
+            </div>
+            <div class="gig-card__cost">
+              <span class="gig-card__cost-icon">⏱</span>
+              <span class="gig-card__cost-text gig-card__cost-text--time">4 hrs</span>
+            </div>
+          </div>
+          <button class="btn-gig btn-gig--taken">Already taken</button>
+        </div>
+
+      </div>
+
+      <button class="newspaper-close" id="newspaper-close">Close</button>
+
+    </div><!-- /newspaper-content -->
+  </div><!-- /newspaper-modal -->
+</div><!-- /newspaper-backdrop -->
+
+<script>
+  const steps = document.querySelectorAll('.mockup-step');
+
+  function setState(state) {
+    document.body.dataset.state = state;
+    steps.forEach(s => s.classList.toggle('mockup-step--active', s.dataset.target === state));
+
+    // Update resource display to reflect post-purchase state
+    const money = document.getElementById('money-display');
+    const time  = document.getElementById('time-display');
+    if (state === 'idle') {
+      money.textContent = '$1,247';
+      time.textContent  = '8:30 AM';
+    } else {
+      money.textContent = '$1,242';
+      time.textContent  = '9:00 AM';
+    }
+
+    if (state === 'buying') restartActivityAnimation();
+  }
+
+  function restartActivityAnimation() {
+    const els = document.querySelectorAll(
+      '.progress, .progress__bar-fill, .outcome, .outcome__title, ' +
+      '.outcome__subtitle, .outcome__divider, .result, .outcome__actions'
+    );
+    els.forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetHeight; // force reflow
+      el.style.animation = '';
+    });
+  }
+
+  // Nav buttons
+  steps.forEach(btn => btn.addEventListener('click', () => setState(btn.dataset.target)));
+
+  // In-game card clicks
+  document.getElementById('buy-newspaper-card').addEventListener('click', () => setState('buying'));
+  document.getElementById('read-newspaper-card').addEventListener('click', () => setState('reading'));
+
+  // Activity modal outcome actions
+  document.getElementById('btn-read-now').addEventListener('click', () => setState('reading'));
+  document.getElementById('btn-later').addEventListener('click', () => setState('purchased'));
+
+  // Newspaper modal close
+  document.getElementById('newspaper-close').addEventListener('click', () => setState('purchased'));
+
+  // Taking a gig — show the taken state interactively
+  document.querySelectorAll('.btn-gig:not(.btn-gig--taken):not(.btn-gig--expired)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.textContent = 'Already taken';
+      btn.classList.add('btn-gig--taken');
+    });
+  });
+</script>
+
+</body>
+</html>
