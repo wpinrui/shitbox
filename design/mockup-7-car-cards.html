@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shitbox — Car UI: Cards &amp; Selection (Mockup 7)</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --glass-1-bg: rgba(0, 0, 0, 0.78);
+    --glass-1-blur: 16px;
+    --glass-1-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-1-radius: 16px;
+    --glass-1-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --glass-2-bg: rgba(255, 255, 255, 0.06);
+    --glass-2-blur: 16px;
+    --glass-2-border: 1px solid rgba(255, 255, 255, 0.10);
+    --glass-2-radius: 12px;
+    --glass-2-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+    --glass-3-bg: rgba(255, 255, 255, 0.04);
+    --glass-3-border: 1px solid rgba(255, 255, 255, 0.06);
+    --glass-3-radius: 8px;
+
+    --accent: #2DD4BF;
+    --earn: #4ADE80;
+    --spend: #F87171;
+    --energy-color: #FBBF24;
+    --danger: #EF4444;
+
+    --text-1: #F5F5F5;
+    --text-2: rgba(245, 245, 245, 0.7);
+    --text-3: rgba(245, 245, 245, 0.45);
+
+    --divider: rgba(255, 255, 255, 0.08);
+    --shadow-text: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: var(--font-sans);
+    color: var(--text-1);
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Mockup nav ── */
+  .mockup-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center;
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 0 20px;
+    height: 44px;
+    z-index: 200;
+    position: relative;
+  }
+  .mockup-nav__label {
+    font-size: 0.68rem; font-weight: 600;
+    color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin-right: 16px; flex-shrink: 0;
+  }
+  .mockup-nav__steps { display: flex; gap: 4px; }
+  .mockup-step {
+    padding: 5px 13px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-sans);
+    font-size: 0.75rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+  }
+  .mockup-step:hover { background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.65); border-color: rgba(255, 255, 255, 0.20); }
+  .mockup-step--active { background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.28); color: var(--text-1); }
+
+  /* ── Background ── */
+  .bg { position: fixed; inset: 0; z-index: 0; }
+  .bg__photo {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: opacity 0.4s ease;
+  }
+  .bg__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%);
+  }
+
+  /* ── Shell ── */
+  .shell { flex: 1; position: relative; z-index: 1; display: flex; flex-direction: column; padding: 3vh 5vw 5vh; min-height: 0; }
+  .panel { flex: 1; background: var(--glass-1-bg); backdrop-filter: blur(var(--glass-1-blur)); -webkit-backdrop-filter: blur(var(--glass-1-blur)); border: var(--glass-1-border); border-radius: var(--glass-1-radius); box-shadow: var(--glass-1-shadow); display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Header ── */
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--divider); flex-shrink: 0; }
+  .header__left { display: flex; align-items: center; gap: 12px; }
+  .header__title { font-size: 1.5rem; font-weight: 700; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .header__subtitle { font-size: 0.85rem; font-weight: 400; color: var(--text-2); margin-left: 4px; }
+  .header__resources { display: flex; align-items: center; gap: 20px; }
+  .header__divider { width: 1px; height: 24px; background: var(--divider); }
+  .res { display: flex; align-items: center; gap: 6px; font-size: 1rem; font-weight: 600; text-shadow: var(--shadow-text); color: var(--text-1); }
+  .res__label { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .energy { display: flex; align-items: center; gap: 8px; }
+  .energy__icon { color: var(--energy-color); font-size: 0.9rem; }
+  .energy__track { width: 120px; height: 8px; background: rgba(255, 255, 255, 0.12); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); }
+  .energy__fill { width: 72%; height: 100%; background: linear-gradient(90deg, var(--earn), var(--energy-color)); border-radius: 4px; }
+  .energy__text { font-size: 0.8rem; font-weight: 400; color: var(--text-2); }
+
+  /* ── Body ── */
+  .body { flex: 1; overflow-y: auto; padding: 20px; display: flex; gap: 20px; min-height: 0; transition: opacity 0.25s ease; }
+  .body::-webkit-scrollbar { width: 8px; }
+  .body::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+  .body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+  /* ── Player card ── */
+  .player-card { width: 240px; min-width: 240px; flex-shrink: 0; background: var(--glass-2-bg); border: var(--glass-2-border); border-radius: var(--glass-2-radius); box-shadow: var(--glass-2-shadow); padding: 16px; display: flex; flex-direction: column; align-self: stretch; }
+  .player-card__name { font-size: 1.1rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); margin-bottom: 12px; }
+  .player-card__divider { height: 1px; background: var(--divider); margin: 10px 0; }
+  .player-card__label { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+  .row-3 { background: var(--glass-3-bg); border: var(--glass-3-border); border-radius: var(--glass-3-radius); padding: 8px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s ease; }
+  .row-3:hover { background: rgba(255, 255, 255, 0.08); }
+  .row-3__label { font-size: 0.8rem; font-weight: 400; color: var(--text-2); text-shadow: var(--shadow-text); }
+  .row-3__value { font-size: 0.85rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .row-3__icon { margin-right: 8px; font-size: 0.85rem; }
+  .btn-menu { display: block; width: 100%; padding: 10px 20px; margin-top: auto; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20); border-radius: 8px; color: var(--text-1); font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-shadow: var(--shadow-text); }
+  .btn-menu:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+
+  /* ── Activities area ── */
+  .activities { flex: 1; min-width: 0; }
+  .section-label { font-size: 0.7rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; align-content: start; }
+  .section-divider { height: 1px; background: var(--divider); margin: 20px 0; }
+
+  .card { background: var(--glass-2-bg); backdrop-filter: blur(var(--glass-2-blur)); -webkit-backdrop-filter: blur(var(--glass-2-blur)); border: var(--glass-2-border); border-radius: var(--glass-2-radius); box-shadow: var(--glass-2-shadow); padding: 20px; cursor: pointer; transition: all 0.2s ease; }
+  .card:hover { background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.20); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transform: translateY(-1px); }
+  .card:active { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.30); transform: translateY(0) scale(0.99); transition: all 0.1s ease; }
+  .card--disabled { opacity: 0.42; cursor: not-allowed; }
+  .card--disabled:hover { background: var(--glass-2-bg); border-color: rgba(255, 255, 255, 0.10); box-shadow: var(--glass-2-shadow); transform: none; }
+  .card__name { font-size: 1rem; font-weight: 600; color: var(--text-1); margin-bottom: 8px; text-shadow: var(--shadow-text); }
+  .card__desc { font-size: 0.9rem; font-weight: 400; color: var(--text-2); line-height: 1.5; margin-bottom: 12px; text-shadow: var(--shadow-text); }
+  .card__desc:last-child { margin-bottom: 0; }
+  .card__divider { height: 1px; background: var(--divider); margin-bottom: 12px; }
+  .card__cost { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .card__cost:last-child { margin-bottom: 0; }
+  .card__cost-icon { font-size: 0.85rem; width: 18px; text-align: center; }
+  .card__cost-icon--time { color: var(--text-2); }
+  .card__cost-icon--energy { color: var(--energy-color); }
+  .card__cost-icon--spend { color: var(--spend); }
+  .card__cost-icon--earn { color: var(--earn); }
+  .card__cost-icon--parts { color: var(--accent); }
+  .card__cost-text { font-size: 0.85rem; font-weight: 400; text-shadow: var(--shadow-text); }
+  .card__cost-text--neutral { color: var(--text-2); }
+  .card__cost-text--earn { color: var(--earn); }
+  .card__cost-text--spend { color: var(--spend); }
+  .card__cost-text--parts { color: var(--accent); }
+  .card__locked { font-size: 0.75rem; font-weight: 600; color: var(--spend); margin-top: 8px; }
+
+  /* ── Car card ── */
+  .car-feature { margin-bottom: 20px; }
+  .car-card {
+    background: var(--glass-2-bg); border: var(--glass-2-border); border-radius: var(--glass-2-radius); box-shadow: var(--glass-2-shadow);
+    display: flex; overflow: hidden; min-height: 150px;
+  }
+  .car-card__image {
+    width: 190px; min-width: 190px; flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.03);
+    position: relative;
+  }
+  .car-card__image-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+  }
+  /* Right-edge fade so image blends into the card info area */
+  .car-card__image-fade {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, transparent 55%, rgba(0, 0, 0, 0.5) 100%);
+  }
+  .car-card__image-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 400; color: var(--text-3);
+    font-style: italic; text-align: center; padding: 16px;
+    text-shadow: var(--shadow-text);
+  }
+  .car-card__info {
+    flex: 1;
+    padding: 14px 20px;
+    display: flex; flex-direction: column; gap: 0;
+    min-width: 0;
+  }
+  .car-card__name {
+    font-size: 1rem; font-weight: 700;
+    color: var(--text-1); text-shadow: var(--shadow-text);
+    margin-bottom: 10px; line-height: 1.2;
+  }
+  .car-stats { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; max-width: 480px; }
+  .cond-row { display: flex; align-items: center; }
+  .cond-row__label {
+    font-size: 0.65rem; font-weight: 600;
+    color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em;
+    width: 48px; flex-shrink: 0;
+  }
+  .cond-row__track {
+    flex: 1; height: 5px;
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 3px; overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    margin: 0 10px;
+  }
+  .cond-row__fill { height: 100%; border-radius: 3px; }
+  .cond-row__fill--excellent { background: var(--earn); }
+  .cond-row__fill--good     { background: var(--earn); }
+  .cond-row__fill--fair     { background: var(--energy-color); }
+  .cond-row__fill--poor     { background: var(--spend); }
+  .cond-row__fill--broken   { width: 2px !important; background: var(--spend); }
+
+  .cond-row__rating {
+    font-size: 0.72rem; font-weight: 600;
+    width: 80px; flex-shrink: 0; white-space: nowrap; text-shadow: var(--shadow-text);
+  }
+  .cond-row__rating--excellent { color: var(--earn); }
+  .cond-row__rating--good     { color: var(--earn); }
+  .cond-row__rating--fair     { color: var(--energy-color); }
+  .cond-row__rating--poor     { color: var(--spend); }
+  .cond-row__rating--broken   { color: var(--spend); }
+
+  .car-card__footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: auto; padding-top: 8px;
+    border-top: 1px solid var(--divider);
+  }
+  .car-card__fuel { font-size: 0.78rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); }
+  .car-card__value { font-size: 0.78rem; font-weight: 600; color: var(--text-2); text-shadow: var(--shadow-text); }
+  .car-card__bio { font-size: 0.78rem; font-weight: 400; color: var(--text-3); line-height: 1.4; font-style: italic; text-shadow: var(--shadow-text); margin-bottom: 8px; max-width: 560px; }
+
+  /* Compact car card (used in multi-car list) */
+  .car-card--compact { min-height: 0; }
+  .car-card--compact .car-card__image { width: 120px; min-width: 120px; }
+  .car-card--compact .car-card__info { padding: 12px 16px; gap: 0; }
+  .car-card--compact .car-card__name { font-size: 0.9rem; margin-bottom: 8px; }
+  .car-card--compact .car-stats { margin-bottom: 6px; }
+  /* Highlighted / currently-selected car */
+  .car-card--selected {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  /* ── Car selector ── */
+  .car-selector-row {
+    display: none; /* shown in selector state */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .car-selector-label { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); flex-shrink: 0; }
+  .car-selector-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: var(--glass-3-bg); border: var(--glass-3-border); border-radius: 6px;
+    color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease; text-shadow: var(--shadow-text);
+    position: relative;
+  }
+  .car-selector-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.14); }
+  .car-selector-btn__arrow { font-size: 0.7rem; color: var(--text-3); margin-left: 2px; }
+  .car-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0;
+    min-width: 256px;
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur)); -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border); border-radius: 10px; box-shadow: var(--glass-1-shadow);
+    padding: 6px; z-index: 50;
+    display: none;
+    animation: dropdownIn 0.15s ease-out;
+  }
+  @keyframes dropdownIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .car-dropdown--open { display: block; }
+  .car-option { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 7px; cursor: pointer; transition: background 0.15s ease; }
+  .car-option:hover { background: rgba(255, 255, 255, 0.06); }
+  .car-option--active { background: rgba(255, 255, 255, 0.08); }
+  .car-option__name { font-size: 0.875rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .car-option__stats { font-size: 0.75rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); }
+  .car-option__check { margin-left: auto; font-size: 0.75rem; color: var(--earn); }
+
+  .cars-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 0; }
+
+  /* ── Browse modal ── */
+  .browse-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .browse-modal {
+    background: var(--glass-1-bg);
+    backdrop-filter: blur(var(--glass-1-blur)); -webkit-backdrop-filter: blur(var(--glass-1-blur));
+    border: var(--glass-1-border); border-radius: var(--glass-1-radius); box-shadow: var(--glass-1-shadow);
+    width: 560px; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: modalIn 0.3s ease-out;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .browse-modal__header {
+    flex-shrink: 0;
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--divider);
+    background: var(--glass-3-bg);
+  }
+  .browse-modal__title { font-size: 1.2rem; font-weight: 700; color: var(--text-1); text-shadow: var(--shadow-text); }
+  .browse-modal__sub { font-size: 0.8rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); }
+  .browse-modal__content { flex: 1; padding: 20px 28px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .browse-modal__content::-webkit-scrollbar { width: 6px; }
+  .browse-modal__content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  .browse-modal__footer { flex-shrink: 0; padding: 0 28px 24px; }
+  .browse-modal__note { font-size: 0.78rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); margin-bottom: 14px; text-align: center; font-style: italic; }
+  .browse-modal__close {
+    display: block; width: 100%; padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 8px; color: var(--text-1); font-family: var(--font-sans);
+    font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    text-shadow: var(--shadow-text); text-align: center;
+  }
+  .browse-modal__close:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+  .browse-modal__close:active { transform: scale(0.98); transition: all 0.1s ease; }
+
+  /* Listing card */
+  .listing-card {
+    background: var(--glass-2-bg); border: var(--glass-2-border); border-radius: var(--glass-2-radius); box-shadow: var(--glass-2-shadow);
+    display: flex; overflow: hidden; min-height: 90px;
+  }
+  .listing-card__image {
+    width: 120px; min-width: 120px; flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.03);
+    position: relative;
+  }
+  .listing-card__image-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .listing-card__image-fade { position: absolute; inset: 0; background: linear-gradient(to right, transparent 55%, rgba(0, 0, 0, 0.4) 100%); }
+  .listing-card__image-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; color: var(--text-3); font-style: italic; text-align: center; padding: 8px; }
+  .listing-card__info { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+  .listing-card__name { font-size: 0.95rem; font-weight: 600; color: var(--text-1); text-shadow: var(--shadow-text); margin-bottom: 6px; }
+  .listing-card__badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0; }
+  .listing-badge { font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
+  .listing-badge--good  { background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.30); color: var(--earn); }
+  .listing-badge--fair  { background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.30); color: var(--energy-color); }
+  .listing-badge--poor  { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.30); color: var(--spend); }
+  .listing-card__footer { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 8px; }
+  .listing-card__expires { font-size: 0.72rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); }
+  .listing-card__price-wrap { text-align: right; }
+  .listing-card__price-label { font-size: 0.65rem; font-weight: 400; color: var(--text-3); text-shadow: var(--shadow-text); display: block; }
+  .listing-card__price { font-size: 1.05rem; font-weight: 700; color: var(--text-1); text-shadow: var(--shadow-text); }
+
+  /* ── State rules ── */
+  [data-state="garage"]   .bg__photo { background-image: url('../public/assets/backgrounds/garage.jpg'); }
+  [data-state="selector"] .bg__photo { background-image: url('../public/assets/backgrounds/garage.jpg'); }
+  [data-state="browse"]   .bg__photo { background-image: url('../public/assets/backgrounds/scrapyard.jpg'); }
+
+  /* Multi-car display — only in selector state */
+  .car-feature--multi { display: none; }
+  [data-state="selector"] .car-feature--single { display: none; }
+  [data-state="selector"] .car-feature--multi  { display: block; }
+
+  /* Car selector row — only in selector state */
+  [data-state="selector"] .car-selector-row { display: flex; }
+
+  /* Garage vs scrapyard activity sections */
+  .garage-activities   { display: block; }
+  .scrapyard-activities { display: none; }
+  [data-state="browse"] .garage-activities    { display: none; }
+  [data-state="browse"] .scrapyard-activities { display: block; }
+
+  /* Browse modal */
+  [data-state="browse"] .browse-backdrop { display: flex; }
+  [data-state="browse"] .body { opacity: 0.3; pointer-events: none; }
+</style>
+</head>
+<body data-state="garage">
+
+<!-- ── Mockup nav ── -->
+<div class="mockup-nav">
+  <span class="mockup-nav__label">Phase 3 Car UI</span>
+  <div class="mockup-nav__steps">
+    <button class="mockup-step mockup-step--active" data-target="garage">1 · Garage (one car)</button>
+    <button class="mockup-step" data-target="selector">2 · Car selector (multi-car)</button>
+    <button class="mockup-step" data-target="browse">3 · Browse results</button>
+  </div>
+</div>
+
+<!-- ── Background ── -->
+<div class="bg">
+  <div class="bg__photo"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<!-- ── Game shell ── -->
+<div class="shell">
+  <div class="panel">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header__left">
+        <div class="header__title" id="header-title">Garage</div>
+        <div class="header__subtitle" id="header-subtitle">Perform basic repairs on your car. Keep it running.</div>
+      </div>
+      <div class="header__resources">
+        <div class="res"><span class="res__label">Day</span><span>14</span></div>
+        <div class="header__divider"></div>
+        <div class="res">9:00 AM</div>
+        <div class="header__divider"></div>
+        <div class="res">$1,242</div>
+        <div class="header__divider"></div>
+        <div class="energy">
+          <span class="energy__icon">⚡</span>
+          <div class="energy__track"><div class="energy__fill"></div></div>
+          <span class="energy__text">68</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+      <!-- Player card -->
+      <div class="player-card">
+        <div class="player-card__name">Ivan</div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">STATS</div>
+        <div class="row-3"><span class="row-3__label">Charisma</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label">Mechanical</span><span class="row-3__value">5</span></div>
+        <div class="row-3"><span class="row-3__label">Fitness</span><span class="row-3__value">2</span></div>
+        <div class="row-3"><span class="row-3__label">Knowledge</span><span class="row-3__value">0</span></div>
+        <div class="row-3"><span class="row-3__label">Driving</span><span class="row-3__value">0</span></div>
+        <div class="player-card__divider"></div>
+        <div class="player-card__label">INVENTORY</div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🔧</span>Engine parts</span><span class="row-3__value">3</span></div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🚗</span>Body parts</span><span class="row-3__value">0</span></div>
+        <div class="row-3"><span class="row-3__label"><span class="row-3__icon">🚗</span>Cars</span><span class="row-3__value">1</span></div>
+        <button class="btn-menu">Menu</button>
+      </div>
+
+      <!-- Activities -->
+      <div class="activities">
+
+        <!-- ═══ GARAGE ACTIVITIES ═══ -->
+        <div class="garage-activities">
+
+          <!-- ── Single-car display (state: garage) ── -->
+          <div class="car-feature car-feature--single">
+            <div class="section-label">YOUR CAR</div>
+            <div class="car-card">
+              <!-- Image — uses URL if available; falls back to placeholder text -->
+              <div class="car-card__image">
+                <div class="car-card__image-fade"></div>
+                <div class="car-card__image-placeholder">No image available</div>
+              </div>
+              <div class="car-card__info">
+                <div class="car-card__name">1994 Toyota Corolla</div>
+                <div class="car-card__bio">"Toyota's answer to the question nobody was asking. Utterly unremarkable, absolutely indestructible. The E100 Corolla was designed to disappear into traffic and outlive its owner — it usually manages both."</div>
+                <div class="car-stats">
+                  <div class="cond-row">
+                    <span class="cond-row__label">Engine</span>
+                    <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--broken" style="width: 0%"></div></div>
+                    <span class="cond-row__rating cond-row__rating--broken">Broken</span>
+                  </div>
+                  <div class="cond-row">
+                    <span class="cond-row__label">Body</span>
+                    <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--poor" style="width: 30%"></div></div>
+                    <span class="cond-row__rating cond-row__rating--poor">30% · Poor</span>
+                  </div>
+                </div>
+                <div class="car-card__footer">
+                  <span class="car-card__fuel">Fuel: 0 / 40 L</span>
+                  <span class="car-card__value">Est. value ~$150</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Multi-car display (state: selector) ── -->
+          <div class="car-feature car-feature--multi">
+            <div class="section-label">YOUR CARS HERE</div>
+            <div class="cars-list">
+
+              <!-- Car 1: selected -->
+              <div class="car-card car-card--compact car-card--selected">
+                <div class="car-card__image">
+                  <div class="car-card__image-fade"></div>
+                  <div class="car-card__image-placeholder">No image</div>
+                </div>
+                <div class="car-card__info">
+                  <div class="car-card__name">1994 Toyota Corolla</div>
+                  <div class="car-stats">
+                    <div class="cond-row">
+                      <span class="cond-row__label">Engine</span>
+                      <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--fair" style="width: 42%"></div></div>
+                      <span class="cond-row__rating cond-row__rating--fair">42% · Fair</span>
+                    </div>
+                    <div class="cond-row">
+                      <span class="cond-row__label">Body</span>
+                      <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--poor" style="width: 30%"></div></div>
+                      <span class="cond-row__rating cond-row__rating--poor">30% · Poor</span>
+                    </div>
+                  </div>
+                  <div class="car-card__footer">
+                    <span class="car-card__fuel">Fuel: 12 / 40 L</span>
+                    <span class="car-card__value">Est. ~$240</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Car 2: not selected -->
+              <div class="car-card car-card--compact">
+                <div class="car-card__image">
+                  <div class="car-card__image-fade"></div>
+                  <div class="car-card__image-placeholder">No image</div>
+                </div>
+                <div class="car-card__info">
+                  <div class="car-card__name">1987 Honda Civic</div>
+                  <div class="car-stats">
+                    <div class="cond-row">
+                      <span class="cond-row__label">Engine</span>
+                      <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--good" style="width: 72%"></div></div>
+                      <span class="cond-row__rating cond-row__rating--good">72% · Good</span>
+                    </div>
+                    <div class="cond-row">
+                      <span class="cond-row__label">Body</span>
+                      <div class="cond-row__track"><div class="cond-row__fill cond-row__fill--good" style="width: 65%"></div></div>
+                      <span class="cond-row__rating cond-row__rating--good">65% · Good</span>
+                    </div>
+                  </div>
+                  <div class="car-card__footer">
+                    <span class="car-card__fuel">Fuel: 22 / 35 L</span>
+                    <span class="car-card__value">Est. ~$680</span>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /cars-list -->
+          </div><!-- /car-feature--multi -->
+
+          <!-- ── Car selector chip (multi-car only) ── -->
+          <div class="car-selector-row">
+            <span class="car-selector-label">Working on</span>
+            <div style="position: relative;">
+              <button class="car-selector-btn" id="car-selector-btn">
+                <span id="selected-car-name">1994 Toyota Corolla</span>
+                <span class="car-selector-btn__arrow">▾</span>
+              </button>
+              <!-- Dropdown — shown open in selector state for the mockup -->
+              <div class="car-dropdown car-dropdown--open" id="car-dropdown">
+                <div class="car-option car-option--active">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div>
+                      <div class="car-option__name">1994 Toyota Corolla</div>
+                      <div class="car-option__stats">Engine: Fair · Body: Poor</div>
+                    </div>
+                    <span class="car-option__check">✓</span>
+                  </div>
+                </div>
+                <div class="car-option" id="car-option-2">
+                  <div class="car-option__name">1987 Honda Civic</div>
+                  <div class="car-option__stats">Engine: Good · Body: Good</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Repair activities ── -->
+          <div class="section-label" style="margin-top: 20px;">REPAIRS</div>
+          <div class="cards">
+
+            <div class="card">
+              <div class="card__name">Basic Engine Repair (DIY)</div>
+              <div class="card__desc">Use engine parts to restore up to 20% engine condition. Mechanical skill speeds it up.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">2–4 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--parts">🔧</span><span class="card__cost-text card__cost-text--parts">1–3 engine parts</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔼</span><span class="card__cost-text card__cost-text--earn">Engine +20%</span></div>
+            </div>
+
+            <div class="card card--disabled">
+              <div class="card__name">Basic Body Repair (DIY)</div>
+              <div class="card__desc">Use body parts to restore up to 20% body condition.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–3 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--parts">🔧</span><span class="card__cost-text card__cost-text--parts">1–2 body parts</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔼</span><span class="card__cost-text card__cost-text--earn">Body +20%</span></div>
+              <div class="card__locked">Requires body parts — you have 0</div>
+            </div>
+
+            <div class="card">
+              <div class="card__name">Basic Engine Repair</div>
+              <div class="card__desc">Pay a mechanic for a basic engine service. Quick, no parts required.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1 hr</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--spend">💰</span><span class="card__cost-text card__cost-text--spend">-$80</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔼</span><span class="card__cost-text card__cost-text--earn">Engine +20%</span></div>
+            </div>
+
+            <div class="card">
+              <div class="card__name">Basic Body Repair</div>
+              <div class="card__desc">Pay a mechanic for a basic panel and bodywork service.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">0.5 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--spend">💰</span><span class="card__cost-text card__cost-text--spend">-$60</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">🔼</span><span class="card__cost-text card__cost-text--earn">Body +20%</span></div>
+            </div>
+
+          </div><!-- /repair cards -->
+
+          <!-- Universal actions -->
+          <div class="section-divider"></div>
+          <div class="cards">
+            <div class="card">
+              <div class="card__name">Nap</div>
+              <div class="card__desc">Take a short rest anywhere. Less effective than sleeping in a car.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–8 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--earn">+2 / hr</span></div>
+            </div>
+            <div class="card">
+              <div class="card__name">Sleep</div>
+              <div class="card__desc">Rest in your shitbox to recover energy. Requires a car at your location.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–12 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--energy">⚡</span><span class="card__cost-text card__cost-text--earn">+4 / hr</span></div>
+            </div>
+            <div class="card">
+              <div class="card__name">Leave</div>
+              <div class="card__desc">Open the map and travel to another location.</div>
+            </div>
+          </div>
+
+        </div><!-- /garage-activities -->
+
+        <!-- ═══ SCRAPYARD ACTIVITIES (browse state background) ═══ -->
+        <div class="scrapyard-activities">
+          <div class="cards">
+            <div class="card">
+              <div class="card__name">Manual Labor</div>
+              <div class="card__desc">Haul scrap metal and sort materials for pay.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–8 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$8 / hr</span></div>
+            </div>
+            <div class="card">
+              <div class="card__name">Scavenge Parts</div>
+              <div class="card__desc">Search the yard for usable engine and body parts.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1–4 hrs</span></div>
+            </div>
+            <div class="card">
+              <div class="card__name">Browse Junk Cars</div>
+              <div class="card__desc">Ask around and check what project cars are available. Listings are good until tomorrow.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">0.5 hrs</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--spend">💰</span><span class="card__cost-text card__cost-text--spend">-$5</span></div>
+            </div>
+            <div class="card">
+              <div class="card__name">Sell Car for Scrap</div>
+              <div class="card__desc">Strip it down and take the weight in cash. No turning back.</div>
+              <div class="card__divider"></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--time">⏱</span><span class="card__cost-text card__cost-text--neutral">1 hr</span></div>
+              <div class="card__cost"><span class="card__cost-icon card__cost-icon--earn">💰</span><span class="card__cost-text card__cost-text--earn">+$ by weight</span></div>
+            </div>
+          </div>
+          <div class="section-divider"></div>
+          <div class="cards">
+            <div class="card"><div class="card__name">Nap</div><div class="card__desc">Take a short rest anywhere.</div></div>
+            <div class="card"><div class="card__name">Sleep</div><div class="card__desc">Rest in your shitbox to recover energy.</div></div>
+            <div class="card"><div class="card__name">Leave</div><div class="card__desc">Open the map and travel to another location.</div></div>
+          </div>
+        </div><!-- /scrapyard-activities -->
+
+      </div><!-- /activities -->
+    </div><!-- /body -->
+  </div><!-- /panel -->
+</div><!-- /shell -->
+
+<!-- ── Browse listings modal (state: browse) ── -->
+<div class="browse-backdrop">
+  <div class="browse-modal">
+    <div class="browse-modal__header">
+      <span class="browse-modal__title">Junkers at the Scrapyard</span>
+      <span class="browse-modal__sub">Day 14</span>
+    </div>
+    <div class="browse-modal__content">
+
+      <!-- Listing 1 -->
+      <div class="listing-card">
+        <div class="listing-card__image">
+          <div class="listing-card__image-fade"></div>
+          <div class="listing-card__image-placeholder">No image</div>
+        </div>
+        <div class="listing-card__info">
+          <div class="listing-card__name">1982 Datsun 1200</div>
+          <div class="listing-card__badges">
+            <span class="listing-badge listing-badge--fair">Engine · Fair</span>
+            <span class="listing-badge listing-badge--poor">Body · Poor</span>
+          </div>
+          <div class="listing-card__footer">
+            <span class="listing-card__expires">Expires tomorrow</span>
+            <div class="listing-card__price-wrap">
+              <span class="listing-card__price-label">Asking</span>
+              <span class="listing-card__price">$320</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing 2 -->
+      <div class="listing-card">
+        <div class="listing-card__image">
+          <div class="listing-card__image-fade"></div>
+          <div class="listing-card__image-placeholder">No image</div>
+        </div>
+        <div class="listing-card__info">
+          <div class="listing-card__name">1969 Volkswagen Beetle</div>
+          <div class="listing-card__badges">
+            <span class="listing-badge listing-badge--poor">Engine · Poor</span>
+            <span class="listing-badge listing-badge--fair">Body · Fair</span>
+          </div>
+          <div class="listing-card__footer">
+            <span class="listing-card__expires">Expires tomorrow</span>
+            <div class="listing-card__price-wrap">
+              <span class="listing-card__price-label">Asking</span>
+              <span class="listing-card__price">$180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing 3 -->
+      <div class="listing-card">
+        <div class="listing-card__image">
+          <div class="listing-card__image-fade"></div>
+          <div class="listing-card__image-placeholder">No image</div>
+        </div>
+        <div class="listing-card__info">
+          <div class="listing-card__name">1991 Suzuki Alto</div>
+          <div class="listing-card__badges">
+            <span class="listing-badge listing-badge--fair">Engine · Fair</span>
+            <span class="listing-badge listing-badge--good">Body · Good</span>
+          </div>
+          <div class="listing-card__footer">
+            <span class="listing-card__expires">Expires tomorrow</span>
+            <div class="listing-card__price-wrap">
+              <span class="listing-card__price-label">Asking</span>
+              <span class="listing-card__price">$450</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+    <div class="browse-modal__footer">
+      <div class="browse-modal__note">These listings are held until tomorrow. Come back with cash to negotiate.</div>
+      <button class="browse-modal__close" id="browse-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const steps = document.querySelectorAll('.mockup-step');
+
+  const headerData = {
+    garage:   { title: 'Garage',    subtitle: 'Perform basic repairs on your car. Keep it running.' },
+    selector: { title: 'Garage',    subtitle: 'Perform basic repairs on your car. Keep it running.' },
+    browse:   { title: 'Scrapyard', subtitle: 'A sprawling junkyard full of old cars and salvage parts.' },
+  };
+
+  function setState(state) {
+    document.body.dataset.state = state;
+    steps.forEach(s => s.classList.toggle('mockup-step--active', s.dataset.target === state));
+    const h = headerData[state];
+    if (h) {
+      document.getElementById('header-title').textContent = h.title;
+      document.getElementById('header-subtitle').textContent = h.subtitle;
+    }
+    // Always close dropdown when switching states via nav
+    document.getElementById('car-dropdown').classList.remove('car-dropdown--open');
+    if (state === 'selector') {
+      // Re-open the dropdown so it's visible on load of this state
+      document.getElementById('car-dropdown').classList.add('car-dropdown--open');
+    }
+  }
+
+  // Nav buttons
+  steps.forEach(btn => btn.addEventListener('click', () => setState(btn.dataset.target)));
+
+  // Car selector toggle
+  document.getElementById('car-selector-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('car-dropdown').classList.toggle('car-dropdown--open');
+  });
+
+  // Select car 2 from dropdown
+  document.getElementById('car-option-2').addEventListener('click', () => {
+    document.getElementById('selected-car-name').textContent = '1987 Honda Civic';
+    document.getElementById('car-dropdown').classList.remove('car-dropdown--open');
+    // Swap selected state on car cards
+    document.querySelectorAll('.car-card--compact').forEach((c, i) => {
+      c.classList.toggle('car-card--selected', i === 1);
+    });
+    // Update option active state
+    document.querySelectorAll('.car-option').forEach((o, i) => {
+      o.classList.toggle('car-option--active', i === 1);
+      const check = o.querySelector('.car-option__check');
+      if (check) check.remove();
+    });
+    const check = document.createElement('span');
+    check.className = 'car-option__check';
+    check.textContent = '✓';
+    document.getElementById('car-option-2').querySelector('div').appendChild(check);
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', () => {
+    document.getElementById('car-dropdown').classList.remove('car-dropdown--open');
+  });
+
+  // Browse close
+  document.getElementById('browse-close').addEventListener('click', () => setState('garage'));
+</script>
+
+</body>
+</html>

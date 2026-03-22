@@ -82,6 +82,54 @@ export interface OwnedCar {
   acquiredPrice: number;
 }
 
+export interface CarDefinition {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  category: string;
+  tier: number;
+  baseStats: {
+    power: number;
+    topSpeed: number;
+    weight: number;
+    fuelEfficiency: number; // L/100km
+    capacity: { passengers: number; cargo: number };
+    prestige: number;
+  };
+  marketValue: {
+    excellent: number;
+    good: number;
+    fair: number;
+    poor: number;
+    scrap: number;
+  };
+  repairCosts: {
+    enginePerPercent: number;
+    bodyPerPercent: number;
+    engineReplacement: number;
+  };
+  fuelCapacity: number;
+  fuelCostPerKm: number;
+  imageUrl: string;
+  bio: string;
+  isVictoryCar?: boolean;
+}
+
+export type ConditionRating = 'excellent' | 'good' | 'fair' | 'poor' | 'scrap';
+
+export interface ConditionRatingRange {
+  min: number;
+  max: number;
+}
+
+export interface CarDataConfig {
+  version: string;
+  scrapPricePerKg: number;
+  cars: CarDefinition[];
+  conditionRatings: Record<ConditionRating, ConditionRatingRange>;
+}
+
 export interface Assets {
   garage: OwnedGarage | null;
   workshop: OwnedWorkshop | null;
@@ -289,7 +337,14 @@ export interface StateDelta {
     engineParts: number;
     bodyParts: number;
   }>;
-  carUpdates?: Array<{ instanceId: string; fuel?: number }>;
+  carUpdates?: Array<{
+    instanceId: string;
+    fuel?: number;
+    engineCondition?: number;
+    bodyCondition?: number;
+  }>;
+  removedCarInstanceId?: string;
+  marketUpdates?: Partial<Market>;
   newspaper?: Partial<NewspaperState>;
   events?: GameEvent[];
 }
@@ -309,7 +364,10 @@ export type GameEventType =
   | 'car_removed'
   | 'conditional_cost'
   | 'newspaper_purchased'
-  | 'gig_completed';
+  | 'gig_completed'
+  | 'car_repaired'
+  | 'car_scrapped'
+  | 'engine_replaced';
 
 export interface GameEvent {
   type: GameEventType;

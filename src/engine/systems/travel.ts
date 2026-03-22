@@ -5,7 +5,7 @@
 
 import type { GridPosition, GameState, OwnedCar, StateDelta } from '../types';
 import { calculateDistanceMeters, getMapData, getLocation } from '../data';
-import { getEconomyConfig } from '../data';
+import { getEconomyConfig, getCarDefinition } from '../data';
 
 // ============================================================================
 // Types
@@ -154,7 +154,8 @@ export function canDrive(
 
   // Use the first available car (could add car selection later)
   const car = carsHere[0];
-  const cost = getDrivingCost(from, to); // Uses default from economy config
+  const carDef = getCarDefinition(car.carId);
+  const cost = getDrivingCost(from, to, carDef?.baseStats.fuelEfficiency);
 
   if (car.fuel < cost.fuelCost) {
     return {
@@ -217,7 +218,8 @@ export function executeDrive(
 
   const from = state.player.position;
   const car = validation.car;
-  const cost = getDrivingCost(from, to); // Uses default from economy config
+  const carDef = getCarDefinition(car.carId);
+  const cost = getDrivingCost(from, to, carDef?.baseStats.fuelEfficiency);
   const distanceMeters = calculateDistanceMeters(from, to);
 
   return {
