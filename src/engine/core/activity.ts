@@ -324,8 +324,19 @@ export function canPerformActivity(
     return { canPerform: false, reason: `Need ${energyCost} energy` };
   }
 
-  // Check money
-  const moneyCost = calculateMoneyCost(state, activity, params);
+  // Check money — mirror the variable-cost pre-computation from executeActivity
+  let moneyCost = calculateMoneyCost(state, activity, params);
+  if (activity.outcomes.some((o) => o.type === 'refuelCar')) {
+    const carForRefuel = state.inventory.cars.find(
+      (c) =>
+        c.position.x === state.player.position.x &&
+        c.position.y === state.player.position.y
+    );
+    if (carForRefuel) {
+      const fuelNeeded = carForRefuel.fuelCapacity - carForRefuel.fuel;
+      moneyCost = Math.round(fuelNeeded * (activity.money.base ?? 2));
+    }
+  }
   if (state.player.money < moneyCost) {
     return { canPerform: false, reason: `Need $${moneyCost}` };
   }
