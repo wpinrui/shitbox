@@ -99,11 +99,14 @@ export function useAudio() {
 
     jingle.addEventListener('ended', onJingleEnd);
 
-    // Attempt autoplay; defer to first user interaction if blocked
+    // Attempt autoplay; defer to first user interaction if blocked.
+    // Guard: if audio is already playing by the time the user interacts
+    // (started via another path), skip the play() call and just clean up.
     const resume = () => {
-      bgm.play().catch(() => {});
       document.removeEventListener('click', resume);
       document.removeEventListener('keydown', resume);
+      if (!bgm.paused) return;
+      bgm.play().catch(() => {});
     };
     bgm.play().catch(() => {
       document.addEventListener('click', resume);
