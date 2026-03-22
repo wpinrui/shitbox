@@ -32,11 +32,15 @@ export {
   getEconomyConfig,
   isEconomyLoaded,
   clearDataCache,
+  loadNewspaperTemplates,
+  getNewspaperTemplates,
   type ActivityDefinition,
   type EconomyConfig,
   type Prerequisite,
   type Outcome,
   type StatGain,
+  type GigTemplate,
+  type NewspaperTemplates,
 } from './data';
 
 // Map data

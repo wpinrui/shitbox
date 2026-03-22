@@ -199,6 +199,28 @@ export interface EconomyConfig {
 }
 
 // ============================================================================
+// Newspaper Templates Types
+// ============================================================================
+
+export interface GigTemplate {
+  id: string;
+  title: string;
+  description: string;
+  pay: number;
+  timeCost: number;
+  requirements: string[];
+  location: string | null;
+}
+
+export interface NewspaperTemplates {
+  headlines: string[];
+  gigTemplates: GigTemplate[];
+  marketNews: never[];
+  roadTripNews: never[];
+  auctionPreviews: never[];
+}
+
+// ============================================================================
 // Data Cache
 // ============================================================================
 
@@ -206,6 +228,7 @@ const dataCache = {
   economy: null as EconomyConfig | null,
   activities: new Map<string, ActivityDefinition[]>(),
   activityById: new Map<string, ActivityDefinition>(),
+  newspaperTemplates: null as NewspaperTemplates | null,
 };
 
 // ============================================================================
@@ -320,6 +343,31 @@ export function clearDataCache(): void {
   dataCache.economy = null;
   dataCache.activities.clear();
   dataCache.activityById.clear();
+  dataCache.newspaperTemplates = null;
+}
+
+/**
+ * Load newspaper template data from JSON.
+ */
+export async function loadNewspaperTemplates(): Promise<NewspaperTemplates> {
+  if (dataCache.newspaperTemplates) {
+    return dataCache.newspaperTemplates;
+  }
+
+  const data = await window.electronAPI.loadData('newspaper-templates.json');
+  dataCache.newspaperTemplates = data as NewspaperTemplates;
+  return dataCache.newspaperTemplates;
+}
+
+/**
+ * Get cached newspaper templates.
+ * Throws if not loaded.
+ */
+export function getNewspaperTemplates(): NewspaperTemplates {
+  if (!dataCache.newspaperTemplates) {
+    throw new Error('Newspaper templates not loaded. Call loadNewspaperTemplates() first.');
+  }
+  return dataCache.newspaperTemplates;
 }
 
 // ============================================================================
