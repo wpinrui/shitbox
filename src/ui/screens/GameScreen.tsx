@@ -17,6 +17,9 @@ import './GameScreen.css';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+/** Round a number up to 1 decimal place. */
+const round1 = (n: number) => (Math.ceil(n * 10) / 10).toFixed(1);
+
 export function GameScreen({
   gameState,
 }: {
@@ -201,14 +204,14 @@ export function GameScreen({
               <div className="header__divider" />
               <div className="res">{clockStr}</div>
               <div className="header__divider" />
-              <div className="res">${gameState.player.money.toLocaleString()}</div>
+              <div className="res">${round1(gameState.player.money)}</div>
               <div className="header__divider" />
               <div className="energy-bar">
                 <span className="energy-bar__icon">⚡</span>
                 <div className="energy-bar__track">
                   <div className="energy-bar__fill" style={{ width: `${energyPct}%` }} />
                 </div>
-                <span className="energy-bar__text">{gameState.player.energy}</span>
+                <span className="energy-bar__text">{round1(gameState.player.energy)}</span>
               </div>
               {gameState.player.daysWithoutFood > 0 && (
                 <div className="food-warn">🍔 !</div>
@@ -232,7 +235,7 @@ export function GameScreen({
               {STAT_ORDER.map((stat) => (
                 <div key={stat} className="row-3">
                   <span className="row-3__label">{capitalize(stat)}</span>
-                  <span className="row-3__value">{gameState.player.stats[stat]}</span>
+                  <span className="row-3__value">{round1(gameState.player.stats[stat])}</span>
                 </div>
               ))}
 
