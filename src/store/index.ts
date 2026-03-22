@@ -431,6 +431,9 @@ export const useGameStore = create<GameStore>()(
               content: null,
               purchased: false,
             },
+            market: dayResult.expiredListingsRemoved
+              ? { ...newState.market, currentListings: dayResult.currentListings }
+              : newState.market,
           };
 
           allEvents.push(...dayResult.events);
@@ -574,6 +577,9 @@ export const useGameStore = create<GameStore>()(
               content: null,
               purchased: false,
             },
+            market: dayResult.expiredListingsRemoved
+              ? { ...newState.market, currentListings: dayResult.currentListings }
+              : newState.market,
           };
 
           allEvents.push(...dayResult.events);

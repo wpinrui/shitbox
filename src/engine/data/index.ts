@@ -65,7 +65,7 @@ export interface Prerequisite {
 }
 
 export interface Outcome {
-  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter' | 'refuelCar' | 'generateNewspaper';
+  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter' | 'refuelCar' | 'generateNewspaper' | 'repairEngine' | 'repairBody' | 'replaceEngine';
   itemType?: string;
   quantity?: { min: number; max: number };
   statModifier?: StatModifier;
@@ -353,7 +353,7 @@ export async function loadActivityDefinitions(locationId: string): Promise<Activ
  */
 export async function loadCoreActivities(): Promise<void> {
   await loadActivityDefinitions('misc');
-  const locationFiles = ['scrapyard', 'gas_station', 'car_wash'];
+  const locationFiles = ['scrapyard', 'gas_station', 'car_wash', 'garage', 'workshop'];
   const results = await Promise.allSettled(
     locationFiles.map((id) => loadActivityDefinitions(id))
   );

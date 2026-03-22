@@ -4,9 +4,9 @@
  * All functions are pure with no side effects.
  */
 
-import type { GameState, ActivityResult, StateDelta, GameEvent, NewspaperContent } from '../types';
+import type { GameState, ActivityResult, StateDelta, GameEvent, NewspaperContent, Market, CarListing } from '../types';
 import type { EconomyConfig } from '../data';
-import { getActivityDefinition, getEconomyConfig } from '../data';
+import { getActivityDefinition, getEconomyConfig, getCarDefinition, getScrapPricePerKg, getAllCarDefinitions } from '../data';
 import { generateNewspaper } from '../systems/newspaper';
 import { RNG } from '../utils/rng';
 import { checkPrerequisites, checkEnergyAvailable, checkMoneyAvailable } from '../utils/validators';
@@ -127,11 +127,28 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 
   // Handle money earning activities
   if (activity.money.type === 'earn') {
-    const earnings = calculateMoneyEarned(state, activity, params);
-    // Apply variance using RNG
-    const variance = activity.money.variance ?? 0;
-    const actualVariance = variance > 0 ? rng.randomInRange(-variance, variance) : 0;
-    moneyChange = Math.round(earnings + actualVariance);
+    if (activity.money.mode === 'carScrapValue') {
+      // Scrap value: max of formula (weight × scrapPricePerKg) and marketValue.scrap
+      const selectedCar = params.selectedCarInstanceId
+        ? state.inventory.cars.find((c) => c.instanceId === params.selectedCarInstanceId)
+        : state.inventory.cars.find(
+            (c) => c.position.x === state.player.position.x && c.position.y === state.player.position.y
+          );
+      if (selectedCar) {
+        const carDef = getCarDefinition(selectedCar.carId);
+        if (carDef) {
+          const formulaValue = Math.round(carDef.baseStats.weight * getScrapPricePerKg());
+          const displayScrap = carDef.marketValue.scrap;
+          moneyChange = Math.max(formulaValue, displayScrap);
+        }
+      }
+    } else {
+      const earnings = calculateMoneyEarned(state, activity, params);
+      // Apply variance using RNG
+      const variance = activity.money.variance ?? 0;
+      const actualVariance = variance > 0 ? rng.randomInRange(-variance, variance) : 0;
+      moneyChange = Math.round(earnings + actualVariance);
+    }
   }
 
   // Calculate stat gains
@@ -143,6 +160,8 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
   let bodyPartsChange = 0;
   type CarUpdate = NonNullable<StateDelta['carUpdates']>[number];
   const carUpdates: CarUpdate[] = [];
+  let removedCarInstanceId: string | undefined;
+  let marketUpdates: Partial<Market> | undefined;
   let generatedNewspaper: NewspaperContent | null = null;
 
   for (const outcome of activity.outcomes) {
@@ -210,13 +229,29 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
         break;
       }
 
-      case 'showListings':
-        events.push({
-          type: 'listings_shown',
-          message: 'You browse the available vehicles.',
-          data: { listingType: outcome.listingType },
-        });
+      case 'showListings': {
+        if (outcome.listingType === 'junker_cars') {
+          const listings = generateJunkerListings(state, rng);
+          marketUpdates = {
+            currentListings: [
+              ...state.market.currentListings.filter((l) => l.source !== 'scrapyard'),
+              ...listings,
+            ],
+          };
+          events.push({
+            type: 'listings_shown',
+            message: `You browse the yard and spot ${listings.length} vehicle${listings.length !== 1 ? 's' : ''}.`,
+            data: { listingType: outcome.listingType, listings },
+          });
+        } else {
+          events.push({
+            type: 'listings_shown',
+            message: 'You browse the available vehicles.',
+            data: { listingType: outcome.listingType },
+          });
+        }
         break;
+      }
 
       case 'acquireCar':
         events.push({
@@ -226,13 +261,90 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
         });
         break;
 
-      case 'removeCar':
-        events.push({
-          type: 'car_removed',
-          message: 'Car removal requires the car listing system.',
-          data: { source: outcome.source },
-        });
+      case 'removeCar': {
+        const carToRemove = params.selectedCarInstanceId
+          ? state.inventory.cars.find((c) => c.instanceId === params.selectedCarInstanceId)
+          : state.inventory.cars.find(
+              (c) => c.position.x === state.player.position.x && c.position.y === state.player.position.y
+            );
+        if (carToRemove) {
+          removedCarInstanceId = carToRemove.instanceId;
+          const carDef = getCarDefinition(carToRemove.carId);
+          const carName = carDef ? `${carDef.year} ${carDef.make} ${carDef.model}` : 'your car';
+          events.push({
+            type: 'car_scrapped',
+            message: `You scrapped ${carName} for $${moneyChange}.`,
+            data: { carId: carToRemove.carId, instanceId: carToRemove.instanceId, scrapValue: moneyChange },
+          });
+        }
         break;
+      }
+
+      case 'repairEngine': {
+        const repairAmount = typeof outcome.value === 'number' ? outcome.value : 20;
+        const carToRepair = params.selectedCarInstanceId
+          ? state.inventory.cars.find((c) => c.instanceId === params.selectedCarInstanceId)
+          : state.inventory.cars.find(
+              (c) => c.position.x === state.player.position.x && c.position.y === state.player.position.y
+            );
+        if (carToRepair) {
+          const newCondition = Math.min(100, carToRepair.engineCondition + repairAmount);
+          carUpdates.push({ instanceId: carToRepair.instanceId, engineCondition: newCondition });
+          if (outcome.source === 'diy') {
+            const partsUsed = Math.min(state.inventory.engineParts + enginePartsChange, rng.randomInt(1, 3));
+            enginePartsChange -= partsUsed;
+          }
+          events.push({
+            type: 'car_repaired',
+            message: `Engine condition improved by ${repairAmount}%.`,
+            data: { repairType: 'engine', amount: repairAmount, newCondition },
+          });
+        }
+        break;
+      }
+
+      case 'repairBody': {
+        const bodyRepairAmount = typeof outcome.value === 'number' ? outcome.value : 20;
+        const carForBodyRepair = params.selectedCarInstanceId
+          ? state.inventory.cars.find((c) => c.instanceId === params.selectedCarInstanceId)
+          : state.inventory.cars.find(
+              (c) => c.position.x === state.player.position.x && c.position.y === state.player.position.y
+            );
+        if (carForBodyRepair) {
+          const newCondition = Math.min(100, carForBodyRepair.bodyCondition + bodyRepairAmount);
+          carUpdates.push({ instanceId: carForBodyRepair.instanceId, bodyCondition: newCondition });
+          if (outcome.source === 'diy') {
+            const partsUsed = Math.min(state.inventory.bodyParts + bodyPartsChange, rng.randomInt(1, 2));
+            bodyPartsChange -= partsUsed;
+          }
+          events.push({
+            type: 'car_repaired',
+            message: `Body condition improved by ${bodyRepairAmount}%.`,
+            data: { repairType: 'body', amount: bodyRepairAmount, newCondition },
+          });
+        }
+        break;
+      }
+
+      case 'replaceEngine': {
+        const carForReplacement = params.selectedCarInstanceId
+          ? state.inventory.cars.find((c) => c.instanceId === params.selectedCarInstanceId)
+          : state.inventory.cars.find(
+              (c) => c.position.x === state.player.position.x && c.position.y === state.player.position.y
+            );
+        if (carForReplacement) {
+          carUpdates.push({ instanceId: carForReplacement.instanceId, engineCondition: 100 });
+          if (outcome.source === 'diy') {
+            enginePartsChange -= 5;
+          }
+          events.push({
+            type: 'engine_replaced',
+            message: 'New engine installed. Engine condition is now 100%.',
+            data: { instanceId: carForReplacement.instanceId },
+          });
+        }
+        break;
+      }
 
       case 'conditionalCost':
         events.push({
@@ -269,6 +381,8 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
       ? { engineParts: enginePartsChange, bodyParts: bodyPartsChange }
       : undefined,
     carUpdates: carUpdates.length > 0 ? carUpdates : undefined,
+    removedCarInstanceId,
+    marketUpdates,
     newspaper: generatedNewspaper
       ? { content: generatedNewspaper, purchased: true, currentDay: state.time.currentDay }
       : undefined,
@@ -283,6 +397,45 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
     delta,
     narrative,
   };
+}
+
+/**
+ * Generate junker car listings for the scrapyard browse activity.
+ * Picks 3–5 tier 0–1 cars at random with randomised condition and pricing.
+ */
+function generateJunkerListings(state: GameState, rng: RNG): CarListing[] {
+  const allCars = getAllCarDefinitions();
+  const junkerPool = allCars.filter((c) => c.tier <= 1);
+  if (junkerPool.length === 0) return [];
+  const count = rng.randomInt(Math.min(3, junkerPool.length), Math.min(5, junkerPool.length));
+  const picked = rng.shuffle(junkerPool).slice(0, count);
+
+  return picked.map((carDef, idx) => {
+    const engineCondition = rng.randomInt(5, 40);
+    const bodyCondition = rng.randomInt(10, 60);
+    const avgCondition = (engineCondition + bodyCondition) / 2;
+
+    // Price based on condition — interpolate between scrap and poor market values
+    let askingPrice: number;
+    if (avgCondition < 20) {
+      askingPrice = carDef.marketValue.scrap + rng.randomInt(0, 50);
+    } else {
+      const t = (avgCondition - 20) / 40; // 0–1 range for 20–60 condition
+      askingPrice = Math.round(
+        carDef.marketValue.scrap + t * (carDef.marketValue.poor - carDef.marketValue.scrap)
+      );
+    }
+
+    return {
+      id: `scrapyard-${state.time.currentDay}-${idx}`,
+      carId: carDef.id,
+      condition: { engine: engineCondition, body: bodyCondition },
+      askingPrice,
+      sellerId: 'scrapyard',
+      expiresDay: state.time.currentDay + 1,
+      source: 'scrapyard' as const,
+    };
+  });
 }
 
 /**

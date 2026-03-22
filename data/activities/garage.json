@@ -1,0 +1,165 @@
+{
+  "locationId": "garage",
+  "locationName": "Garage",
+  "activities": [
+    {
+      "id": "basic_engine_repair_diy",
+      "name": "DIY Engine Repair",
+      "description": "Get under the hood and patch things up yourself.",
+      "category": "repair",
+      "time": {
+        "type": "variable",
+        "minHours": 2,
+        "maxHours": 4,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "perHour",
+        "base": 12,
+        "statModifier": {
+          "stat": "mechanical",
+          "effect": "reduce",
+          "formula": "base * (1 - mechanical * 0.02)"
+        }
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        },
+        {
+          "type": "item",
+          "itemType": "engineParts",
+          "minimum": 1
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "repairEngine",
+          "value": 20,
+          "source": "diy"
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "mechanical",
+          "amount": 0.03,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "basic_body_repair_diy",
+      "name": "DIY Body Repair",
+      "description": "Sand, fill, and patch the bodywork yourself.",
+      "category": "repair",
+      "time": {
+        "type": "variable",
+        "minHours": 1,
+        "maxHours": 3,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "perHour",
+        "base": 10
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        },
+        {
+          "type": "item",
+          "itemType": "bodyParts",
+          "minimum": 1
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "repairBody",
+          "value": 20,
+          "source": "diy"
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "mechanical",
+          "amount": 0.02,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "basic_engine_repair_paid",
+      "name": "Mechanic: Engine Repair",
+      "description": "Pay a mechanic to fix the engine. Faster, but costly.",
+      "category": "repair",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 3
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 500
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "repairEngine",
+          "value": 20,
+          "source": "paid"
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    },
+    {
+      "id": "basic_body_repair_paid",
+      "name": "Mechanic: Body Repair",
+      "description": "Pay a panel beater to fix the bodywork.",
+      "category": "repair",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 2
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 300
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "repairBody",
+          "value": 20,
+          "source": "paid"
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    }
+  ]
+}

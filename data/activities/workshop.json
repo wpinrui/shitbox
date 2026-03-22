@@ -1,0 +1,84 @@
+{
+  "locationId": "workshop",
+  "locationName": "Workshop",
+  "activities": [
+    {
+      "id": "replace_engine_diy",
+      "name": "DIY Engine Replacement",
+      "description": "Tear out the old engine and drop in a new one. Major job.",
+      "category": "repair",
+      "time": {
+        "type": "fixed",
+        "hours": 8
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 60
+      },
+      "money": {
+        "type": "none"
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        },
+        {
+          "type": "stat",
+          "stat": "mechanical",
+          "minimum": 30
+        },
+        {
+          "type": "item",
+          "itemType": "engineParts",
+          "minimum": 5
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "replaceEngine",
+          "source": "diy"
+        }
+      ],
+      "statGain": [
+        {
+          "stat": "mechanical",
+          "amount": 0.1,
+          "per": "activity"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "replace_engine_paid",
+      "name": "Mechanic: Engine Replacement",
+      "description": "Pay a professional to replace the engine. Expensive but reliable.",
+      "category": "repair",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 3
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 2000
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarHere"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "replaceEngine",
+          "source": "paid"
+        }
+      ],
+      "statGain": [],
+      "risks": []
+    }
+  ]
+}
