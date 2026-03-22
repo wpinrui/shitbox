@@ -16,9 +16,6 @@ import './GameScreen.css';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-// Universal activities: nap, sleep
-const UNIVERSAL_IDS = new Set(['nap', 'sleep']);
-
 export function GameScreen({
   gameState,
 }: {
@@ -41,13 +38,14 @@ export function GameScreen({
   const [showPauseMenu, setShowPauseMenu] = useState(false);
 
   const currentLocation = getLocationAtPosition(gameState.player.position);
-  const locationActivities = currentLocation
+
+  // Location-specific activities (from the location's own activity file)
+  const locationSpecific = currentLocation
     ? getLocationActivities(currentLocation.id)
     : [];
 
-  // Split location-specific vs universal activities
-  const locationSpecific = locationActivities.filter((a) => !UNIVERSAL_IDS.has(a.id));
-  const universalActivities = locationActivities.filter((a) => UNIVERSAL_IDS.has(a.id));
+  // Universal activities (nap, sleep) — loaded from misc.json
+  const universalActivities = getLocationActivities('misc');
 
   const hasCarHere = gameState.inventory.cars.some(
     (car) =>
@@ -228,23 +226,27 @@ export function GameScreen({
                 {currentLocation ? (
                   <>
                     {/* Location-specific activities */}
-                    <div className="activities-grid">
-                      {locationSpecific.map((activity) => {
-                        const check = canPerformActivity(gameState, activity.id);
-                        return (
-                          <ActivityCard
-                            key={activity.id}
-                            activity={activity}
-                            canPerform={check.canPerform}
-                            reason={check.reason}
-                            onClick={() => handleActivityClick(activity)}
-                          />
-                        );
-                      })}
-                    </div>
+                    {locationSpecific.length > 0 && (
+                      <div className="activities-grid">
+                        {locationSpecific.map((activity) => {
+                          const check = canPerformActivity(gameState, activity.id);
+                          return (
+                            <ActivityCard
+                              key={activity.id}
+                              activity={activity}
+                              canPerform={check.canPerform}
+                              reason={check.reason}
+                              onClick={() => handleActivityClick(activity)}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
 
-                    {/* Divider + Universal actions */}
-                    <div className="section-divider" />
+                    {/* Divider — only if there are location activities above */}
+                    {locationSpecific.length > 0 && <div className="section-divider" />}
+
+                    {/* Universal actions + Leave */}
                     <div className="activities-grid">
                       {universalActivities.map((activity) => {
                         const check = canPerformActivity(gameState, activity.id);
@@ -265,12 +267,6 @@ export function GameScreen({
                         <div className="card__desc">Open the map and travel to another location.</div>
                       </div>
                     </div>
-
-                    {locationSpecific.length === 0 && universalActivities.length === 0 && (
-                      <div className="no-activities">
-                        <p>Nothing to do here.</p>
-                      </div>
-                    )}
                   </>
                 ) : (
                   <div className="stranded-notice">
