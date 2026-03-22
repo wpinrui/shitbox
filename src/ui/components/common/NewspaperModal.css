@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Newspaper Modal (Brand Guide §7 / design/mockup-6-newspaper.html)
+   ========================================================================== */
+
+.newspaper-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.newspaper-modal {
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 520px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.3s ease-out;
+}
+
+/* ── Masthead ── */
+.newspaper-masthead {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--divider);
+  background: var(--glass-3-bg);
+}
+
+.newspaper-masthead__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.newspaper-masthead__date {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+/* ── Scrollable content ── */
+.newspaper-content {
+  flex: 1;
+  padding: 20px 28px 28px;
+  overflow-y: auto;
+}
+
+.newspaper-content::-webkit-scrollbar { width: 6px; }
+.newspaper-content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+.newspaper-content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+.newspaper-content::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+/* ── Section label ── */
+.newspaper-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+/* ── Headlines ── */
+.headlines {
+  margin-bottom: 4px;
+}
+
+.headline {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 0;
+}
+
+.headline__bullet {
+  color: var(--text-3);
+  font-size: 0.75rem;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.headline__text {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-2);
+  line-height: 1.45;
+  text-shadow: var(--shadow-text);
+}
+
+/* ── Divider ── */
+.newspaper-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 18px 0;
+}
+
+/* ── Gig cards ── */
+.gigs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gig-card {
+  background: var(--glass-2-bg);
+  border: var(--glass-2-border);
+  border-radius: var(--glass-2-radius);
+  box-shadow: var(--glass-2-shadow);
+  padding: 16px;
+}
+
+.gig-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 6px;
+}
+
+.gig-card__desc {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-2);
+  line-height: 1.45;
+  text-shadow: var(--shadow-text);
+  margin-bottom: 12px;
+}
+
+.gig-card__divider {
+  height: 1px;
+  background: var(--divider);
+  margin-bottom: 12px;
+}
+
+.gig-card__costs {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.gig-card__cost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gig-card__cost-icon {
+  font-size: 0.85rem;
+}
+
+.gig-card__cost-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-shadow: var(--shadow-text);
+}
+
+.gig-card__cost-text--earn { color: var(--earn); }
+.gig-card__cost-text--time { color: var(--text-2); }
+
+/* ── Gig action button ── */
+.btn-gig {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 8px;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: var(--shadow-text);
+  text-align: center;
+}
+
+.btn-gig:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-gig:active {
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+.btn-gig--taken {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--text-3);
+  cursor: default;
+  pointer-events: none;
+}
+
+.btn-gig--expired {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(245, 245, 245, 0.25);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Close button ── */
+.newspaper-close {
+  display: block;
+  width: 100%;
+}

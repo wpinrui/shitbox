@@ -5,3 +5,4 @@ export { ConfirmDialog } from './ConfirmDialog';
 export { PauseMenu } from './PauseMenu';
 export { LoadGameDialog } from './LoadGameDialog';
 export { BackgroundSlideshow } from './BackgroundSlideshow';
+export { NewspaperModal } from './NewspaperModal';
