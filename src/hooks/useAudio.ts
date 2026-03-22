@@ -126,6 +126,7 @@ export function useAudio() {
   }, [muted]);
 
   // Switch to title music on non-game screens; stop jingles
+  const TITLE_TRACK = '/assets/audio/late-night-radio.mp3';
   useEffect(() => {
     if (currentScreen !== 'game') {
       jingleRef.current?.pause();
@@ -134,12 +135,20 @@ export function useAudio() {
 
       const bgm = bgmRef.current;
       if (!bgm) return;
-      bgm.src = '/assets/audio/late-night-radio.mp3';
-      bgm.currentTime = 0;
-      bgm.volume = 1;
-      bgm.play().catch(() => {});
+
+      // Only (re)start title track if we weren't already playing it —
+      // avoids restarting the song on main_menu → new_game transitions
+      const alreadyOnTitleTrack = bgm.src.endsWith('late-night-radio.mp3');
+      if (!alreadyOnTitleTrack) {
+        bgm.src = TITLE_TRACK;
+        bgm.currentTime = 0;
+        bgm.volume = 1;
+        bgm.play().catch(() => {});
+      } else if (bgm.paused) {
+        bgm.play().catch(() => {});
+      }
     }
-  }, [currentScreen]);
+  }, [currentScreen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // IMPORTANT: audio event effect must be declared BEFORE period-change effect.
   // React fires effects in declaration order within the same render, so this
