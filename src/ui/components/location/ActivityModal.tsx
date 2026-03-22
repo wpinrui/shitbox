@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ActivityDefinition } from '@engine/index';
+import { useGameStore } from '@store/index';
 import './ActivityModal.css';
 
 type ModalPhase = 'hours' | 'progress' | 'outcome';
@@ -30,6 +31,14 @@ export function ActivityModal({
   onClose,
   onOpenNewspaper,
 }: ActivityModalProps) {
+  const triggerAudioEvent = useGameStore((s) => s.triggerAudioEvent);
+
+  // Wrap onClose so we always signal activity_end when the modal closes
+  const handleClose = useCallback(() => {
+    triggerAudioEvent('activity_end');
+    onClose();
+  }, [triggerAudioEvent, onClose]);
+
   const isVariableTime = activity.time.type === 'variable';
   const minHours = activity.time.minHours ?? 1;
   const maxHours = activity.time.maxHours ?? 8;
@@ -48,8 +57,9 @@ export function ActivityModal({
     if (res && typeof res === 'object') {
       setResult(res as ActivityResult);
     }
+    triggerAudioEvent('activity_start');
     setPhase('progress');
-  }, [isVariableTime, hours, onExecute]);
+  }, [isVariableTime, hours, onExecute, triggerAudioEvent]);
 
   // Auto-execute for fixed-time activities on mount
   useEffect(() => {
@@ -59,6 +69,7 @@ export function ActivityModal({
       if (res && typeof res === 'object') {
         setResult(res as ActivityResult);
       }
+      triggerAudioEvent('activity_start');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -121,7 +132,7 @@ export function ActivityModal({
   }
 
   return (
-    <div className="activity-modal-overlay" onClick={phase === 'outcome' ? onClose : undefined}>
+    <div className="activity-modal-overlay" onClick={phase === 'outcome' ? handleClose : undefined}>
       <div className="activity-modal" onClick={(e) => e.stopPropagation()}>
 
         {/* ── Phase: Hours Picker (variable-time only) ── */}
@@ -147,7 +158,7 @@ export function ActivityModal({
               </div>
             </div>
             <div className="modal-hours__buttons">
-              <button className="modal-hours__cancel btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="modal-hours__cancel btn-secondary" onClick={handleClose}>Cancel</button>
               <button className="modal-hours__go btn-primary" onClick={handleGo}>Go</button>
             </div>
           </div>
@@ -208,14 +219,14 @@ export function ActivityModal({
                 <button
                   className="btn-primary"
                   style={{ flex: 1 }}
-                  onClick={() => { onClose(); onOpenNewspaper(); }}
+                  onClick={() => { handleClose(); onOpenNewspaper(); }}
                 >
                   Read Newspaper
                 </button>
                 <button
                   className="btn-secondary"
                   style={{ flex: 1 }}
-                  onClick={onClose}
+                  onClick={handleClose}
                 >
                   Later
                 </button>
@@ -224,7 +235,7 @@ export function ActivityModal({
               <button
                 className="modal-outcome__close btn-primary"
                 style={{ animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s` }}
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Close
               </button>

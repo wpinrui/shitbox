@@ -33,6 +33,8 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info' | 'earn' | 'spend';
 }
 
+export type AudioEvent = 'activity_start' | 'activity_end' | 'travel';
+
 type GameTab = 'location' | 'map';
 
 interface GameStore {
@@ -49,6 +51,10 @@ interface GameStore {
   pendingEvents: GameEvent[];
   toasts: ToastMessage[];
   isExecutingActivity: boolean;
+
+  // Audio state
+  muted: boolean;
+  audioEvent: AudioEvent | null;
 
   // Actions
   newGame: (playerName: string, statAllocation: StatAllocation) => void;
@@ -77,6 +83,11 @@ interface GameStore {
   // Toast management
   addToast: (message: string, type: ToastMessage['type']) => void;
   removeToast: (id: string) => void;
+
+  // Audio
+  toggleMute: () => void;
+  triggerAudioEvent: (event: AudioEvent) => void;
+  clearAudioEvent: () => void;
 
   // Error handling
   setError: (error: string | null) => void;
@@ -272,6 +283,8 @@ export const useGameStore = create<GameStore>()(
       pendingEvents: [],
       toasts: [],
       isExecutingActivity: false,
+      muted: false,
+      audioEvent: null,
 
       // Actions
       newGame: (playerName, statAllocation) => {
@@ -607,7 +620,7 @@ export const useGameStore = create<GameStore>()(
           }
         }
 
-        set({ gameState: newState });
+        set({ gameState: newState, audioEvent: 'travel' });
         return { success: true };
       },
 
@@ -661,7 +674,7 @@ export const useGameStore = create<GameStore>()(
           newState = { ...newState, time: timeResult.newTime };
         }
 
-        set({ gameState: newState });
+        set({ gameState: newState, audioEvent: 'travel' });
         return { success: true };
       },
 
@@ -685,6 +698,11 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
+      // Audio
+      toggleMute: () => set((state) => ({ muted: !state.muted })),
+      triggerAudioEvent: (event) => set({ audioEvent: event }),
+      clearAudioEvent: () => set({ audioEvent: null }),
+
       // Error handling
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
@@ -694,6 +712,7 @@ export const useGameStore = create<GameStore>()(
       partialize: (state) => ({
         // Only persist game state, not UI state
         gameState: state.gameState,
+        muted: state.muted,
       }),
     }
   )
