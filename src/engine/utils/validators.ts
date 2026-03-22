@@ -58,6 +58,9 @@ function checkSinglePrerequisite(
     case 'item':
       return checkItemPrerequisite(state, prereq);
 
+    case 'hasCarHere':
+      return checkHasCarHere(state);
+
     case 'context':
       // Context prerequisites are handled at the UI level
       // For now, always pass
@@ -206,6 +209,26 @@ function checkItemPrerequisite(
         };
       }
       break;
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Check if the player has a car at their current position.
+ */
+function checkHasCarHere(state: GameState): ValidationResult {
+  const hasCar = state.inventory.cars.some(
+    (car) =>
+      car.position.x === state.player.position.x &&
+      car.position.y === state.player.position.y
+  );
+
+  if (!hasCar) {
+    return {
+      valid: false,
+      reason: 'You need a car at this location.',
+    };
   }
 
   return { valid: true };
