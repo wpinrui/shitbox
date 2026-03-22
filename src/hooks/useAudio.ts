@@ -46,22 +46,30 @@ export function useAudio() {
   const deferredListener = useRef<(() => void) | null>(null);
 
   // Play BGM src at a given position. Handles autoplay policy: if the browser
-  // blocks play(), attaches a one-shot click/keydown listener. Any previously
-  // pending listener is cancelled first to prevent stale firings.
+  // blocks play(), attaches a one-shot click/keydown listener.
   const playBgm = useCallback((src: string, startTime = 0) => {
     const bgm = bgmRef.current;
     if (!bgm) return;
 
-    // Cancel any pending deferred listener
-    if (deferredListener.current) {
-      document.removeEventListener('click', deferredListener.current);
-      document.removeEventListener('keydown', deferredListener.current);
-      deferredListener.current = null;
+    if (bgm.src.endsWith(src)) {
+      // Same track already loaded — skip if playing or a deferred listener is pending.
+      // This prevents restarts when effects re-fire during menu-screen transitions
+      // while the browser's autoplay block keeps the element paused.
+      if (!bgm.paused || deferredListener.current) return;
+      // Paused for another reason (e.g. explicit pause) — seek and retry
+      bgm.currentTime = startTime;
+      bgm.volume = 1;
+    } else {
+      // Different track — cancel any pending deferred listener and switch
+      if (deferredListener.current) {
+        document.removeEventListener('click', deferredListener.current);
+        document.removeEventListener('keydown', deferredListener.current);
+        deferredListener.current = null;
+      }
+      bgm.src = src;
+      bgm.currentTime = startTime;
+      bgm.volume = 1;
     }
-
-    bgm.src = src;
-    bgm.currentTime = startTime;
-    bgm.volume = 1;
 
     bgm.play().catch(() => {
       const resume = () => {
@@ -200,17 +208,12 @@ export function useAudio() {
     }
   }, [audioEvent, clearAudioEvent, fadeBgmOut]);
 
-  // Title/menu screens: play late-night-radio without restarting if already on it
+  // Title/menu screens: play late-night-radio
   useEffect(() => {
     if (currentScreen !== 'game') {
       jingleRef.current?.pause();
       jinglePlaying.current = false;
       activePeriod.current = null;
-
-      const bgm = bgmRef.current;
-      if (!bgm) return;
-
-      if (bgm.src.endsWith('late-night-radio.mp3') && !bgm.paused) return;
       playBgm(TITLE_TRACK, 0);
     }
   }, [currentScreen, playBgm]);
