@@ -49,6 +49,7 @@ export function BackgroundSlideshow() {
   }, []);
 
   useEffect(() => {
+    indexRef.current = 0;
     nextSlide();
     const timer = setInterval(nextSlide, INTERVAL);
     return () => clearInterval(timer);
