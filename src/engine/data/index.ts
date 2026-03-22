@@ -65,7 +65,7 @@ export interface Prerequisite {
 }
 
 export interface Outcome {
-  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter' | 'refuelCar';
+  type: 'items' | 'showListings' | 'acquireCar' | 'removeCar' | 'conditionalCost' | 'resetFoodCounter' | 'refuelCar' | 'generateNewspaper';
   itemType?: string;
   quantity?: { min: number; max: number };
   statModifier?: StatModifier;

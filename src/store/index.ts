@@ -23,6 +23,7 @@ import {
   getLocation,
   type ActivityParams,
   type ActivityDefinition,
+  type GigListing,
 } from '@engine/index';
 
 // Toast message type
@@ -58,6 +59,9 @@ interface GameStore {
   // Activity execution
   performActivity: (activityId: string, params?: ActivityParams) => ActivityResult;
   clearEvents: () => void;
+
+  // Newspaper
+  takeGig: (gigId: string) => { success: boolean; error?: string };
 
   // Travel
   walkTo: (destination: GridPosition) => { success: boolean; error?: string };
@@ -243,6 +247,13 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
     };
   }
 
+  if (delta.newspaper) {
+    newState.newspaper = {
+      ...state.newspaper,
+      ...delta.newspaper,
+    };
+  }
+
   return newState;
 }
 
@@ -381,6 +392,12 @@ export const useGameStore = create<GameStore>()(
               money: newState.player.money + dayResult.moneyChange,
               daysWithoutFood: dayResult.daysWithoutFood,
             },
+            // Reset newspaper state for the new day
+            newspaper: {
+              currentDay: newState.time.currentDay,
+              content: null,
+              purchased: false,
+            },
           };
 
           allEvents.push(...dayResult.events);
@@ -431,6 +448,108 @@ export const useGameStore = create<GameStore>()(
 
       clearEvents: () => {
         set({ pendingEvents: [] });
+      },
+
+      // Newspaper
+      takeGig: (gigId) => {
+        const { gameState } = get();
+        if (!gameState) {
+          return { success: false, error: 'No active game' };
+        }
+
+        const content = gameState.newspaper.content;
+        if (!content) {
+          return { success: false, error: 'No newspaper content available.' };
+        }
+
+        const gig = content.gigs.find((g: GigListing) => g.id === gigId);
+        if (!gig) {
+          return { success: false, error: 'Gig not found.' };
+        }
+        if (gig.taken) {
+          return { success: false, error: 'You already took this gig.' };
+        }
+        if (gig.day !== gameState.time.currentDay) {
+          return { success: false, error: 'This gig has expired.' };
+        }
+
+        // Apply gig: deduct time, add pay, mark taken
+        const timeResult = advanceTime(gameState.time, gig.timeCost);
+        const updatedGigs = content.gigs.map((g: GigListing) =>
+          g.id === gigId ? { ...g, taken: true } : g
+        );
+
+        let newState: GameState = {
+          ...gameState,
+          player: {
+            ...gameState.player,
+            money: gameState.player.money + gig.pay,
+          },
+          time: timeResult.newTime,
+          newspaper: {
+            ...gameState.newspaper,
+            content: { ...content, gigs: updatedGigs },
+          },
+          history: {
+            ...gameState.history,
+            actions: [
+              ...gameState.history.actions.slice(-99),
+              {
+                timestamp: Date.now(),
+                day: gameState.time.currentDay,
+                action: 'take_gig',
+                params: { gigId },
+                result: 'success' as const,
+              },
+            ],
+          },
+        };
+
+        const gigCompletedEvent: GameEvent = {
+          type: 'gig_completed',
+          message: `Gig complete: "${gig.title}". You earned $${gig.pay}.`,
+          data: { gigId, pay: gig.pay, timeCost: gig.timeCost },
+        };
+
+        const allEvents: GameEvent[] = [gigCompletedEvent];
+
+        // Handle new day if time ticked over
+        if (timeResult.newDayStarted) {
+          const economyConfig = getEconomyConfig();
+          const dayResult = processNewDay(newState, economyConfig);
+
+          newState = {
+            ...newState,
+            player: {
+              ...newState.player,
+              money: newState.player.money + dayResult.moneyChange,
+              daysWithoutFood: dayResult.daysWithoutFood,
+            },
+            newspaper: {
+              currentDay: newState.time.currentDay,
+              content: null,
+              purchased: false,
+            },
+          };
+
+          allEvents.push(...dayResult.events);
+
+          const deathCheck = checkDeathConditions(newState, economyConfig);
+          if (deathCheck.isDead) {
+            set({
+              gameState: newState,
+              currentScreen: 'game_over',
+              pendingEvents: [
+                ...allEvents,
+                { type: 'death', message: deathCheck.deathReason ?? 'You died.' },
+              ],
+            });
+            return { success: true };
+          }
+        }
+
+        set({ gameState: newState, pendingEvents: allEvents });
+        return { success: true };
       },
 
       // Travel
