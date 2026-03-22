@@ -5,6 +5,7 @@ interface ActivityCardProps {
   activity: ActivityDefinition;
   canPerform: boolean;
   reason?: string;
+  isUniversal?: boolean;
   onClick: () => void;
 }
 
@@ -12,6 +13,7 @@ export function ActivityCard({
   activity,
   canPerform,
   reason,
+  isUniversal,
   onClick,
 }: ActivityCardProps) {
   const getTimeDisplay = () => {
@@ -61,7 +63,7 @@ export function ActivityCard({
 
   return (
     <div
-      className={`card ${canPerform ? '' : 'card--disabled'}`}
+      className={`card${isUniversal ? ' card--universal' : ''}${canPerform ? '' : ' card--disabled'}`}
       onClick={canPerform ? onClick : undefined}
       title={!canPerform ? reason : undefined}
     >

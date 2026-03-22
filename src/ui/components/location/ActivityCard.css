@@ -26,6 +26,22 @@
   transition: all 0.1s ease;
 }
 
+/* Universal-action tint — subtle accent wash to distinguish from location activities */
+.card--universal {
+  background: rgba(var(--accent-rgb), 0.08);
+  border-color: rgba(var(--accent-rgb), 0.15);
+}
+
+.card--universal:hover {
+  background: rgba(var(--accent-rgb), 0.14);
+  border-color: rgba(var(--accent-rgb), 0.25);
+}
+
+.card--universal:active {
+  background: rgba(var(--accent-rgb), 0.18);
+  border-color: rgba(var(--accent-rgb), 0.30);
+}
+
 .card--disabled {
   opacity: 0.4;
   cursor: not-allowed;

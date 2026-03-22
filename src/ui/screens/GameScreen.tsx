@@ -301,6 +301,7 @@ export function GameScreen({
                               activity={activity}
                               canPerform={check.canPerform}
                               reason={check.reason}
+                              isUniversal
                               onClick={() => handleActivityClick(activity)}
                             />
                           );
@@ -308,14 +309,14 @@ export function GameScreen({
 
                       {/* Read Newspaper card — shown after purchase, replaces Buy Newspaper */}
                       {newspaperPurchasedToday && (
-                        <div className="card" onClick={() => setShowNewspaper(true)} style={{ cursor: 'pointer' }}>
+                        <div className="card card--universal" onClick={() => setShowNewspaper(true)} style={{ cursor: 'pointer' }}>
                           <div className="card__name">Read Newspaper</div>
                           <div className="card__desc">Today's paper is on hand — check the headlines and available gigs.</div>
                         </div>
                       )}
 
                       {/* Leave card — always present */}
-                      <div className="card" onClick={handleLeave} style={{ cursor: 'pointer' }}>
+                      <div className="card card--universal" onClick={handleLeave} style={{ cursor: 'pointer' }}>
                         <div className="card__name">Leave</div>
                         <div className="card__desc">Open the map and travel to another location.</div>
                       </div>
