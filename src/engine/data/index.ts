@@ -129,6 +129,9 @@ export interface EconomyConfig {
     niceApartmentBuyPrice: { min: number; max: number };
     houseBuyPrice: { min: number; max: number };
   };
+  carDegradation: {
+    engineConditionLossPerTrip: number;
+  };
   parking: {
     seasonParkingMonthly: { min: number; max: number };
   };

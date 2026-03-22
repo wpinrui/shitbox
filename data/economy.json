@@ -76,6 +76,10 @@
     "dealerTradeInPercent": 0.75
   },
 
+  "carDegradation": {
+    "engineConditionLossPerTrip": 0.2
+  },
+
   "statEffects": {
     "charisma": {
       "traitVisibilityPerPoint": 0.01,

@@ -21,6 +21,7 @@ import {
   executeWalk,
   executeDrive,
   getLocation,
+  getCarDefinition,
   type ActivityParams,
   type ActivityDefinition,
   type GigListing,
@@ -141,13 +142,14 @@ function createInitialGameState(
   };
 
   // Starting shitbox - non-functional, 0 fuel
+  const starterCarDef = getCarDefinition('shitbox_starter');
   const startingShitbox = {
     instanceId: rng.uuid(),
     carId: 'shitbox_starter', // Reference to cars.json
     engineCondition: 0, // Broken
     bodyCondition: 30, // Rough but intact
     fuel: 0,
-    fuelCapacity: 40, // 40 liter tank
+    fuelCapacity: starterCarDef?.fuelCapacity ?? 40,
     position: startingPosition, // Same as player
     acquiredDay: 1,
     acquiredPrice: 0, // You already own it
@@ -238,23 +240,41 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
     };
   }
 
-  if (delta.inventory || delta.carUpdates) {
-    const updatedCars = delta.carUpdates
+  if (delta.inventory || delta.carUpdates || delta.removedCarInstanceId) {
+    let updatedCars = delta.carUpdates
       ? state.inventory.cars.map((car) => {
           const update = delta.carUpdates!.find((u) => u.instanceId === car.instanceId);
           if (!update) return car;
           return {
             ...car,
             fuel: update.fuel ?? car.fuel,
+            engineCondition: update.engineCondition !== undefined
+              ? Math.max(0, Math.min(100, update.engineCondition))
+              : car.engineCondition,
+            bodyCondition: update.bodyCondition !== undefined
+              ? Math.max(0, Math.min(100, update.bodyCondition))
+              : car.bodyCondition,
           };
         })
       : state.inventory.cars;
+
+    // Remove car if scrapped
+    if (delta.removedCarInstanceId) {
+      updatedCars = updatedCars.filter((c) => c.instanceId !== delta.removedCarInstanceId);
+    }
 
     newState.inventory = {
       ...state.inventory,
       cars: updatedCars,
       engineParts: state.inventory.engineParts + (delta.inventory?.engineParts ?? 0),
       bodyParts: state.inventory.bodyParts + (delta.inventory?.bodyParts ?? 0),
+    };
+  }
+
+  if (delta.marketUpdates) {
+    newState.market = {
+      ...state.market,
+      ...delta.marketUpdates,
     };
   }
 
@@ -649,15 +669,22 @@ export const useGameStore = create<GameStore>()(
           };
         }
 
-        // Update car fuel and position
+        // Update car fuel, position, and apply degradation
         if (result.carInstanceId && result.fuelUsed !== undefined && result.newPosition) {
           const { carInstanceId, fuelUsed, newPosition } = result;
+          const economyConfig = getEconomyConfig();
+          const baseDegradation = economyConfig.carDegradation.engineConditionLossPerTrip;
+          const drivingSkill = newState.player.stats.driving;
+          const wearReduction = drivingSkill * economyConfig.statEffects.driving.carWearReductionPerPoint;
+          const degradation = baseDegradation * (1 - wearReduction);
+
           const updatedCars = newState.inventory.cars.map((car) => {
             if (car.instanceId === carInstanceId) {
               return {
                 ...car,
                 fuel: car.fuel - fuelUsed,
                 position: newPosition,
+                engineCondition: Math.max(0, car.engineCondition - degradation),
               };
             }
             return car;
