@@ -55,7 +55,7 @@ electron/     # Electron shell
 
 ## Image Attributions
 
-Background photos in `src/assets/backgrounds/`:
+Background photos in `public/assets/backgrounds/`:
 
 | # | File | Attribution |
 |---|---|---|
@@ -77,3 +77,9 @@ Background photos in `src/assets/backgrounds/`:
 | 16 | `film_school.jpg` | Photo by [Brands&People](https://unsplash.com/@brandspeople?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/br2HgQuvq6I?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) |
 | 17 | `gym.jpg` | Photo by [Samuel Girven](https://unsplash.com/@samuelgirven?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/fqMu99l8sqo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) |
 | 18 | `penthouse.jpg` | Photo by [Peter Thomas](https://unsplash.com/@peterthomas?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/efLcMHXtrg0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) |
+
+## Music Attribution
+
+"Late Night Radio" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+http://creativecommons.org/licenses/by/4.0/

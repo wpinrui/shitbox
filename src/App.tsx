@@ -63,7 +63,29 @@ function App() {
     }
   };
 
-  return <div className="app">{renderScreen()}</div>;
+  // Start background music on first user interaction
+  useEffect(() => {
+    const audio = document.getElementById('bgm') as HTMLAudioElement | null;
+    if (!audio) return;
+    audio.play().catch(() => {
+      const start = () => {
+        audio.play().catch(() => {});
+        document.removeEventListener('click', start);
+        document.removeEventListener('keydown', start);
+      };
+      document.addEventListener('click', start);
+      document.addEventListener('keydown', start);
+    });
+  }, []);
+
+  return (
+    <div className="app">
+      <audio id="bgm" loop preload="auto">
+        <source src="/assets/audio/late-night-radio.mp3" type="audio/mpeg" />
+      </audio>
+      {renderScreen()}
+    </div>
+  );
 }
 
 export default App;
