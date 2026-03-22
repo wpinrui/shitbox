@@ -291,7 +291,7 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
           const newCondition = Math.min(100, carToRepair.engineCondition + repairAmount);
           carUpdates.push({ instanceId: carToRepair.instanceId, engineCondition: newCondition });
           if (outcome.source === 'diy') {
-            const partsUsed = Math.min(state.inventory.engineParts + enginePartsChange, rng.randomInRange(1, 3));
+            const partsUsed = Math.min(state.inventory.engineParts + enginePartsChange, rng.randomInt(1, 3));
             enginePartsChange -= partsUsed;
           }
           events.push({
@@ -314,7 +314,7 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
           const newCondition = Math.min(100, carForBodyRepair.bodyCondition + bodyRepairAmount);
           carUpdates.push({ instanceId: carForBodyRepair.instanceId, bodyCondition: newCondition });
           if (outcome.source === 'diy') {
-            const partsUsed = Math.min(state.inventory.bodyParts + bodyPartsChange, rng.randomInRange(1, 2));
+            const partsUsed = Math.min(state.inventory.bodyParts + bodyPartsChange, rng.randomInt(1, 2));
             bodyPartsChange -= partsUsed;
           }
           events.push({
@@ -406,25 +406,19 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 function generateJunkerListings(state: GameState, rng: RNG): CarListing[] {
   const allCars = getAllCarDefinitions();
   const junkerPool = allCars.filter((c) => c.tier <= 1);
-  const count = rng.randomInRange(3, Math.min(5, junkerPool.length));
-
-  // Shuffle and pick
-  const shuffled = [...junkerPool];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = rng.randomInRange(0, i);
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  const picked = shuffled.slice(0, count);
+  if (junkerPool.length === 0) return [];
+  const count = rng.randomInt(Math.min(3, junkerPool.length), Math.min(5, junkerPool.length));
+  const picked = rng.shuffle(junkerPool).slice(0, count);
 
   return picked.map((carDef, idx) => {
-    const engineCondition = rng.randomInRange(5, 40);
-    const bodyCondition = rng.randomInRange(10, 60);
+    const engineCondition = rng.randomInt(5, 40);
+    const bodyCondition = rng.randomInt(10, 60);
     const avgCondition = (engineCondition + bodyCondition) / 2;
 
     // Price based on condition — interpolate between scrap and poor market values
     let askingPrice: number;
     if (avgCondition < 20) {
-      askingPrice = carDef.marketValue.scrap + rng.randomInRange(0, 50);
+      askingPrice = carDef.marketValue.scrap + rng.randomInt(0, 50);
     } else {
       const t = (avgCondition - 20) / 40; // 0–1 range for 20–60 condition
       askingPrice = Math.round(
