@@ -3,6 +3,7 @@ import { useGameStore } from '@store/index';
 import { MainMenu, NewGame, GameScreen, GameOverScreen, PlaceholderScreen } from '@ui/screens';
 import { BackgroundSlideshow } from '@ui/components/common';
 import { loadEconomyData, loadCoreActivities, loadMapData, loadNewspaperTemplates } from '@engine/index';
+import { useAudio } from './hooks/useAudio';
 
 type DataStatus = 'loading' | 'loaded' | 'error';
 
@@ -11,6 +12,8 @@ function App() {
   const currentScreen = useGameStore((state) => state.currentScreen);
   const gameState = useGameStore((state) => state.gameState);
   const pendingEvents = useGameStore((state) => state.pendingEvents);
+
+  useAudio();
 
   useEffect(() => {
     async function loadData() {
@@ -28,30 +31,12 @@ function App() {
     loadData();
   }, []);
 
-  // Start background music on first user interaction
-  useEffect(() => {
-    const audio = document.getElementById('bgm') as HTMLAudioElement | null;
-    if (!audio) return;
-    audio.play().catch(() => {
-      const start = () => {
-        audio.play().catch(() => {});
-        document.removeEventListener('click', start);
-        document.removeEventListener('keydown', start);
-      };
-      document.addEventListener('click', start);
-      document.addEventListener('keydown', start);
-    });
-  }, []);
-
   // Show slideshow behind menu screens (persists across main_menu ↔ new_game)
   const showSlideshow = currentScreen === 'main_menu' || currentScreen === 'new_game';
 
   if (dataStatus === 'loading') {
     return (
       <div className="app loading">
-        <audio id="bgm" loop preload="auto">
-          <source src="/assets/audio/late-night-radio.mp3" type="audio/mpeg" />
-        </audio>
         <h1>Loading...</h1>
       </div>
     );
@@ -60,9 +45,6 @@ function App() {
   if (dataStatus === 'error') {
     return (
       <div className="app error">
-        <audio id="bgm" loop preload="auto">
-          <source src="/assets/audio/late-night-radio.mp3" type="audio/mpeg" />
-        </audio>
         <h1>Failed to load game data</h1>
         <p>Please check the console for details.</p>
       </div>
@@ -88,9 +70,6 @@ function App() {
 
   return (
     <div className="app">
-      <audio id="bgm" loop preload="auto">
-        <source src="/assets/audio/late-night-radio.mp3" type="audio/mpeg" />
-      </audio>
       {showSlideshow && <BackgroundSlideshow />}
       {renderScreen()}
     </div>

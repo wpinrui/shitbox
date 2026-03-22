@@ -80,6 +80,22 @@ Background photos in `public/assets/backgrounds/`:
 
 ## Music Attribution
 
-"Late Night Radio" Kevin MacLeod (incompetech.com)
-Licensed under Creative Commons: By Attribution 4.0 License
-http://creativecommons.org/licenses/by/4.0/
+Background music tracks by Kevin MacLeod (incompetech.com), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/):
+
+- "Late Night Radio"
+- "Montauk Point"
+- "Carpe Diem"
+- "Heartwarming"
+- "Bright Wish"
+- "Porch Swing Days (Slower)"
+- "Groundwork"
+- "Midday Dance"
+- "Mining by Moonlight"
+- "Fretless"
+- "Fuzzball Parade"
+- "Son of a Rocket"
+- "Deadly Roulette"
+- "Hep Cats"
+- "Whiskey on the Mississippi"
+
+Travel jingle: "Jingle_Win_Synth_05.wav" LittleRobotSoundFactory (freesound.org/s/274182/) — Licensed under [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)

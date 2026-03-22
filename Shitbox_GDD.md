@@ -321,7 +321,7 @@ One core loop: *Activity(parameters, context) → {Δmoney, Δenergy, Δtime, ou
 
 ### 13.5 Audio
 
-Silent for initial release. Music/SFX to be added later if desired.
+Time-of-day background music (morning, afternoon, evening, night tracks — sourced from incompetech). When an activity is in progress, the current track fades quickly and an activity jingle plays. On completion, the track resumes from where it left off — unless the time-of-day has changed, in which case the appropriate new track starts from the beginning. Travel has its own jingle with the same resume/switch logic. Single activity jingle and single travel jingle for now.
 
 ### 13.6 Onboarding
 

@@ -9,6 +9,7 @@ import {
   canPerformActivity,
   MAX_ENERGY,
   STAT_ORDER,
+  getTimeOfDay,
   type ActivityDefinition,
   type LocationDefinition,
 } from '@engine/index';
@@ -35,6 +36,8 @@ export function GameScreen({
   const saveGame = useGameStore((state) => state.saveGame);
   const loadGame = useGameStore((state) => state.loadGame);
   const takeGig = useGameStore((state) => state.takeGig);
+  const muted = useGameStore((state) => state.muted);
+  const toggleMute = useGameStore((state) => state.toggleMute);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showNewspaper, setShowNewspaper] = useState(false);
@@ -145,6 +148,8 @@ export function GameScreen({
     setTab('map');
   };
 
+  const timeOfDay = getTimeOfDay(gameState.time.currentHour);
+
   // Format clock
   const hour = gameState.time.currentHour;
   const minute = gameState.time.currentMinute;
@@ -155,13 +160,14 @@ export function GameScreen({
   const energyPct = (gameState.player.energy / MAX_ENERGY) * 100;
 
   return (
-    <div className={`game-screen ${showPauseMenu || selectedActivity || showNewspaper ? 'game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
           className="bg__photo"
           style={{ backgroundImage: `url('/assets/backgrounds/${bgImage}')` }}
         />
+        <div className="bg__tint" />
         <div className="bg__vignette" />
       </div>
 
@@ -207,6 +213,10 @@ export function GameScreen({
               {gameState.player.daysWithoutFood > 0 && (
                 <div className="food-warn">🍔 !</div>
               )}
+              <div className="header__divider" />
+              <button className="btn-mute" onClick={toggleMute} title={muted ? 'Unmute' : 'Mute'}>
+                {muted ? '🔇' : '🔊'}
+              </button>
             </div>
           </div>
 
