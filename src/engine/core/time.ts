@@ -3,7 +3,7 @@
  * Handles time progression, day transitions, and death conditions.
  */
 
-import type { GameState, GameTime, GameEvent } from '../types';
+import type { GameState, GameTime, GameEvent, CarListing } from '../types';
 import type { EconomyConfig } from '../data';
 import { HOURS_PER_DAY } from '../index';
 
@@ -56,6 +56,8 @@ export interface NewDayResult {
   daysWithoutFood: number;
   moneyChange: number;
   events: GameEvent[];
+  expiredListingsRemoved: boolean;
+  currentListings: CarListing[];
 }
 
 /**
@@ -115,10 +117,18 @@ export function processNewDay(
     }
   }
 
+  // Filter expired market listings
+  const newDay = state.time.currentDay + 1;
+  const prevListings = state.market.currentListings;
+  const currentListings = prevListings.filter((l) => l.expiresDay > newDay);
+  const expiredListingsRemoved = currentListings.length < prevListings.length;
+
   return {
     daysWithoutFood,
     moneyChange,
     events,
+    expiredListingsRemoved,
+    currentListings,
   };
 }
 
