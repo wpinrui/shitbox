@@ -32,11 +32,15 @@ export {
   getEconomyConfig,
   isEconomyLoaded,
   clearDataCache,
+  loadNewspaperTemplates,
+  getNewspaperTemplates,
   type ActivityDefinition,
   type EconomyConfig,
   type Prerequisite,
   type Outcome,
   type StatGain,
+  type GigTemplate,
+  type NewspaperTemplates,
 } from './data';
 
 // Map data
@@ -101,6 +105,9 @@ export {
   canPerformActivity,
   type ExecuteActivityInput,
 } from './core/activity';
+
+// Newspaper system
+export { generateNewspaper } from './systems/newspaper';
 
 // Travel system
 export {

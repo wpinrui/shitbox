@@ -4,9 +4,10 @@
  * All functions are pure with no side effects.
  */
 
-import type { GameState, ActivityResult, StateDelta, GameEvent } from '../types';
+import type { GameState, ActivityResult, StateDelta, GameEvent, NewspaperContent } from '../types';
 import type { EconomyConfig } from '../data';
 import { getActivityDefinition, getEconomyConfig } from '../data';
+import { generateNewspaper } from '../systems/newspaper';
 import { RNG } from '../utils/rng';
 import { checkPrerequisites, checkEnergyAvailable, checkMoneyAvailable } from '../utils/validators';
 import {
@@ -45,7 +46,19 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
     };
   }
 
-  // 2. Get economy config
+  // 2. Check newspaper re-purchase block
+  if (
+    activityId === 'buy_newspaper' &&
+    state.newspaper.purchased &&
+    state.newspaper.currentDay === state.time.currentDay
+  ) {
+    return {
+      success: false,
+      error: "You already have today's paper.",
+    };
+  }
+
+  // 3. Get economy config
   let economyConfig: EconomyConfig;
   try {
     economyConfig = getEconomyConfig();
@@ -129,6 +142,7 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
   let enginePartsChange = 0;
   let bodyPartsChange = 0;
   const carUpdates: Array<{ instanceId: string; fuel?: number }> = [];
+  let generatedNewspaper: NewspaperContent | null = null;
 
   for (const outcome of activity.outcomes) {
     switch (outcome.type) {
@@ -226,6 +240,15 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
           data: { condition: outcome.condition, cost: outcome.cost },
         });
         break;
+
+      case 'generateNewspaper':
+        generatedNewspaper = generateNewspaper(state, rng);
+        events.push({
+          type: 'newspaper_purchased',
+          message: "You pick up today's paper.",
+          data: { day: state.time.currentDay },
+        });
+        break;
     }
   }
 
@@ -245,6 +268,9 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
       ? { engineParts: enginePartsChange, bodyParts: bodyPartsChange }
       : undefined,
     carUpdates: carUpdates.length > 0 ? carUpdates : undefined,
+    newspaper: generatedNewspaper
+      ? { content: generatedNewspaper, purchased: true, currentDay: state.time.currentDay }
+      : undefined,
     events,
   };
 
@@ -310,6 +336,15 @@ export function canPerformActivity(
   const activity = getActivityDefinition(activityId);
   if (!activity) {
     return { canPerform: false, reason: 'Unknown activity' };
+  }
+
+  // Block newspaper re-purchase for the same day
+  if (
+    activityId === 'buy_newspaper' &&
+    state.newspaper.purchased &&
+    state.newspaper.currentDay === state.time.currentDay
+  ) {
+    return { canPerform: false, reason: "You already have today's paper." };
   }
 
   // Check prerequisites

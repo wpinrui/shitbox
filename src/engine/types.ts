@@ -215,6 +215,7 @@ export interface NewspaperState {
 }
 
 export interface NewspaperContent {
+  headlines: string[];
   classifieds: ClassifiedAd[];
   auctionPreviews: string[];
   marketNews: string[];
@@ -234,9 +235,13 @@ export interface ClassifiedAd {
 export interface GigListing {
   id: string;
   title: string;
+  description: string;
   pay: number;
+  timeCost: number;
+  energyPerHour: number;
   day: number;
   requirements: string[];
+  taken: boolean;
 }
 
 export interface Progression {
@@ -285,6 +290,7 @@ export interface StateDelta {
     bodyParts: number;
   }>;
   carUpdates?: Array<{ instanceId: string; fuel?: number }>;
+  newspaper?: Partial<NewspaperState>;
   events?: GameEvent[];
 }
 
@@ -301,7 +307,9 @@ export type GameEventType =
   | 'listings_shown'
   | 'car_acquired'
   | 'car_removed'
-  | 'conditional_cost';
+  | 'conditional_cost'
+  | 'newspaper_purchased'
+  | 'gig_completed';
 
 export interface GameEvent {
   type: GameEventType;

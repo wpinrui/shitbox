@@ -21,12 +21,14 @@ interface ActivityModalProps {
   gameState: unknown;
   onExecute: (params: { hours?: number }) => ActivityResult | void;
   onClose: () => void;
+  onOpenNewspaper?: () => void;
 }
 
 export function ActivityModal({
   activity,
   onExecute,
   onClose,
+  onOpenNewspaper,
 }: ActivityModalProps) {
   const isVariableTime = activity.time.type === 'variable';
   const minHours = activity.time.minHours ?? 1;
@@ -98,6 +100,11 @@ export function ActivityModal({
         }
       }
     }
+  }
+
+  // Newspaper purchase — prepend a dedicated result row
+  if (activity.id === 'buy_newspaper' && result?.success) {
+    resultRows.unshift({ icon: '📰', label: 'Newspaper purchased', value: "Today's edition", type: 'neutral' });
   }
 
   // Fallback: if no structured result, show narrative
@@ -189,13 +196,39 @@ export function ActivityModal({
               ))}
             </div>
 
-            <button
-              className="modal-outcome__close btn-primary"
-              style={{ animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s` }}
-              onClick={onClose}
-            >
-              Close
-            </button>
+            {activity.id === 'buy_newspaper' && result?.success && onOpenNewspaper ? (
+              <div
+                className="modal-outcome__close"
+                style={{
+                  animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s`,
+                  display: 'flex',
+                  gap: '8px',
+                }}
+              >
+                <button
+                  className="btn-primary"
+                  style={{ flex: 1 }}
+                  onClick={() => { onClose(); onOpenNewspaper(); }}
+                >
+                  Read Newspaper
+                </button>
+                <button
+                  className="btn-secondary"
+                  style={{ flex: 1 }}
+                  onClick={onClose}
+                >
+                  Later
+                </button>
+              </div>
+            ) : (
+              <button
+                className="modal-outcome__close btn-primary"
+                style={{ animationDelay: `${0.1 + resultRows.length * 0.2 + 0.3}s` }}
+                onClick={onClose}
+              >
+                Close
+              </button>
+            )}
           </div>
         )}
       </div>

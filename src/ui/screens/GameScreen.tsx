@@ -1,8 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal } from '@ui/components/location';
-import { PauseMenu, ToastContainer } from '@ui/components/common';
+import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
 import {
   getLocationActivities,
   getLocationAtPosition,
@@ -34,8 +34,21 @@ export function GameScreen({
   const driveTo = useGameStore((state) => state.driveTo);
   const saveGame = useGameStore((state) => state.saveGame);
   const loadGame = useGameStore((state) => state.loadGame);
+  const takeGig = useGameStore((state) => state.takeGig);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const [showNewspaper, setShowNewspaper] = useState(false);
+
+  const newspaperPurchasedToday =
+    gameState.newspaper.purchased &&
+    gameState.newspaper.currentDay === gameState.time.currentDay;
+
+  // Close newspaper modal if day advances or state clears while open
+  useEffect(() => {
+    if (showNewspaper && !newspaperPurchasedToday) {
+      setShowNewspaper(false);
+    }
+  }, [showNewspaper, newspaperPurchasedToday]);
 
   const currentLocation = getLocationAtPosition(gameState.player.position);
 
@@ -75,6 +88,22 @@ export function GameScreen({
   const handleModalClose = () => {
     setSelectedActivity(null);
   };
+
+  const handleOpenNewspaper = useCallback(() => {
+    setShowNewspaper(true);
+  }, []);
+
+  const handleTakeGig = useCallback((gigId: string) => {
+    const result = takeGig(gigId);
+    if (!result.success && result.error) {
+      addToast(result.error, 'error');
+    }
+    return result;
+  }, [takeGig, addToast]);
+
+  const handleCloseNewspaper = useCallback(() => {
+    setShowNewspaper(false);
+  }, []);
 
   const handleWalk = useCallback((location: LocationDefinition) => {
     const result = walkTo(location.position);
@@ -126,7 +155,7 @@ export function GameScreen({
   const energyPct = (gameState.player.energy / MAX_ENERGY) * 100;
 
   return (
-    <div className={`game-screen ${showPauseMenu || selectedActivity ? 'game-screen--modal-open' : ''}`}>
+    <div className={`game-screen ${showPauseMenu || selectedActivity || showNewspaper ? 'game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -248,18 +277,29 @@ export function GameScreen({
 
                     {/* Universal actions + Leave */}
                     <div className="activities-grid">
-                      {universalActivities.map((activity) => {
-                        const check = canPerformActivity(gameState, activity.id);
-                        return (
-                          <ActivityCard
-                            key={activity.id}
-                            activity={activity}
-                            canPerform={check.canPerform}
-                            reason={check.reason}
-                            onClick={() => handleActivityClick(activity)}
-                          />
-                        );
-                      })}
+                      {universalActivities
+                        // When newspaper is purchased today, hide buy_newspaper — replaced by Read Newspaper card
+                        .filter((a) => !(a.id === 'buy_newspaper' && newspaperPurchasedToday))
+                        .map((activity) => {
+                          const check = canPerformActivity(gameState, activity.id);
+                          return (
+                            <ActivityCard
+                              key={activity.id}
+                              activity={activity}
+                              canPerform={check.canPerform}
+                              reason={check.reason}
+                              onClick={() => handleActivityClick(activity)}
+                            />
+                          );
+                        })}
+
+                      {/* Read Newspaper card — shown after purchase, replaces Buy Newspaper */}
+                      {newspaperPurchasedToday && (
+                        <div className="card" onClick={() => setShowNewspaper(true)} style={{ cursor: 'pointer' }}>
+                          <div className="card__name">Read Newspaper</div>
+                          <div className="card__desc">Today's paper is on hand — check the headlines and available gigs.</div>
+                        </div>
+                      )}
 
                       {/* Leave card — always present */}
                       <div className="card" onClick={handleLeave} style={{ cursor: 'pointer' }}>
@@ -297,6 +337,17 @@ export function GameScreen({
           gameState={gameState}
           onExecute={handleActivityExecute}
           onClose={handleModalClose}
+          onOpenNewspaper={selectedActivity.id === 'buy_newspaper' ? handleOpenNewspaper : undefined}
+        />
+      )}
+
+      {/* Newspaper Modal */}
+      {showNewspaper && newspaperPurchasedToday && (
+        <NewspaperModal
+          newspaper={gameState.newspaper}
+          currentDay={gameState.time.currentDay}
+          onTakeGig={handleTakeGig}
+          onClose={handleCloseNewspaper}
         />
       )}
 

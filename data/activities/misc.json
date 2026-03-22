@@ -37,6 +37,29 @@
       "risks": []
     },
     {
+      "id": "buy_newspaper",
+      "name": "Buy Newspaper",
+      "description": "Pick up today's paper. Find out what's happening — and whether any gigs are worth chasing.",
+      "category": "misc",
+      "time": {
+        "type": "fixed",
+        "hours": 0.5,
+        "unit": "hour"
+      },
+      "energy": {
+        "type": "none"
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 5
+      },
+      "prerequisites": [],
+      "outcomes": [{ "type": "generateNewspaper" }],
+      "statGain": [],
+      "risks": []
+    },
+    {
       "id": "nap",
       "name": "Nap",
       "description": "Take a short rest anywhere. Less effective than sleeping in a car.",

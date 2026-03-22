@@ -1,0 +1,179 @@
+{
+  "headlines": [
+    "City council votes to extend parking meter hours — third time this month.",
+    "Sinkhole opens on Elm Street; resident calls it 'an improvement to the neighbourhood.'",
+    "Economists warn of moderate uncertainty; urge cautious optimism.",
+    "Warehouse fire on the industrial estate ruled accidental; investigators decline further comment.",
+    "Local man claims scrapyard shitbox 'has character.' Neighbours disagree.",
+    "Bus route 14 cancelled indefinitely due to 'operational considerations.'",
+    "Fuel prices up again. Analysts cite 'various factors.'",
+    "Council approves new roundabout despite near-universal opposition.",
+    "Mysterious billboard appears overnight; no one claims responsibility.",
+    "Unemployment flat. 'Steady' says spokesperson. No further questions taken.",
+    "Dog found on motorway returned to owner. Car not yet located.",
+    "New café opens downtown. Closes same week. Building immediately relisted.",
+    "Potholes on Gravel Road described as 'under review' for fourth consecutive quarter.",
+    "Local mechanic wins regional award. 'It's just bolts,' he says.",
+    "Power outage blamed on 'scheduled maintenance.' Duration unspecified.",
+    "City announces 'Smart Parking' initiative. Meters to be replaced with slightly newer meters.",
+    "Used car prices reach new high. Experts divided on whether this is good or bad.",
+    "Man fined for parking on footpath. Appeals on grounds that nobody uses that footpath.",
+    "Traffic light on Main Street stuck on amber since Tuesday. Investigation ongoing.",
+    "Regional index fund posts 'mixed results' for third quarter running."
+  ],
+  "gigTemplates": [
+    {
+      "id": "gig_moving_crew",
+      "title": "Moving crew needs an extra pair of hands",
+      "description": "Bigfoot Removals is short-staffed for the day. Heavy lifting, nothing glamorous. Cash in hand.",
+      "pay": 120,
+      "timeCost": 6,
+      "energyPerHour": 14,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_warehouse_unload",
+      "title": "Warehouse unloading — one day only",
+      "description": "Night delivery came in early. Owner needs it sorted before the morning shift. Show up, work fast, get paid.",
+      "pay": 95,
+      "timeCost": 4,
+      "energyPerHour": 12,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_market_stall",
+      "title": "Market stall hand wanted — cash daily",
+      "description": "Farmers' market needs a spare set of hands. Set up, run the register, pack down. Straightforward.",
+      "pay": 80,
+      "timeCost": 5,
+      "energyPerHour": 6,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_garden_clearance",
+      "title": "Garden clearance — full day rate",
+      "description": "Old couple on Harrow Lane need their back yard sorted out. Overgrown. Bring gloves.",
+      "pay": 110,
+      "timeCost": 7,
+      "energyPerHour": 12,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_furniture_delivery",
+      "title": "Furniture delivery assistant needed",
+      "description": "One-day cover for a delivery driver's mate. Heavy stuff. Tips possible.",
+      "pay": 130,
+      "timeCost": 8,
+      "energyPerHour": 13,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_event_crew",
+      "title": "Event setup crew — tonight only",
+      "description": "Community hall booking ran long. Need the room cleared and reset before the next one. Quick turnaround.",
+      "pay": 85,
+      "timeCost": 4,
+      "energyPerHour": 8,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_kitchen_hand",
+      "title": "Kitchen hand — lunch rush cover",
+      "description": "Short-staffed at the café on Bridge Street. Dishes, prep, general chaos. Feed yourself on the job.",
+      "pay": 75,
+      "timeCost": 4,
+      "energyPerHour": 8,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_painting_assist",
+      "title": "Painting assistant — residential job",
+      "description": "Tradesman needs a second person for a house repaint. No experience needed — you hold the ladder and roll walls.",
+      "pay": 140,
+      "timeCost": 7,
+      "energyPerHour": 10,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_stock_count",
+      "title": "Stock count at local hardware store",
+      "description": "Annual inventory. Walk the aisles, count the screws. Not exciting, but it pays and it's indoors.",
+      "pay": 90,
+      "timeCost": 5,
+      "energyPerHour": 5,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_road_crew",
+      "title": "Road crew labourer — day rate",
+      "description": "Council works crew is a man short on the Eastfield resurfacing job. Hard hat and boots if you have them.",
+      "pay": 160,
+      "timeCost": 8,
+      "energyPerHour": 16,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_leaflet_drop",
+      "title": "Leaflet distribution — whole suburb",
+      "description": "Real estate firm needs flyers dropped across the north end today. You walk, you drop, you're done.",
+      "pay": 70,
+      "timeCost": 4,
+      "energyPerHour": 7,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_cleaner",
+      "title": "Office clean — after hours",
+      "description": "Regular cleaner called in sick. Three-floor office building. Equipment provided. Key left under the mat.",
+      "pay": 100,
+      "timeCost": 5,
+      "energyPerHour": 7,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_scrap_run",
+      "title": "Scrap metal collection run",
+      "description": "Scrap dealer needs loads picked up from three residential properties and dropped at the yard. Day's work.",
+      "pay": 150,
+      "timeCost": 7,
+      "energyPerHour": 11,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_security_cover",
+      "title": "Security cover — overnight not required",
+      "description": "Construction site on Millbrook Ave needs eyes on it for the day while the regular's off sick. Sit, watch, report.",
+      "pay": 115,
+      "timeCost": 6,
+      "energyPerHour": 3,
+      "requirements": [],
+      "location": null
+    },
+    {
+      "id": "gig_demolition_assist",
+      "title": "Demolition assist — internal strip-out",
+      "description": "Tradesman stripping an old office fit-out before the builder comes in. Swing a hammer, fill a skip.",
+      "pay": 175,
+      "timeCost": 8,
+      "energyPerHour": 15,
+      "requirements": [],
+      "location": null
+    }
+  ],
+  "marketNews": [],
+  "roadTripNews": [],
+  "auctionPreviews": []
+}
