@@ -493,6 +493,7 @@ a:focus-visible {
 }
 
 .new-game-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -503,8 +504,22 @@ a:focus-visible {
   border: var(--glass-1-border);
   border-radius: var(--glass-1-radius);
   box-shadow: var(--glass-1-shadow);
-  padding: 2rem;
+  padding: 48px 40px 40px;
   animation: menuCardIn 0.8s ease-out;
+}
+
+.new-game__back {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+}
+
+.new-game__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  text-align: center;
 }
 
 .name-section label {

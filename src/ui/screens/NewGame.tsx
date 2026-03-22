@@ -84,12 +84,10 @@ export function NewGame() {
   return (
     <div className="screen new-game">
       <div className="new-game-content">
-        <header className="screen-header">
-          <button className="back-button" onClick={() => setScreen('main_menu')}>
-            &larr; Back
-          </button>
-          <h1>New Game</h1>
-        </header>
+        <button className="btn-nav new-game__back" onClick={() => setScreen('main_menu')}>
+          Back
+        </button>
+        <div className="new-game__title">New Game</div>
         <section className="name-section">
           <label htmlFor="player-name">Your Name</label>
           <input
