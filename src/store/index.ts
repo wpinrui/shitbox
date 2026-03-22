@@ -473,7 +473,17 @@ export const useGameStore = create<GameStore>()(
           return { success: false, error: 'This gig has expired.' };
         }
 
-        // Apply gig: deduct time, add pay, mark taken
+        // Calculate energy cost: per-hour rate * hours, reduced by fitness
+        const economyConfig = getEconomyConfig();
+        const baseEnergy = gig.energyPerHour * gig.timeCost;
+        const fitnessReduction = gameState.player.stats.fitness * economyConfig.statEffects.fitness.energyCostReductionPerPoint;
+        const energyCost = Math.max(0, Math.round(baseEnergy * (1 - fitnessReduction)));
+
+        if (gameState.player.energy < energyCost) {
+          return { success: false, error: `Not enough energy. Need ${energyCost}, have ${gameState.player.energy}.` };
+        }
+
+        // Apply gig: deduct time, deduct energy, add pay, mark taken
         const timeResult = advanceTime(gameState.time, gig.timeCost);
         const updatedGigs = content.gigs.map((g: GigListing) =>
           g.id === gigId ? { ...g, taken: true } : g
@@ -483,6 +493,7 @@ export const useGameStore = create<GameStore>()(
           ...gameState,
           player: {
             ...gameState.player,
+            energy: Math.max(0, gameState.player.energy - energyCost),
             money: gameState.player.money + gig.pay,
           },
           time: timeResult.newTime,

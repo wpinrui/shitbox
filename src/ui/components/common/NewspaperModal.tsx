@@ -86,6 +86,12 @@ export function NewspaperModal({
                             {gig.timeCost} hr{gig.timeCost !== 1 ? 's' : ''}
                           </span>
                         </div>
+                        <div className="gig-card__cost">
+                          <span className="gig-card__cost-icon">⚡</span>
+                          <span className="gig-card__cost-text gig-card__cost-text--energy">
+                            {gig.energyPerHour}/hr
+                          </span>
+                        </div>
                       </div>
                       <button
                         className={`btn-gig${gigState === 'taken' ? ' btn-gig--taken' : gigState === 'expired' ? ' btn-gig--expired' : ''}`}

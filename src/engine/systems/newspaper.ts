@@ -31,6 +31,7 @@ export function generateNewspaper(state: GameState, rng: RNG): NewspaperContent 
     description: template.description,
     pay: template.pay,
     timeCost: template.timeCost,
+    energyPerHour: template.energyPerHour,
     day: state.time.currentDay,
     requirements: template.requirements,
     taken: false,

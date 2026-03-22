@@ -208,6 +208,7 @@ export interface GigTemplate {
   description: string;
   pay: number;
   timeCost: number;
+  energyPerHour: number;
   requirements: string[];
   location: string | null;
 }

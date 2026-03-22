@@ -238,6 +238,7 @@ export interface GigListing {
   description: string;
   pay: number;
   timeCost: number;
+  energyPerHour: number;
   day: number;
   requirements: string[];
   taken: boolean;

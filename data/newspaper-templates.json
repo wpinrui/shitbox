@@ -28,6 +28,7 @@
       "description": "Bigfoot Removals is short-staffed for the day. Heavy lifting, nothing glamorous. Cash in hand.",
       "pay": 120,
       "timeCost": 6,
+      "energyPerHour": 14,
       "requirements": [],
       "location": null
     },
@@ -37,6 +38,7 @@
       "description": "Night delivery came in early. Owner needs it sorted before the morning shift. Show up, work fast, get paid.",
       "pay": 95,
       "timeCost": 4,
+      "energyPerHour": 12,
       "requirements": [],
       "location": null
     },
@@ -46,6 +48,7 @@
       "description": "Farmers' market needs a spare set of hands. Set up, run the register, pack down. Straightforward.",
       "pay": 80,
       "timeCost": 5,
+      "energyPerHour": 6,
       "requirements": [],
       "location": null
     },
@@ -55,6 +58,7 @@
       "description": "Old couple on Harrow Lane need their back yard sorted out. Overgrown. Bring gloves.",
       "pay": 110,
       "timeCost": 7,
+      "energyPerHour": 12,
       "requirements": [],
       "location": null
     },
@@ -64,6 +68,7 @@
       "description": "One-day cover for a delivery driver's mate. Heavy stuff. Tips possible.",
       "pay": 130,
       "timeCost": 8,
+      "energyPerHour": 13,
       "requirements": [],
       "location": null
     },
@@ -73,6 +78,7 @@
       "description": "Community hall booking ran long. Need the room cleared and reset before the next one. Quick turnaround.",
       "pay": 85,
       "timeCost": 4,
+      "energyPerHour": 8,
       "requirements": [],
       "location": null
     },
@@ -82,6 +88,7 @@
       "description": "Short-staffed at the café on Bridge Street. Dishes, prep, general chaos. Feed yourself on the job.",
       "pay": 75,
       "timeCost": 4,
+      "energyPerHour": 8,
       "requirements": [],
       "location": null
     },
@@ -91,6 +98,7 @@
       "description": "Tradesman needs a second person for a house repaint. No experience needed — you hold the ladder and roll walls.",
       "pay": 140,
       "timeCost": 7,
+      "energyPerHour": 10,
       "requirements": [],
       "location": null
     },
@@ -100,6 +108,7 @@
       "description": "Annual inventory. Walk the aisles, count the screws. Not exciting, but it pays and it's indoors.",
       "pay": 90,
       "timeCost": 5,
+      "energyPerHour": 5,
       "requirements": [],
       "location": null
     },
@@ -109,6 +118,7 @@
       "description": "Council works crew is a man short on the Eastfield resurfacing job. Hard hat and boots if you have them.",
       "pay": 160,
       "timeCost": 8,
+      "energyPerHour": 16,
       "requirements": [],
       "location": null
     },
@@ -118,6 +128,7 @@
       "description": "Real estate firm needs flyers dropped across the north end today. You walk, you drop, you're done.",
       "pay": 70,
       "timeCost": 4,
+      "energyPerHour": 7,
       "requirements": [],
       "location": null
     },
@@ -127,6 +138,7 @@
       "description": "Regular cleaner called in sick. Three-floor office building. Equipment provided. Key left under the mat.",
       "pay": 100,
       "timeCost": 5,
+      "energyPerHour": 7,
       "requirements": [],
       "location": null
     },
@@ -136,6 +148,7 @@
       "description": "Scrap dealer needs loads picked up from three residential properties and dropped at the yard. Day's work.",
       "pay": 150,
       "timeCost": 7,
+      "energyPerHour": 11,
       "requirements": [],
       "location": null
     },
@@ -145,6 +158,7 @@
       "description": "Construction site on Millbrook Ave needs eyes on it for the day while the regular's off sick. Sit, watch, report.",
       "pay": 115,
       "timeCost": 6,
+      "energyPerHour": 3,
       "requirements": [],
       "location": null
     },
@@ -154,6 +168,7 @@
       "description": "Tradesman stripping an old office fit-out before the builder comes in. Swing a hammer, fill a skip.",
       "pay": 175,
       "timeCost": 8,
+      "energyPerHour": 15,
       "requirements": [],
       "location": null
     }
