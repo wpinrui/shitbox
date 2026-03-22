@@ -58,6 +58,9 @@ function checkSinglePrerequisite(
     case 'item':
       return checkItemPrerequisite(state, prereq);
 
+    case 'hasCarHere':
+      return checkHasCarHere(state);
+
     case 'context':
       // Context prerequisites are handled at the UI level
       // For now, always pass
@@ -75,7 +78,17 @@ function checkMoneyPrerequisite(
   state: GameState,
   prereq: Prerequisite
 ): ValidationResult {
-  const minimum = typeof prereq.minimum === 'number' ? prereq.minimum : 0;
+  if (typeof prereq.minimum === 'string') {
+    // Dynamic money prerequisites (e.g. "carPrice") require context that
+    // isn't available yet. Fail with a descriptive message rather than
+    // silently treating the minimum as 0.
+    return {
+      valid: false,
+      reason: `Cannot determine cost: ${prereq.minimum} is not yet available.`,
+    };
+  }
+
+  const minimum = prereq.minimum ?? 0;
 
   if (state.player.money < minimum) {
     return {
@@ -206,6 +219,26 @@ function checkItemPrerequisite(
         };
       }
       break;
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Check if the player has a car at their current position.
+ */
+function checkHasCarHere(state: GameState): ValidationResult {
+  const hasCar = state.inventory.cars.some(
+    (car) =>
+      car.position.x === state.player.position.x &&
+      car.position.y === state.player.position.y
+  );
+
+  if (!hasCar) {
+    return {
+      valid: false,
+      reason: 'You need a car at this location.',
+    };
   }
 
   return { valid: true };

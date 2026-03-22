@@ -284,6 +284,7 @@ export interface StateDelta {
     engineParts: number;
     bodyParts: number;
   }>;
+  carUpdates?: Array<{ instanceId: string; fuel?: number }>;
   events?: GameEvent[];
 }
 
@@ -294,7 +295,13 @@ export type GameEventType =
   | 'hunger_warning'
   | 'hunger_critical'
   | 'death_imminent'
-  | 'death';
+  | 'death'
+  | 'items_found'
+  | 'car_refueled'
+  | 'listings_shown'
+  | 'car_acquired'
+  | 'car_removed'
+  | 'conditional_cost';
 
 export interface GameEvent {
   type: GameEventType;

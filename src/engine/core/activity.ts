@@ -67,8 +67,22 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 
   // 4. Calculate costs
   const energyCost = calculateEnergyCost(state, activity, params);
-  const moneyCost = calculateMoneyCost(state, activity, params);
+  let moneyCost = calculateMoneyCost(state, activity, params);
   const timeCost = calculateTimeCost(activity, params);
+
+  // Override moneyCost for variable-mode activities whose real cost depends on runtime state.
+  // Must happen before the affordability check so the check uses the actual amount.
+  if (activity.outcomes.some((o) => o.type === 'refuelCar')) {
+    const carForRefuel = state.inventory.cars.find(
+      (c) =>
+        c.position.x === state.player.position.x &&
+        c.position.y === state.player.position.y
+    );
+    if (carForRefuel) {
+      const fuelNeeded = carForRefuel.fuelCapacity - carForRefuel.fuel;
+      moneyCost = Math.round(fuelNeeded * (activity.money.base ?? 2));
+    }
+  }
 
   // 5. Check affordability
   const energyCheck = checkEnergyAvailable(state, energyCost);
@@ -112,6 +126,9 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 
   // 7. Process special outcomes
   let foodCounterReset = false;
+  let enginePartsChange = 0;
+  let bodyPartsChange = 0;
+  const carUpdates: Array<{ instanceId: string; fuel?: number }> = [];
 
   for (const outcome of activity.outcomes) {
     switch (outcome.type) {
@@ -123,14 +140,97 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
         });
         break;
 
-      // Future: Handle other outcome types
-      // case 'items':
-      // case 'acquireCar':
-      // etc.
+      case 'items': {
+        const min = outcome.quantity?.min ?? 0;
+        let max = outcome.quantity?.max ?? 1;
+        // Apply stat modifier to max quantity
+        if (outcome.statModifier && outcome.statModifier.effect === 'increaseMax') {
+          const statValue = state.player.stats[outcome.statModifier.stat];
+          max += Math.floor(statValue / 10);
+        }
+        const quantity = rng.randomInRange(min, max);
+        if (quantity > 0) {
+          if (outcome.itemType === 'engine_part') {
+            enginePartsChange += quantity;
+          } else if (outcome.itemType === 'body_part') {
+            bodyPartsChange += quantity;
+          } else {
+            // random_part — split randomly between engine and body
+            const engineCount = rng.randomInRange(0, quantity);
+            enginePartsChange += engineCount;
+            bodyPartsChange += quantity - engineCount;
+          }
+          events.push({
+            type: 'items_found',
+            message: `You found ${quantity} part${quantity > 1 ? 's' : ''}.`,
+            data: { quantity, itemType: outcome.itemType },
+          });
+        } else {
+          events.push({
+            type: 'items_found',
+            message: 'You searched but found nothing useful.',
+            data: { quantity: 0 },
+          });
+        }
+        break;
+      }
+
+      case 'refuelCar': {
+        // Cost was pre-computed in step 4 and checked in step 5.
+        // Here we just apply the car state change.
+        const car = state.inventory.cars.find(
+          (c) =>
+            c.position.x === state.player.position.x &&
+            c.position.y === state.player.position.y
+        );
+        if (car) {
+          const fuelAdded = car.fuelCapacity - car.fuel;
+          carUpdates.push({ instanceId: car.instanceId, fuel: car.fuelCapacity });
+          events.push({
+            type: 'car_refueled',
+            message: `Filled up ${Math.round(fuelAdded)}L of fuel for $${Math.abs(moneyChange)}.`,
+            data: { fuelAdded, cost: Math.abs(moneyChange) },
+          });
+        }
+        break;
+      }
+
+      case 'showListings':
+        events.push({
+          type: 'listings_shown',
+          message: 'You browse the available vehicles.',
+          data: { listingType: outcome.listingType },
+        });
+        break;
+
+      case 'acquireCar':
+        events.push({
+          type: 'car_acquired',
+          message: 'Car acquisition requires the car listing system.',
+          data: { source: outcome.source },
+        });
+        break;
+
+      case 'removeCar':
+        events.push({
+          type: 'car_removed',
+          message: 'Car removal requires the car listing system.',
+          data: { source: outcome.source },
+        });
+        break;
+
+      case 'conditionalCost':
+        events.push({
+          type: 'conditional_cost',
+          message: outcome.description ?? 'Additional cost may apply.',
+          data: { condition: outcome.condition, cost: outcome.cost },
+        });
+        break;
     }
   }
 
   // 8. Build state delta
+  const hasInventoryChanges = enginePartsChange !== 0 || bodyPartsChange !== 0;
   const delta: StateDelta = {
     player: {
       energy: energyChange,
@@ -141,6 +241,10 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
     time: {
       hours: timeCost,
     },
+    inventory: hasInventoryChanges
+      ? { engineParts: enginePartsChange, bodyParts: bodyPartsChange }
+      : undefined,
+    carUpdates: carUpdates.length > 0 ? carUpdates : undefined,
     events,
   };
 
@@ -174,14 +278,16 @@ function generateNarrative(
   const hourStr = pluralizeHours(hours);
 
   switch (activityId) {
-    case 'eat':
-      return `You spent $${Math.abs(moneyChange)} on food. (1 hour)`;
-
     case 'sleep':
       return `You slept for ${hourStr} and recovered ${energyChange} energy.`;
 
-    case 'wait':
-      return `You waited for ${hourStr} and recovered ${energyChange} energy.`;
+    case 'nap':
+      return `You napped for ${hourStr} and recovered ${energyChange} energy.`;
+
+    case 'refuel':
+      return delta.carUpdates?.[0]
+        ? `Filled up your car. (${hourStr})`
+        : `No car to refuel. (${hourStr})`;
 
     default:
       if (moneyChange > 0) {
@@ -218,8 +324,19 @@ export function canPerformActivity(
     return { canPerform: false, reason: `Need ${energyCost} energy` };
   }
 
-  // Check money
-  const moneyCost = calculateMoneyCost(state, activity, params);
+  // Check money — mirror the variable-cost pre-computation from executeActivity
+  let moneyCost = calculateMoneyCost(state, activity, params);
+  if (activity.outcomes.some((o) => o.type === 'refuelCar')) {
+    const carForRefuel = state.inventory.cars.find(
+      (c) =>
+        c.position.x === state.player.position.x &&
+        c.position.y === state.player.position.y
+    );
+    if (carForRefuel) {
+      const fuelNeeded = carForRefuel.fuelCapacity - carForRefuel.fuel;
+      moneyCost = Math.round(fuelNeeded * (activity.money.base ?? 2));
+    }
+  }
   if (state.player.money < moneyCost) {
     return { canPerform: false, reason: `Need $${moneyCost}` };
   }
