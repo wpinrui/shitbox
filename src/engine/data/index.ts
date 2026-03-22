@@ -250,10 +250,14 @@ export async function loadActivityDefinitions(locationId: string): Promise<Activ
 }
 
 /**
- * Load all core activity files needed for Phase 1.
+ * Load all core activity files.
+ * Loads misc (universal) plus all location-specific files that exist.
  */
 export async function loadCoreActivities(): Promise<void> {
   await loadActivityDefinitions('misc');
+  // Load location-specific activity files that exist
+  const locationFiles = ['scrapyard', 'gas_station'];
+  await Promise.all(locationFiles.map((id) => loadActivityDefinitions(id)));
 }
 
 // ============================================================================
