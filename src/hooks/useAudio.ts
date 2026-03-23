@@ -12,8 +12,7 @@ const BGM_TRACKS: Record<TimePeriod, string[]> = {
 };
 
 const TITLE_TRACK = '/assets/audio/late-night-radio.mp3';
-const JINGLE_ACTIVITY = '/assets/audio/jingle-activity.wav';
-const JINGLE_TRAVEL = '/assets/audio/jingle-travel.wav';
+const JINGLE_TRAVEL = '/assets/audio/jingle-activity.wav';
 const FADE_MS = 600;
 
 export function useAudio() {
@@ -99,7 +98,7 @@ export function useAudio() {
   // Initialize audio elements + global autoplay unlock listener
   useEffect(() => {
     const bgm = new Audio();
-    bgm.loop = true;
+    bgm.loop = false;
     bgmRef.current = bgm;
     intendedSrc.current = '';
 
@@ -118,6 +117,28 @@ export function useAudio() {
     };
     document.addEventListener('click', onInteraction);
     document.addEventListener('keydown', onInteraction);
+
+    // When a BGM track ends, advance to the next track for the period
+    // (or loop if on the title screen).
+    const onBgmEnded = () => {
+      if (jinglePlaying.current) return;
+      const period = activePeriod.current;
+      if (!period) {
+        // Title screen — loop the same track
+        bgm.currentTime = 0;
+        bgm.play().catch(() => {});
+        return;
+      }
+      const tracks = BGM_TRACKS[period];
+      const idx = trackIdx.current[period];
+      trackIdx.current[period] = (idx + 1) % tracks.length;
+      intendedSrc.current = tracks[idx];
+      bgm.src = tracks[idx];
+      bgm.currentTime = 0;
+      bgm.volume = 1;
+      bgm.play().catch(() => {});
+    };
+    bgm.addEventListener('ended', onBgmEnded);
 
     // Shared resume logic — used by both onJingleEnd and activity_end handler.
     // Checks live time period to avoid resuming a stale track after a period
@@ -151,6 +172,7 @@ export function useAudio() {
     return () => {
       bgm.pause();
       jingle.pause();
+      bgm.removeEventListener('ended', onBgmEnded);
       jingle.removeEventListener('ended', onJingleEnd);
       document.removeEventListener('click', onInteraction);
       document.removeEventListener('keydown', onInteraction);
@@ -174,15 +196,14 @@ export function useAudio() {
     const jingle = jingleRef.current;
     if (!bgm || !jingle) return;
 
-    if (audioEvent === 'activity_start' || audioEvent === 'travel') {
+    if (audioEvent === 'travel') {
       savedSrc.current = intendedSrc.current;
       savedPos.current = bgm.currentTime;
       savedPeriod.current = activePeriod.current;
       jinglePlaying.current = true;
 
-      const jingleSrc = audioEvent === 'travel' ? JINGLE_TRAVEL : JINGLE_ACTIVITY;
       fadeBgmOut().then(() => {
-        jingle.src = jingleSrc;
+        jingle.src = JINGLE_TRAVEL;
         jingle.currentTime = 0;
         jingle.volume = 1;
         jingle.play().catch(() => {});
