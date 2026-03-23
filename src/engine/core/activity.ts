@@ -9,7 +9,7 @@ import type { EconomyConfig } from '../data';
 import { getActivityDefinition, getEconomyConfig, getCarDefinition, getScrapPricePerKg, getAllCarDefinitions } from '../data';
 import { generateNewspaper } from '../systems/newspaper';
 import { RNG } from '../utils/rng';
-import { checkPrerequisites, checkEnergyAvailable, checkMoneyAvailable } from '../utils/validators';
+import { checkPrerequisites, checkMoneyAvailable } from '../utils/validators';
 import {
   calculateEnergyCost,
   calculateEnergyRecovery,
@@ -97,15 +97,7 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
     }
   }
 
-  // 5. Check affordability
-  const energyCheck = checkEnergyAvailable(state, energyCost);
-  if (!energyCheck.valid) {
-    return {
-      success: false,
-      error: energyCheck.reason,
-    };
-  }
-
+  // 5. Check affordability (money only — energy can go negative)
   const moneyCheck = checkMoneyAvailable(state, moneyCost);
   if (!moneyCheck.valid) {
     return {
@@ -531,12 +523,6 @@ export function canPerformActivity(
   const prereqResult = checkPrerequisites(state, activity.prerequisites, params);
   if (!prereqResult.valid) {
     return { canPerform: false, reason: prereqResult.reason };
-  }
-
-  // Check energy
-  const energyCost = calculateEnergyCost(state, activity, params);
-  if (state.player.energy < energyCost) {
-    return { canPerform: false, reason: `Requires ${energyCost} energy.` };
   }
 
   // Check money — mirror the variable-cost pre-computation from executeActivity
