@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Car Selector Chip + Dropdown (Mockup 7)
+   ========================================================================== */
+
+.car-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.car-selector-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+  flex-shrink: 0;
+}
+
+.car-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: 6px;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: var(--shadow-text);
+}
+
+.car-selector-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.car-selector-btn__arrow {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  margin-left: 2px;
+}
+
+/* ── Dropdown ── */
+.car-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 256px;
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: 10px;
+  box-shadow: var(--glass-1-shadow);
+  padding: 6px;
+  z-index: 50;
+  animation: carDropdownIn 0.15s ease-out;
+}
+
+@keyframes carDropdownIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.car-option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.car-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.car-option--active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.car-option__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.car-option__stats {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+.car-option__check {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--earn);
+}
