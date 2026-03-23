@@ -118,13 +118,17 @@ export function GameScreen({
   };
 
   // Watch for listings_shown events to open browse modal.
-  // Close the activity modal first so the progress bar doesn't linger behind.
+  // Delay opening until the activity modal's progress bar finishes (2800ms).
   useEffect(() => {
     const listingsEvent = pendingEvents.find((e) => e.type === 'listings_shown');
     if (listingsEvent?.data?.listings) {
-      setSelectedActivity(null);
-      setBrowseListings(listingsEvent.data.listings as CarListing[]);
       clearEvents();
+      const listings = listingsEvent.data.listings as CarListing[];
+      const timer = setTimeout(() => {
+        setSelectedActivity(null);
+        setBrowseListings(listings);
+      }, 2800);
+      return () => clearTimeout(timer);
     }
   }, [pendingEvents, clearEvents, setSelectedActivity]);
 
