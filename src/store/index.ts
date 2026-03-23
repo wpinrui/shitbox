@@ -227,10 +227,7 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
   if (delta.player) {
     newState.player = {
       ...state.player,
-      energy: Math.max(
-        0,
-        Math.min(MAX_ENERGY, state.player.energy + (delta.player.energy ?? 0))
-      ),
+      energy: Math.min(MAX_ENERGY, state.player.energy + (delta.player.energy ?? 0)),
       money: state.player.money + (delta.player.money ?? 0),
       daysWithoutFood:
         delta.player.daysWithoutFood !== undefined
@@ -520,10 +517,6 @@ export const useGameStore = create<GameStore>()(
         const fitnessReduction = gameState.player.stats.fitness * economyConfig.statEffects.fitness.energyCostReductionPerPoint;
         const energyCost = Math.max(0, Math.round(baseEnergy * (1 - fitnessReduction)));
 
-        if (gameState.player.energy < energyCost) {
-          return { success: false, error: `Not enough energy. Need ${energyCost}, have ${gameState.player.energy}.` };
-        }
-
         // Apply gig: deduct time, deduct energy, add pay, mark taken
         const timeResult = advanceTime(gameState.time, gig.timeCost);
         const updatedGigs = content.gigs.map((g: GigListing) =>
@@ -534,7 +527,7 @@ export const useGameStore = create<GameStore>()(
           ...gameState,
           player: {
             ...gameState.player,
-            energy: Math.max(0, gameState.player.energy - energyCost),
+            energy: gameState.player.energy - energyCost,
             money: gameState.player.money + gig.pay,
           },
           time: timeResult.newTime,
@@ -640,7 +633,7 @@ export const useGameStore = create<GameStore>()(
               ...newState,
               player: {
                 ...newState.player,
-                energy: Math.max(0, newState.player.energy + result.delta.player.energy),
+                energy: newState.player.energy + result.delta.player.energy,
               },
             };
           }
