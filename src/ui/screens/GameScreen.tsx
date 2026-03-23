@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
 import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal } from '@ui/components/location';
@@ -90,14 +90,11 @@ export function GameScreen({
   );
 
   // Build a lookup of car definitions for cars at this location
-  const carDefsMap = useMemo(() => {
-    const map = new Map<string, CarDefinition>();
-    for (const car of carsHere) {
-      const def = getCarDefinition(car.carId);
-      if (def) map.set(car.carId, def);
-    }
-    return map;
-  }, [carsHere]);
+  const carDefsMap = new Map<string, CarDefinition>();
+  for (const car of carsHere) {
+    const def = getCarDefinition(car.carId);
+    if (def) carDefsMap.set(car.carId, def);
+  }
 
   // Auto-select first car when location changes or selection becomes invalid
   useEffect(() => {
@@ -112,13 +109,13 @@ export function GameScreen({
   }, [gameState.player.position.x, gameState.player.position.y, carsHere.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Estimate car value based on average condition rating
-  const estimateCarValue = useCallback((car: typeof carsHere[number]) => {
+  const estimateCarValue = (car: typeof carsHere[number]) => {
     const def = carDefsMap.get(car.carId);
     if (!def) return 0;
     const avg = (car.engineCondition + car.bodyCondition) / 2;
     const rating = getConditionRating(Math.round(avg));
     return def.marketValue[rating];
-  }, [carDefsMap]);
+  };
 
   // Watch for listings_shown events to open browse modal
   useEffect(() => {
