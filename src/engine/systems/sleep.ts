@@ -234,15 +234,15 @@ export function getChillPresets(currentTime: GameTime): ChillPreset[] {
   presets.push({ label: '2 hours', hours: 2 });
   presets.push({ label: '4 hours', hours: 4 });
 
-  // Until morning (6 AM)
+  // Until morning (6 AM) — hidden if already at 6 AM (would wrap to 24h)
   const hoursUntilMorning = hoursUntil(currentHour, 6);
-  if (hoursUntilMorning > 0) {
+  if (hoursUntilMorning > 0 && hoursUntilMorning < HOURS_PER_DAY) {
     presets.push({ label: 'Until morning', hours: hoursUntilMorning });
   }
 
-  // Until evening (18:00)
+  // Until evening (18:00) — hidden if already at 18:00 (would wrap to 24h)
   const hoursUntilEvening = hoursUntil(currentHour, 18);
-  if (hoursUntilEvening > 0) {
+  if (hoursUntilEvening > 0 && hoursUntilEvening < HOURS_PER_DAY) {
     presets.push({ label: 'Until evening', hours: hoursUntilEvening });
   }
 
