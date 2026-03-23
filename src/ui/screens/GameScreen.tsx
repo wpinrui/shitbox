@@ -478,9 +478,7 @@ export function GameScreen({
               <LocationList
                 playerPosition={gameState.player.position}
                 playerFitness={gameState.player.stats.fitness}
-                hasCarHere={hasCarHere}
-                onWalk={handleLocationSelect}
-                onDrive={handleLocationSelect}
+                onSelect={handleLocationSelect}
               />
             )}
           </div>

@@ -34,7 +34,7 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info' | 'earn' | 'spend';
 }
 
-export type AudioEvent = 'activity_start' | 'activity_end' | 'travel';
+export type AudioEvent = 'activity_end' | 'travel';
 
 type GameTab = 'location' | 'map';
 

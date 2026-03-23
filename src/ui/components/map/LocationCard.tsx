@@ -11,20 +11,16 @@ interface LocationCardProps {
   location: LocationDefinition;
   playerPosition: GridPosition;
   playerFitness: number;
-  hasCarHere: boolean;
   isCurrentLocation: boolean;
-  onWalk: () => void;
-  onDrive: () => void;
+  onSelect: () => void;
 }
 
 export function LocationCard({
   location,
   playerPosition,
   playerFitness,
-  hasCarHere,
   isCurrentLocation,
-  onWalk,
-  onDrive,
+  onSelect,
 }: LocationCardProps) {
   const distanceMeters = calculateDistanceMeters(playerPosition, location.position);
   const walkTime = calculateTravelTime(playerPosition, location.position, 'walk');
@@ -37,12 +33,7 @@ export function LocationCard({
 
   const handleClick = () => {
     if (isCurrentLocation) return;
-    // Default action: walk if no car, drive if car available
-    if (hasCarHere) {
-      onDrive();
-    } else {
-      onWalk();
-    }
+    onSelect();
   };
 
   return (
