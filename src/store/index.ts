@@ -49,6 +49,7 @@ interface GameStore {
   currentTab: GameTab;
   selectedLocation: string | null;
   selectedActivity: ActivityDefinition | null;
+  selectedCarInstanceId: string | null;
   pendingEvents: GameEvent[];
   toasts: ToastMessage[];
   isExecutingActivity: boolean;
@@ -79,6 +80,7 @@ interface GameStore {
   setTab: (tab: GameTab) => void;
   setLocation: (locationId: string | null) => void;
   setSelectedActivity: (activity: ActivityDefinition | null) => void;
+  setSelectedCarInstanceId: (id: string | null) => void;
   setExecutingActivity: (isExecuting: boolean) => void;
 
   // Toast management
@@ -300,6 +302,7 @@ export const useGameStore = create<GameStore>()(
       currentTab: 'location',
       selectedLocation: null,
       selectedActivity: null,
+      selectedCarInstanceId: null,
       pendingEvents: [],
       toasts: [],
       isExecutingActivity: false,
@@ -367,6 +370,7 @@ export const useGameStore = create<GameStore>()(
           currentTab: 'location',
           selectedLocation: null,
           selectedActivity: null,
+          selectedCarInstanceId: null,
           error: null,
           pendingEvents: [],
           toasts: [],
@@ -716,6 +720,7 @@ export const useGameStore = create<GameStore>()(
       setTab: (tab) => set({ currentTab: tab }),
       setLocation: (locationId) => set({ selectedLocation: locationId }),
       setSelectedActivity: (activity) => set({ selectedActivity: activity }),
+      setSelectedCarInstanceId: (id) => set({ selectedCarInstanceId: id }),
       setExecutingActivity: (isExecuting) => set({ isExecutingActivity: isExecuting }),
 
       // Toast management
