@@ -297,6 +297,26 @@
   margin: 20px 0;
 }
 
+/* ── Car feature area ── */
+.car-feature {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+}
+
+.cars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* ── Stranded notice ── */
 .stranded-notice {
   padding: 1.6rem;

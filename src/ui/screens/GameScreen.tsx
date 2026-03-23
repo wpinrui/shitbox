@@ -1,17 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList } from '@ui/components/map';
-import { ActivityCard, ActivityModal } from '@ui/components/location';
+import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal } from '@ui/components/location';
 import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
 import {
   getLocationActivities,
   getLocationAtPosition,
   canPerformActivity,
+  getCarDefinition,
+  getConditionRating,
   MAX_ENERGY,
   STAT_ORDER,
   getTimeOfDay,
   type ActivityDefinition,
   type LocationDefinition,
+  type CarDefinition,
+  type CarListing,
 } from '@engine/index';
 import './GameScreen.css';
 
@@ -41,9 +45,14 @@ export function GameScreen({
   const takeGig = useGameStore((state) => state.takeGig);
   const muted = useGameStore((state) => state.muted);
   const toggleMute = useGameStore((state) => state.toggleMute);
+  const selectedCarInstanceId = useGameStore((state) => state.selectedCarInstanceId);
+  const setSelectedCarInstanceId = useGameStore((state) => state.setSelectedCarInstanceId);
+  const pendingEvents = useGameStore((state) => state.pendingEvents);
+  const clearEvents = useGameStore((state) => state.clearEvents);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showNewspaper, setShowNewspaper] = useState(false);
+  const [browseListings, setBrowseListings] = useState<CarListing[] | null>(null);
 
   const newspaperPurchasedToday =
     gameState.newspaper.purchased &&
@@ -73,6 +82,53 @@ export function GameScreen({
       car.engineCondition > 0
   );
 
+  // All cars at the player's current position (regardless of condition)
+  const carsHere = gameState.inventory.cars.filter(
+    (car) =>
+      car.position.x === gameState.player.position.x &&
+      car.position.y === gameState.player.position.y
+  );
+
+  // Build a lookup of car definitions for cars at this location
+  const carDefsMap = useMemo(() => {
+    const map = new Map<string, CarDefinition>();
+    for (const car of carsHere) {
+      const def = getCarDefinition(car.carId);
+      if (def) map.set(car.carId, def);
+    }
+    return map;
+  }, [carsHere]);
+
+  // Auto-select first car when location changes or selection becomes invalid
+  useEffect(() => {
+    if (carsHere.length === 0) {
+      if (selectedCarInstanceId !== null) setSelectedCarInstanceId(null);
+      return;
+    }
+    const stillHere = carsHere.some((c) => c.instanceId === selectedCarInstanceId);
+    if (!stillHere) {
+      setSelectedCarInstanceId(carsHere[0].instanceId);
+    }
+  }, [gameState.player.position.x, gameState.player.position.y, carsHere.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Estimate car value based on average condition rating
+  const estimateCarValue = useCallback((car: typeof carsHere[number]) => {
+    const def = carDefsMap.get(car.carId);
+    if (!def) return 0;
+    const avg = (car.engineCondition + car.bodyCondition) / 2;
+    const rating = getConditionRating(Math.round(avg));
+    return def.marketValue[rating];
+  }, [carDefsMap]);
+
+  // Watch for listings_shown events to open browse modal
+  useEffect(() => {
+    const listingsEvent = pendingEvents.find((e) => e.type === 'listings_shown');
+    if (listingsEvent?.data?.listings) {
+      setBrowseListings(listingsEvent.data.listings as CarListing[]);
+      clearEvents();
+    }
+  }, [pendingEvents, clearEvents]);
+
   // Background image for current location or map
   const bgImage = currentTab === 'map'
     ? 'map.jpg'
@@ -86,9 +142,12 @@ export function GameScreen({
   const handleActivityExecute = useCallback(
     (params: { hours?: number }) => {
       if (!selectedActivity) return;
-      return performActivity(selectedActivity.id, params);
+      return performActivity(selectedActivity.id, {
+        ...params,
+        selectedCarInstanceId: selectedCarInstanceId ?? undefined,
+      });
     },
-    [selectedActivity, performActivity]
+    [selectedActivity, performActivity, selectedCarInstanceId]
   );
 
   const handleModalClose = () => {
@@ -163,7 +222,7 @@ export function GameScreen({
   const energyPct = (gameState.player.energy / MAX_ENERGY) * 100;
 
   return (
-    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper ? ' game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -267,11 +326,58 @@ export function GameScreen({
               <div className="content-area">
                 {currentLocation ? (
                   <>
+                    {/* Car card — shows when player has cars at this location */}
+                    {carsHere.length === 1 && (() => {
+                      const car = carsHere[0];
+                      const def = carDefsMap.get(car.carId);
+                      if (!def) return null;
+                      return (
+                        <div className="car-feature">
+                          <div className="section-label">YOUR CAR</div>
+                          <CarCard car={car} carDef={def} estimatedValue={estimateCarValue(car)} />
+                        </div>
+                      );
+                    })()}
+
+                    {/* Multi-car display + selector chip */}
+                    {carsHere.length > 1 && (
+                      <>
+                        <div className="car-feature">
+                          <div className="section-label">YOUR CARS HERE</div>
+                          <div className="cars-list">
+                            {carsHere.map((car) => {
+                              const def = carDefsMap.get(car.carId);
+                              if (!def) return null;
+                              return (
+                                <CarCard
+                                  key={car.instanceId}
+                                  car={car}
+                                  carDef={def}
+                                  estimatedValue={estimateCarValue(car)}
+                                  compact
+                                  selected={car.instanceId === selectedCarInstanceId}
+                                  onClick={() => setSelectedCarInstanceId(car.instanceId)}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <CarSelector
+                          cars={carsHere}
+                          carDefs={carDefsMap}
+                          selectedId={selectedCarInstanceId ?? carsHere[0].instanceId}
+                          onSelect={setSelectedCarInstanceId}
+                        />
+                      </>
+                    )}
+
                     {/* Location-specific activities */}
                     {locationSpecific.length > 0 && (
                       <div className="activities-grid">
                         {locationSpecific.map((activity) => {
-                          const check = canPerformActivity(gameState, activity.id);
+                          const check = canPerformActivity(gameState, activity.id, {
+                            selectedCarInstanceId: selectedCarInstanceId ?? undefined,
+                          });
                           return (
                             <ActivityCard
                               key={activity.id}
@@ -362,6 +468,15 @@ export function GameScreen({
           currentDay={gameState.time.currentDay}
           onTakeGig={handleTakeGig}
           onClose={handleCloseNewspaper}
+        />
+      )}
+
+      {/* Browse Results Modal — triggered by browse_junkers activity */}
+      {browseListings && (
+        <BrowseResultsModal
+          listings={browseListings}
+          currentDay={gameState.time.currentDay}
+          onClose={() => setBrowseListings(null)}
         />
       )}
 
