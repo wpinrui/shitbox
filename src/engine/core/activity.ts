@@ -490,12 +490,6 @@ function generateNarrative(
   const hourStr = pluralizeHours(hours);
 
   switch (activityId) {
-    case 'sleep':
-      return `You slept for ${hourStr} and recovered ${energyChange} energy.`;
-
-    case 'nap':
-      return `You napped for ${hourStr} and recovered ${energyChange} energy.`;
-
     case 'refuel':
       return delta.carUpdates?.[0]
         ? `Filled up your car. (${hourStr})`

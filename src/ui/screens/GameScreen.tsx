@@ -74,7 +74,7 @@ export function GameScreen({
     ? getLocationActivities(currentLocation.id)
     : [];
 
-  // Universal activities (nap, sleep) — loaded from misc.json
+  // Universal activities (buy_newspaper) — loaded from misc.json
   const universalActivities = getLocationActivities('misc');
 
   const hasCarHere = gameState.inventory.cars.some(

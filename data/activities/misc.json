@@ -3,40 +3,6 @@
   "locationName": "Anywhere",
   "activities": [
     {
-      "id": "sleep",
-      "name": "Sleep",
-      "description": "Rest in your shitbox to recover energy. Requires a car at your location.",
-      "category": "rest",
-      "time": {
-        "type": "variable",
-        "minHours": 1,
-        "maxHours": 12,
-        "unit": "hour"
-      },
-      "energy": {
-        "type": "recover",
-        "mode": "perHour",
-        "base": 4,
-        "housingModifier": true,
-        "statModifier": {
-          "stat": "fitness",
-          "effect": "increase",
-          "formula": "base * (1 + fitness * 0.02)"
-        }
-      },
-      "money": {
-        "type": "none"
-      },
-      "prerequisites": [
-        {
-          "type": "hasCarHere"
-        }
-      ],
-      "outcomes": [],
-      "statGain": [],
-      "risks": []
-    },
-    {
       "id": "buy_newspaper",
       "name": "Buy Newspaper",
       "description": "Pick up today's paper. Find out what's happening — and whether any gigs are worth chasing.",
@@ -56,35 +22,6 @@
       },
       "prerequisites": [],
       "outcomes": [{ "type": "generateNewspaper" }],
-      "statGain": [],
-      "risks": []
-    },
-    {
-      "id": "nap",
-      "name": "Nap",
-      "description": "Take a short rest anywhere. Less effective than sleeping in a car.",
-      "category": "rest",
-      "time": {
-        "type": "variable",
-        "minHours": 1,
-        "maxHours": 8,
-        "unit": "hour"
-      },
-      "energy": {
-        "type": "recover",
-        "mode": "perHour",
-        "base": 5,
-        "statModifier": {
-          "stat": "fitness",
-          "effect": "increase",
-          "formula": "base * (1 + fitness * 0.02)"
-        }
-      },
-      "money": {
-        "type": "none"
-      },
-      "prerequisites": [],
-      "outcomes": [],
       "statGain": [],
       "risks": []
     }
