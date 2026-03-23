@@ -478,7 +478,6 @@ function generateNarrative(
   hours: number
 ): string {
   const moneyChange = delta.player?.money ?? 0;
-  const energyChange = delta.player?.energy ?? 0;
   const hourStr = pluralizeHours(hours);
 
   switch (activityId) {

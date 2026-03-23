@@ -3,7 +3,7 @@
  * Determines sleep options and rates based on player location and housing.
  */
 
-import type { GameState, GameEvent, GameTime, CarListing } from '../types';
+import type { GameState, GameEvent, GameTime } from '../types';
 import type { EconomyConfig } from '../data';
 import { getEconomyConfig, getLocation } from '../data';
 import { advanceTime, processNewDay, checkDeathConditions } from '../core/time';
