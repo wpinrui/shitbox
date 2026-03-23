@@ -4,6 +4,8 @@ import fs from 'fs';
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 // Window configuration
 const WINDOW_CONFIG = {
   width: 1280,
