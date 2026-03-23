@@ -62,6 +62,7 @@ export function GameScreen({
   const [browseListings, setBrowseListings] = useState<CarListing[] | null>(null);
   const [pendingTravel, setPendingTravel] = useState<LocationDefinition | null>(null);
   const [travelLoading, setTravelLoading] = useState<string | null>(null);
+  const [restLoading, setRestLoading] = useState<{ label: string; action: () => void } | null>(null);
 
   const newspaperPurchasedToday =
     gameState.newspaper.purchased &&
@@ -232,6 +233,17 @@ export function GameScreen({
     }
   }, [travelLoading, setTab]);
 
+  // Rest loading (sleep/chill/crash) → execute action after progress bar
+  useEffect(() => {
+    if (restLoading) {
+      const timer = setTimeout(() => {
+        restLoading.action();
+        setRestLoading(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [restLoading]);
+
   const handleMenuClick = () => {
     setShowPauseMenu(true);
   };
@@ -262,12 +274,20 @@ export function GameScreen({
 
   const handleSleep = useCallback((rate: number) => {
     setShowSleepConfirm(false);
-    sleep(rate);
-  }, [sleep]);
+    const energy = gameState.player.energy;
+    const hrs = Math.ceil((MAX_ENERGY - energy) / rate);
+    setRestLoading({
+      label: `Sleeping for ${hrs} hour${hrs !== 1 ? 's' : ''}...`,
+      action: () => sleep(rate),
+    });
+  }, [sleep, gameState.player.energy]);
 
   const handleChill = useCallback((hours: number) => {
     setShowChillModal(false);
-    chill(hours);
+    setRestLoading({
+      label: `Chilling for ${hours} hour${hours !== 1 ? 's' : ''}...`,
+      action: () => chill(hours),
+    });
   }, [chill]);
 
   const timeOfDay = getTimeOfDay(gameState.time.currentHour);
@@ -282,7 +302,7 @@ export function GameScreen({
   const energyPct = Math.max(0, (gameState.player.energy / MAX_ENERGY) * 100);
 
   return (
-    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading || showSleepConfirm || showChillModal || crashPromptActive ? ' game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading || restLoading || showSleepConfirm || showChillModal || crashPromptActive ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -331,7 +351,7 @@ export function GameScreen({
                   <div className="energy-bar__fill" style={{ width: `${energyPct}%` }} />
                 </div>
                 <span className={`energy-bar__text${gameState.player.energy <= 0 ? ' energy-bar__text--danger' : ''}`}>
-                  {round1(gameState.player.energy)}
+                  {gameState.player.energy <= 0 ? '0' : round1(gameState.player.energy)}
                 </span>
               </div>
               {gameState.player.daysWithoutFood > 0 && (
@@ -596,6 +616,19 @@ export function GameScreen({
         </div>
       )}
 
+      {/* Rest loading (sleep/chill/crash progress bar) */}
+      {restLoading && (
+        <div className="travel-loading-overlay">
+          <div className="travel-loading">
+            <div className="travel-loading__title">{restLoading.label}</div>
+            <div className="travel-loading__bar-track">
+              <div className="travel-loading__bar-fill" />
+            </div>
+            <div className="travel-loading__text">Resting...</div>
+          </div>
+        </div>
+      )}
+
       {/* Voluntary sleep confirmation */}
       {showSleepConfirm && !crashPromptActive && (
         <SleepModal
@@ -618,8 +651,8 @@ export function GameScreen({
         />
       )}
 
-      {/* Crash prompt — mandatory, blocks all actions */}
-      {crashPromptActive && (
+      {/* Crash prompt — mandatory, blocks all actions. Delayed until other modals close. */}
+      {crashPromptActive && !selectedActivity && !travelLoading && !restLoading && (
         <SleepModal
           mode="crash"
           options={sleepContext.options}
