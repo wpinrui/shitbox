@@ -73,7 +73,7 @@
       "energy": {
         "type": "recover",
         "mode": "perHour",
-        "base": 2,
+        "base": 5,
         "statModifier": {
           "stat": "fitness",
           "effect": "increase",
