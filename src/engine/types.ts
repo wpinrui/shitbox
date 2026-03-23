@@ -342,6 +342,7 @@ export interface StateDelta {
     fuel?: number;
     engineCondition?: number;
     bodyCondition?: number;
+    position?: GridPosition;
   }>;
   removedCarInstanceId?: string;
   marketUpdates?: Partial<Market>;
@@ -367,6 +368,7 @@ export type GameEventType =
   | 'gig_completed'
   | 'car_repaired'
   | 'car_scrapped'
+  | 'car_towed'
   | 'engine_replaced';
 
 export interface GameEvent {

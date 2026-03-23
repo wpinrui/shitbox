@@ -346,6 +346,29 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
         break;
       }
 
+      case 'towCar': {
+        // Find the first car not at the player's current position
+        const carToTow = state.inventory.cars.find(
+          (c) =>
+            c.position.x !== state.player.position.x ||
+            c.position.y !== state.player.position.y
+        );
+        if (carToTow) {
+          const carDef = getCarDefinition(carToTow.carId);
+          const carName = carDef ? `${carDef.year} ${carDef.make} ${carDef.model}` : 'your car';
+          carUpdates.push({
+            instanceId: carToTow.instanceId,
+            position: { ...state.player.position },
+          });
+          events.push({
+            type: 'car_towed',
+            message: `${carName} has been towed here.`,
+            data: { instanceId: carToTow.instanceId },
+          });
+        }
+        break;
+      }
+
       case 'conditionalCost':
         events.push({
           type: 'conditional_cost',
@@ -510,7 +533,7 @@ export function canPerformActivity(
   // Check energy
   const energyCost = calculateEnergyCost(state, activity, params);
   if (state.player.energy < energyCost) {
-    return { canPerform: false, reason: `Need ${energyCost} energy` };
+    return { canPerform: false, reason: `Requires ${energyCost} energy.` };
   }
 
   // Check money — mirror the variable-cost pre-computation from executeActivity
@@ -527,7 +550,7 @@ export function canPerformActivity(
     }
   }
   if (state.player.money < moneyCost) {
-    return { canPerform: false, reason: `Need $${moneyCost}` };
+    return { canPerform: false, reason: `You need $${moneyCost}.` };
   }
 
   return { canPerform: true };

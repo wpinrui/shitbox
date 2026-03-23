@@ -160,6 +160,37 @@
       ],
       "statGain": [],
       "risks": []
+    },
+    {
+      "id": "tow_car_to_garage",
+      "name": "Tow Car Here",
+      "description": "Pay a tow truck to bring your car to the garage.",
+      "category": "transport",
+      "time": {
+        "type": "fixed",
+        "hours": 1
+      },
+      "energy": {
+        "type": "fixed",
+        "base": 3
+      },
+      "money": {
+        "type": "spend",
+        "mode": "fixed",
+        "base": 150
+      },
+      "prerequisites": [
+        {
+          "type": "hasCarElsewhere"
+        }
+      ],
+      "outcomes": [
+        {
+          "type": "towCar"
+        }
+      ],
+      "statGain": [],
+      "risks": []
     }
   ]
 }

@@ -256,6 +256,7 @@ function applyDelta(state: GameState, delta: StateDelta): GameState {
             bodyCondition: update.bodyCondition !== undefined
               ? Math.max(0, Math.min(100, update.bodyCondition))
               : car.bodyCondition,
+            position: update.position ?? car.position,
           };
         })
       : state.inventory.cars;

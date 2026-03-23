@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ActivityDefinition } from '@engine/index';
 import { useGameStore } from '@store/index';
 import './ActivityModal.css';
@@ -47,6 +47,7 @@ export function ActivityModal({
   const [phase, setPhase] = useState<ModalPhase>(isVariableTime ? 'hours' : 'progress');
   const [hours, setHours] = useState(minHours);
   const [result, setResult] = useState<ActivityResult | null>(null);
+  const executedRef = useRef(false);
 
   const actualHours = isVariableTime ? hours : fixedHours;
 
@@ -61,9 +62,11 @@ export function ActivityModal({
     setPhase('progress');
   }, [isVariableTime, hours, onExecute, triggerAudioEvent]);
 
-  // Auto-execute for fixed-time activities on mount
+  // Auto-execute for fixed-time activities on mount.
+  // Guard with ref to prevent StrictMode double-execution.
   useEffect(() => {
-    if (!isVariableTime) {
+    if (!isVariableTime && !executedRef.current) {
+      executedRef.current = true;
       const params = {};
       const res = onExecute(params);
       if (res && typeof res === 'object') {
