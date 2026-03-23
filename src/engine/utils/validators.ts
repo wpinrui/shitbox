@@ -7,6 +7,8 @@ import type { GameState } from '../types';
 import type { Prerequisite } from '../data';
 import type { ActivityParams } from './calculations';
 
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 /**
  * Result of a validation check
  */
@@ -61,10 +63,11 @@ function checkSinglePrerequisite(
     case 'hasCarHere':
       return checkHasCarHere(state);
 
+    case 'hasCarElsewhere':
+      return checkHasCarElsewhere(state);
+
     case 'context':
-      // Context prerequisites are handled at the UI level
-      // For now, always pass
-      return { valid: true };
+      return checkContextPrerequisite(prereq);
 
     default:
       return { valid: true };
@@ -73,19 +76,16 @@ function checkSinglePrerequisite(
 
 /**
  * Check if player has enough money.
+ * Dynamic references (e.g. "carPrice") are deferred to execution time.
  */
 function checkMoneyPrerequisite(
   state: GameState,
   prereq: Prerequisite
 ): ValidationResult {
   if (typeof prereq.minimum === 'string') {
-    // Dynamic money prerequisites (e.g. "carPrice") require context that
-    // isn't available yet. Fail with a descriptive message rather than
-    // silently treating the minimum as 0.
-    return {
-      valid: false,
-      reason: `Cannot determine cost: ${prereq.minimum} is not yet available.`,
-    };
+    // Dynamic money prerequisites (e.g. "carPrice") can't be resolved at
+    // card-display time — defer to execution.
+    return { valid: true };
   }
 
   const minimum = prereq.minimum ?? 0;
@@ -93,7 +93,7 @@ function checkMoneyPrerequisite(
   if (state.player.money < minimum) {
     return {
       valid: false,
-      reason: `Not enough money. Need $${minimum}, have $${state.player.money}.`,
+      reason: `You need at least $${minimum}.`,
     };
   }
 
@@ -117,7 +117,7 @@ function checkStatPrerequisite(
   if (currentLevel < minimum) {
     return {
       valid: false,
-      reason: `${prereq.stat} too low. Need ${minimum}, have ${currentLevel}.`,
+      reason: `You need at least ${minimum} ${capitalize(prereq.stat)} skill.`,
     };
   }
 
@@ -138,7 +138,7 @@ function checkLicensePrerequisite(
   if (!state.player.licenses.includes(prereq.requirement)) {
     return {
       valid: false,
-      reason: `Missing license: ${prereq.requirement}`,
+      reason: `Requires a ${prereq.requirement} license.`,
     };
   }
 
@@ -206,7 +206,7 @@ function checkItemPrerequisite(
       if (state.inventory.engineParts < minimum) {
         return {
           valid: false,
-          reason: `Not enough engine parts. Need ${minimum}, have ${state.inventory.engineParts}.`,
+          reason: `Requires engine parts \u2014 you have ${state.inventory.engineParts}.`,
         };
       }
       break;
@@ -215,7 +215,7 @@ function checkItemPrerequisite(
       if (state.inventory.bodyParts < minimum) {
         return {
           valid: false,
-          reason: `Not enough body parts. Need ${minimum}, have ${state.inventory.bodyParts}.`,
+          reason: `Requires body parts \u2014 you have ${state.inventory.bodyParts}.`,
         };
       }
       break;
@@ -245,6 +245,41 @@ function checkHasCarHere(state: GameState): ValidationResult {
 }
 
 /**
+ * Check if the player has a car at a different position (for tow).
+ */
+function checkHasCarElsewhere(state: GameState): ValidationResult {
+  const hasCarElsewhere = state.inventory.cars.some(
+    (car) =>
+      car.position.x !== state.player.position.x ||
+      car.position.y !== state.player.position.y
+  );
+
+  if (!hasCarElsewhere) {
+    return {
+      valid: false,
+      reason: 'All your cars are already here.',
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Check context prerequisites — gate on runtime context that the UI
+ * must supply (e.g. a selected car listing).
+ */
+function checkContextPrerequisite(prereq: Prerequisite): ValidationResult {
+  if (prereq.requirement === 'selectedCar') {
+    return {
+      valid: false,
+      reason: 'Browse junkers first to select a car.',
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
  * Check if player has enough energy for an activity.
  */
 export function checkEnergyAvailable(
@@ -254,7 +289,7 @@ export function checkEnergyAvailable(
   if (state.player.energy < requiredEnergy) {
     return {
       valid: false,
-      reason: `Not enough energy. Need ${requiredEnergy}, have ${state.player.energy}.`,
+      reason: `Requires ${requiredEnergy} energy.`,
     };
   }
 
@@ -271,7 +306,7 @@ export function checkMoneyAvailable(
   if (state.player.money < requiredMoney) {
     return {
       valid: false,
-      reason: `Not enough money. Need $${requiredMoney}, have $${state.player.money}.`,
+      reason: `You need $${requiredMoney}.`,
     };
   }
 

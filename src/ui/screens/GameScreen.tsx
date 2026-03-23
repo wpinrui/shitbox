@@ -117,14 +117,16 @@ export function GameScreen({
     return def.marketValue[rating];
   };
 
-  // Watch for listings_shown events to open browse modal
+  // Watch for listings_shown events to open browse modal.
+  // Close the activity modal first so the progress bar doesn't linger behind.
   useEffect(() => {
     const listingsEvent = pendingEvents.find((e) => e.type === 'listings_shown');
     if (listingsEvent?.data?.listings) {
+      setSelectedActivity(null);
       setBrowseListings(listingsEvent.data.listings as CarListing[]);
       clearEvents();
     }
-  }, [pendingEvents, clearEvents]);
+  }, [pendingEvents, clearEvents, setSelectedActivity]);
 
   // Background image for current location or map
   const bgImage = currentTab === 'map'
