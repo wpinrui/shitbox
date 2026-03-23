@@ -18,7 +18,8 @@
   },
 
   "rest": {
-    "shitboxEnergyPerHour": 4,
+    "crashOutEnergyPerHour": 5,
+    "shitboxEnergyPerHour": 6,
     "basicApartmentEnergyPerHour": 8,
     "niceApartmentEnergyPerHour": 10,
     "ownedHomeEnergyPerHour": 10,

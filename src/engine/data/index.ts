@@ -116,6 +116,7 @@ export interface EconomyConfig {
     defaultFuelEfficiency: number;
   };
   rest: {
+    crashOutEnergyPerHour: number;
     shitboxEnergyPerHour: number;
     basicApartmentEnergyPerHour: number;
     niceApartmentEnergyPerHour: number;
