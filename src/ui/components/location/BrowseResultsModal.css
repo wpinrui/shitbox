@@ -1,0 +1,250 @@
+/* ==========================================================================
+   Browse Results Modal — Tier 1 Glass (Mockup 7)
+   ========================================================================== */
+
+.browse-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.browse-modal {
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: browseModalIn 0.3s ease-out;
+}
+
+@keyframes browseModalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Header ── */
+.browse-modal__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--divider);
+  background: var(--glass-3-bg);
+}
+
+.browse-modal__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.browse-modal__sub {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+/* ── Content ── */
+.browse-modal__content {
+  flex: 1;
+  padding: 20px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.browse-modal__content::-webkit-scrollbar { width: 6px; }
+.browse-modal__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* ── Footer ── */
+.browse-modal__footer {
+  flex-shrink: 0;
+  padding: 0 28px 24px;
+}
+
+.browse-modal__note {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 14px;
+  text-align: center;
+  font-style: italic;
+}
+
+.browse-modal__close {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 8px;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: var(--shadow-text);
+  text-align: center;
+}
+
+.browse-modal__close:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.browse-modal__close:active {
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* ==========================================================================
+   Listing Card — Tier 2 Glass
+   ========================================================================== */
+
+.listing-card {
+  background: var(--glass-2-bg);
+  border: var(--glass-2-border);
+  border-radius: var(--glass-2-radius);
+  box-shadow: var(--glass-2-shadow);
+  display: flex;
+  overflow: hidden;
+  min-height: 90px;
+}
+
+.listing-card__image {
+  width: 120px;
+  min-width: 120px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.listing-card__image-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.listing-card__image-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.listing-card__image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  color: var(--text-3);
+  font-style: italic;
+  text-align: center;
+  padding: 8px;
+}
+
+.listing-card__info {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.listing-card__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 6px;
+}
+
+/* ── Condition badges ── */
+.listing-card__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.listing-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.listing-badge--good {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.30);
+  color: var(--earn);
+}
+
+.listing-badge--fair {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.30);
+  color: var(--energy-color);
+}
+
+.listing-badge--poor {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.30);
+  color: var(--spend);
+}
+
+/* ── Footer: expires + price ── */
+.listing-card__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.listing-card__expires {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+.listing-card__price-wrap {
+  text-align: right;
+}
+
+.listing-card__price-label {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+  display: block;
+}
+
+.listing-card__price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
