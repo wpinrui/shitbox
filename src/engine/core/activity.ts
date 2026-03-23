@@ -231,13 +231,22 @@ export function executeActivity(input: ExecuteActivityInput): ActivityResult {
 
       case 'showListings': {
         if (outcome.listingType === 'junker_cars') {
-          const listings = generateJunkerListings(state, rng);
-          marketUpdates = {
-            currentListings: [
-              ...state.market.currentListings.filter((l) => l.source !== 'scrapyard'),
-              ...listings,
-            ],
-          };
+          // Reuse existing scrapyard listings if they haven't expired
+          const existingListings = state.market.currentListings.filter(
+            (l) => l.source === 'scrapyard' && l.expiresDay > state.time.currentDay
+          );
+          const listings = existingListings.length > 0
+            ? existingListings
+            : generateJunkerListings(state, rng);
+
+          if (existingListings.length === 0) {
+            marketUpdates = {
+              currentListings: [
+                ...state.market.currentListings.filter((l) => l.source !== 'scrapyard'),
+                ...listings,
+              ],
+            };
+          }
           events.push({
             type: 'listings_shown',
             message: `You browse the yard and spot ${listings.length} vehicle${listings.length !== 1 ? 's' : ''}.`,
