@@ -115,6 +115,18 @@ export {
 // Newspaper system
 export { generateNewspaper } from './systems/newspaper';
 
+// Sleep system
+export {
+  getSleepOptions,
+  getSleepContext,
+  getChillPresets,
+  advanceTimeWithDayProcessing,
+  type SleepOption,
+  type SleepContext,
+  type ChillPreset,
+  type TimeAdvanceOutcome,
+} from './systems/sleep';
+
 // Travel system
 export {
   getWalkingCost,

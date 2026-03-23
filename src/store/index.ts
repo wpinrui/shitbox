@@ -22,6 +22,7 @@ import {
   executeDrive,
   getLocation,
   getCarDefinition,
+  advanceTimeWithDayProcessing,
   type ActivityParams,
   type ActivityDefinition,
   type GigListing,
@@ -54,6 +55,9 @@ interface GameStore {
   toasts: ToastMessage[];
   isExecutingActivity: boolean;
 
+  // Sleep/crash state
+  crashPromptActive: boolean;
+
   // Audio state
   muted: boolean;
   audioEvent: AudioEvent | null;
@@ -74,6 +78,10 @@ interface GameStore {
   // Travel
   walkTo: (destination: GridPosition) => { success: boolean; error?: string };
   driveTo: (destination: GridPosition) => { success: boolean; error?: string };
+
+  // Sleep & Chill
+  sleep: (rate: number) => void;
+  chill: (hours: number) => void;
 
   // Navigation
   setScreen: (screen: Screen) => void;
@@ -304,6 +312,7 @@ export const useGameStore = create<GameStore>()(
       pendingEvents: [],
       toasts: [],
       isExecutingActivity: false,
+      crashPromptActive: false,
       muted: false,
       audioEvent: null,
 
@@ -373,6 +382,7 @@ export const useGameStore = create<GameStore>()(
           pendingEvents: [],
           toasts: [],
           isExecutingActivity: false,
+          crashPromptActive: false,
         });
       },
 
@@ -476,9 +486,13 @@ export const useGameStore = create<GameStore>()(
           },
         };
 
+        // Check for crash (energy <= 0)
+        const crashed = newState.player.energy <= 0;
+
         set({
           gameState: newState,
           pendingEvents: allEvents,
+          crashPromptActive: crashed,
         });
 
         return result;
@@ -596,7 +610,10 @@ export const useGameStore = create<GameStore>()(
           }
         }
 
-        set({ gameState: newState, pendingEvents: allEvents });
+        // Check for crash (energy <= 0)
+        const crashed = newState.player.energy <= 0;
+
+        set({ gameState: newState, pendingEvents: allEvents, crashPromptActive: crashed });
         return { success: true };
       },
 
@@ -644,7 +661,10 @@ export const useGameStore = create<GameStore>()(
           }
         }
 
-        set({ gameState: newState, audioEvent: 'travel' });
+        // Check for crash (energy <= 0)
+        const crashed = newState.player.energy <= 0;
+
+        set({ gameState: newState, audioEvent: 'travel', crashPromptActive: crashed });
         return { success: true };
       },
 
@@ -707,6 +727,106 @@ export const useGameStore = create<GameStore>()(
 
         set({ gameState: newState, audioEvent: 'travel' });
         return { success: true };
+      },
+
+      // Sleep & Chill
+      sleep: (rate) => {
+        const { gameState } = get();
+        if (!gameState) return;
+
+        const currentEnergy = gameState.player.energy;
+        const toRecover = MAX_ENERGY - currentEnergy;
+        const sleepHours = Math.ceil(toRecover / rate);
+
+        // Set energy to 100 first, then advance time with day processing
+        let newState: GameState = {
+          ...gameState,
+          player: { ...gameState.player, energy: MAX_ENERGY },
+        };
+
+        const outcome = advanceTimeWithDayProcessing(newState, sleepHours);
+        newState = outcome.newState;
+
+        // Log action
+        newState = {
+          ...newState,
+          history: {
+            ...newState.history,
+            actions: [
+              ...newState.history.actions.slice(-99),
+              {
+                timestamp: Date.now(),
+                day: newState.time.currentDay,
+                action: 'sleep',
+                params: { rate, hours: sleepHours },
+                result: 'success' as const,
+              },
+            ],
+          },
+        };
+
+        if (outcome.isDead) {
+          set({
+            gameState: newState,
+            currentScreen: 'game_over',
+            crashPromptActive: false,
+            pendingEvents: [
+              ...outcome.events,
+              { type: 'death' as const, message: outcome.deathReason ?? 'You died.' },
+            ],
+          });
+          return;
+        }
+
+        set({
+          gameState: newState,
+          crashPromptActive: false,
+          pendingEvents: outcome.events,
+        });
+      },
+
+      chill: (hours) => {
+        const { gameState } = get();
+        if (!gameState) return;
+        if (gameState.player.energy <= 0) return; // Can't chill while crashed
+
+        const outcome = advanceTimeWithDayProcessing(gameState, hours);
+        let newState = outcome.newState;
+
+        // Log action
+        newState = {
+          ...newState,
+          history: {
+            ...newState.history,
+            actions: [
+              ...newState.history.actions.slice(-99),
+              {
+                timestamp: Date.now(),
+                day: newState.time.currentDay,
+                action: 'chill',
+                params: { hours },
+                result: 'success' as const,
+              },
+            ],
+          },
+        };
+
+        if (outcome.isDead) {
+          set({
+            gameState: newState,
+            currentScreen: 'game_over',
+            pendingEvents: [
+              ...outcome.events,
+              { type: 'death' as const, message: outcome.deathReason ?? 'You died.' },
+            ],
+          });
+          return;
+        }
+
+        set({
+          gameState: newState,
+          pendingEvents: outcome.events,
+        });
       },
 
       // Navigation
