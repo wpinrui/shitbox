@@ -35,6 +35,7 @@ export function useAudio() {
   const savedSrc = useRef('');
   const savedPos = useRef(0);
   const savedPeriod = useRef<TimePeriod | null>(null);
+  const resumeBgmRef = useRef<(() => void) | null>(null);
 
   // Keep a ref to current game hour for use inside event handlers
   const currentHourRef = useRef(6);
@@ -42,48 +43,8 @@ export function useAudio() {
     if (gameState) currentHourRef.current = gameState.time.currentHour;
   }, [gameState?.time.currentHour]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Single pending deferred-start listener — only one ever active at a time
-  const deferredListener = useRef<(() => void) | null>(null);
-
-  // Play BGM src at a given position. Handles autoplay policy: if the browser
-  // blocks play(), attaches a one-shot click/keydown listener.
-  const playBgm = useCallback((src: string, startTime = 0) => {
-    const bgm = bgmRef.current;
-    if (!bgm) return;
-
-    if (bgm.src.endsWith(src)) {
-      // Same track already loaded — skip if playing or a deferred listener is pending.
-      // This prevents restarts when effects re-fire during menu-screen transitions
-      // while the browser's autoplay block keeps the element paused.
-      if (!bgm.paused || deferredListener.current) return;
-      // Paused for another reason (e.g. explicit pause) — seek and retry
-      bgm.currentTime = startTime;
-      bgm.volume = 1;
-    } else {
-      // Different track — cancel any pending deferred listener and switch
-      if (deferredListener.current) {
-        document.removeEventListener('click', deferredListener.current);
-        document.removeEventListener('keydown', deferredListener.current);
-        deferredListener.current = null;
-      }
-      bgm.src = src;
-      bgm.currentTime = startTime;
-      bgm.volume = 1;
-    }
-
-    bgm.play().catch(() => {
-      const resume = () => {
-        document.removeEventListener('click', resume);
-        document.removeEventListener('keydown', resume);
-        deferredListener.current = null;
-        bgm.play().catch(() => {});
-      };
-      deferredListener.current = resume;
-      document.addEventListener('click', resume);
-      document.addEventListener('keydown', resume);
-    });
-  }, []);
-
+  // Track what src we intentionally set — avoids comparing against browser-resolved URLs
+  const intendedSrc = useRef('');
   const fadeBgmOut = useCallback((): Promise<void> => {
     return new Promise((resolve) => {
       const el = bgmRef.current;
@@ -105,37 +66,85 @@ export function useAudio() {
     });
   }, []);
 
-  // Initialize audio elements once on mount — no autoplay here
+  // Generation counter — incremented on every switchBgm call so stale
+  // fade callbacks from a prior switch are discarded.
+  const switchGen = useRef(0);
+
+  // Switch BGM to a new src. Fades out the current track if one is playing,
+  // then starts the new track.
+  const switchBgm = useCallback((src: string, startTime = 0) => {
+    const bgm = bgmRef.current;
+    if (!bgm) return;
+    if (intendedSrc.current === src) return;
+
+    intendedSrc.current = src;
+    const gen = ++switchGen.current;
+
+    const startNew = () => {
+      if (switchGen.current !== gen) return;
+      bgm.src = src;
+      bgm.currentTime = startTime;
+      bgm.volume = 1;
+      bgm.play().catch(() => {});
+    };
+
+    // If a track is currently audible, fade out first
+    if (!bgm.paused) {
+      fadeBgmOut().then(startNew);
+    } else {
+      startNew();
+    }
+  }, [fadeBgmOut]);
+
+  // Initialize audio elements + global autoplay unlock listener
   useEffect(() => {
     const bgm = new Audio();
     bgm.loop = true;
     bgmRef.current = bgm;
+    intendedSrc.current = '';
 
     const jingle = new Audio();
     jingle.loop = false;
     jingleRef.current = jingle;
 
-    // Resume BGM when jingle ends naturally
-    const onJingleEnd = () => {
+    // One-shot listener: on first user interaction, unlock autoplay
+    const onInteraction = () => {
+      document.removeEventListener('click', onInteraction);
+      document.removeEventListener('keydown', onInteraction);
+      // If BGM has a src queued but is paused, start it now
+      if (bgm.src && bgm.paused) {
+        bgm.play().catch(() => {});
+      }
+    };
+    document.addEventListener('click', onInteraction);
+    document.addEventListener('keydown', onInteraction);
+
+    // Shared resume logic — used by both onJingleEnd and activity_end handler.
+    // Checks live time period to avoid resuming a stale track after a period
+    // boundary crossing during a jingle.
+    const resumeBgm = () => {
       jinglePlaying.current = false;
       const currentPeriod = getTimeOfDay(currentHourRef.current);
       activePeriod.current = currentPeriod;
 
       if (currentPeriod === savedPeriod.current && savedSrc.current) {
+        intendedSrc.current = savedSrc.current;
         bgm.src = savedSrc.current;
         bgm.currentTime = savedPos.current;
-        bgm.volume = 1;
-        bgm.play().catch(() => {});
       } else {
         const tracks = BGM_TRACKS[currentPeriod];
         const idx = trackIdx.current[currentPeriod];
         trackIdx.current[currentPeriod] = (idx + 1) % tracks.length;
+        intendedSrc.current = tracks[idx];
         bgm.src = tracks[idx];
         bgm.currentTime = 0;
-        bgm.volume = 1;
-        bgm.play().catch(() => {});
       }
+      bgm.volume = 1;
+      bgm.play().catch(() => {});
     };
+    resumeBgmRef.current = resumeBgm;
+
+    const onJingleEnd = () => resumeBgm();
 
     jingle.addEventListener('ended', onJingleEnd);
 
@@ -143,10 +152,8 @@ export function useAudio() {
       bgm.pause();
       jingle.pause();
       jingle.removeEventListener('ended', onJingleEnd);
-      if (deferredListener.current) {
-        document.removeEventListener('click', deferredListener.current);
-        document.removeEventListener('keydown', deferredListener.current);
-      }
+      document.removeEventListener('click', onInteraction);
+      document.removeEventListener('keydown', onInteraction);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -156,10 +163,9 @@ export function useAudio() {
     if (jingleRef.current) jingleRef.current.muted = muted;
   }, [muted]);
 
-  // IMPORTANT: audio event effect must be declared BEFORE period-change effect.
-  // React fires effects in declaration order within the same render, so this
-  // ensures jinglePlaying.current is set to true before the period-change
-  // effect runs (which checks it to decide whether to switch tracks).
+  // Audio event effect (jingle start/end) — must be declared BEFORE the
+  // unified BGM effect so jinglePlaying.current is set before the BGM
+  // effect checks it in the same render cycle.
   useEffect(() => {
     if (!audioEvent) return;
     clearAudioEvent();
@@ -169,7 +175,7 @@ export function useAudio() {
     if (!bgm || !jingle) return;
 
     if (audioEvent === 'activity_start' || audioEvent === 'travel') {
-      savedSrc.current = bgm.src;
+      savedSrc.current = intendedSrc.current;
       savedPos.current = bgm.currentTime;
       savedPeriod.current = activePeriod.current;
       jinglePlaying.current = true;
@@ -186,50 +192,32 @@ export function useAudio() {
 
       jingle.pause();
       jingle.currentTime = 0;
-      jinglePlaying.current = false;
-
-      const currentPeriod = activePeriod.current;
-      if (!currentPeriod) return;
-
-      if (currentPeriod === savedPeriod.current && savedSrc.current) {
-        bgm.src = savedSrc.current;
-        bgm.currentTime = savedPos.current;
-        bgm.volume = 1;
-        bgm.play().catch(() => {});
-      } else {
-        const tracks = BGM_TRACKS[currentPeriod];
-        const idx = trackIdx.current[currentPeriod];
-        trackIdx.current[currentPeriod] = (idx + 1) % tracks.length;
-        bgm.src = tracks[idx];
-        bgm.currentTime = 0;
-        bgm.volume = 1;
-        bgm.play().catch(() => {});
-      }
+      resumeBgmRef.current?.();
     }
   }, [audioEvent, clearAudioEvent, fadeBgmOut]);
 
-  // Title/menu screens: play late-night-radio
+  // Unified BGM effect — handles both title/menu and game-screen music.
+  // Single point of control eliminates races between competing effects.
   useEffect(() => {
-    if (currentScreen !== 'game') {
+    if (jinglePlaying.current) return;
+
+    if (currentScreen !== 'game' || !gameState) {
+      // Menu/title screens: play late-night-radio
       jingleRef.current?.pause();
       jinglePlaying.current = false;
       activePeriod.current = null;
-      playBgm(TITLE_TRACK, 0);
+      switchBgm(TITLE_TRACK, 0);
+      return;
     }
-  }, [currentScreen, playBgm]);
 
-  // Period-change effect — runs after audio event effect (declaration order)
-  useEffect(() => {
-    if (currentScreen !== 'game' || !gameState) return;
-
+    // Game screen: play period-appropriate track
     const period = getTimeOfDay(gameState.time.currentHour);
-    if (period === activePeriod.current || jinglePlaying.current) return;
+    if (period === activePeriod.current) return;
 
     activePeriod.current = period;
     const tracks = BGM_TRACKS[period];
     const idx = trackIdx.current[period];
     trackIdx.current[period] = (idx + 1) % tracks.length;
-
-    playBgm(tracks[idx], 0);
-  }, [currentScreen, gameState?.time.currentHour, playBgm]); // eslint-disable-line react-hooks/exhaustive-deps
+    switchBgm(tracks[idx], 0);
+  }, [currentScreen, gameState?.time.currentHour, switchBgm]); // eslint-disable-line react-hooks/exhaustive-deps
 }
