@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList, TravelConfirmModal } from '@ui/components/map';
 import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal } from '@ui/components/location';
@@ -121,16 +121,31 @@ export function GameScreen({
 
   // Watch for listings_shown events to open browse modal.
   // Delay opening until the activity modal's progress bar finishes (2800ms).
+  // Timer is stored in a ref so that the clearEvents() re-render doesn't cancel it.
+  const browseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (browseTimerRef.current) {
+        clearTimeout(browseTimerRef.current);
+        browseTimerRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const listingsEvent = pendingEvents.find((e) => e.type === 'listings_shown');
     if (listingsEvent?.data?.listings) {
       clearEvents();
       const listings = listingsEvent.data.listings as CarListing[];
-      const timer = setTimeout(() => {
+      if (browseTimerRef.current) {
+        clearTimeout(browseTimerRef.current);
+      }
+      browseTimerRef.current = setTimeout(() => {
+        browseTimerRef.current = null;
         setSelectedActivity(null);
         setBrowseListings(listings);
       }, 2800);
-      return () => clearTimeout(timer);
     }
   }, [pendingEvents, clearEvents, setSelectedActivity]);
 
