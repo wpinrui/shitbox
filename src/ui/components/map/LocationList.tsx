@@ -11,17 +11,13 @@ import './LocationList.css';
 interface LocationListProps {
   playerPosition: GridPosition;
   playerFitness: number;
-  hasCarHere: boolean;
-  onWalk: (location: LocationDefinition) => void;
-  onDrive: (location: LocationDefinition) => void;
+  onSelect: (location: LocationDefinition) => void;
 }
 
 export function LocationList({
   playerPosition,
   playerFitness,
-  hasCarHere,
-  onWalk,
-  onDrive,
+  onSelect,
 }: LocationListProps) {
   const locationsByRegion = getLocationsByRegion();
   const currentLocation = getLocationAtPosition(playerPosition);
@@ -43,10 +39,8 @@ export function LocationList({
               location={location}
               playerPosition={playerPosition}
               playerFitness={playerFitness}
-              hasCarHere={hasCarHere}
               isCurrentLocation={currentLocation?.id === location.id}
-              onWalk={() => onWalk(location)}
-              onDrive={() => onDrive(location)}
+              onSelect={() => onSelect(location)}
             />
           )),
         ];

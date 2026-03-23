@@ -89,6 +89,11 @@ shitbox/
 │   ├── main.ts                 # Electron main process
 │   └── preload.ts              # IPC bridge
 │
+├── public/
+│   └── assets/
+│       ├── audio/              # BGM (time-of-day tracks), jingles, title music
+│       └── backgrounds/        # Location/UI background photos (JPG)
+│
 ├── src/
 │   ├── index.tsx               # React entry point
 │   ├── index.css               # Global styles
@@ -96,8 +101,8 @@ shitbox/
 │   ├── App.tsx                 # Root component, router
 │   ├── vite-env.d.ts
 │   │
-│   ├── assets/
-│   │   └── backgrounds/        # 18 location/UI background photos (JPG)
+│   ├── hooks/
+│   │   └── useAudio.ts         # Audio playback hook (BGM, jingles)
 │   │
 │   ├── engine/                 # PURE GAME LOGIC (no React)
 │   │   ├── index.ts            # Public API
@@ -109,6 +114,7 @@ shitbox/
 │   │   │   ├── index.ts        # Data loading
 │   │   │   └── map.ts          # Map data helpers
 │   │   ├── systems/
+│   │   │   ├── newspaper.ts    # Newspaper generation & gig execution
 │   │   │   └── travel.ts       # Travel logic
 │   │   └── utils/
 │   │       ├── rng.ts          # Seeded random number generator
@@ -120,10 +126,10 @@ shitbox/
 │   │
 │   └── ui/                     # REACT COMPONENTS
 │       ├── components/
-│       │   ├── common/         # ConfirmDialog, FadeTransition, HoursSlider, LoadGameDialog, PauseMenu, Toast
+│       │   ├── common/         # BackgroundSlideshow, ConfirmDialog, FadeTransition, HoursSlider, LoadGameDialog, NewspaperModal, PauseMenu, Toast
 │       │   ├── game/           # ActivityPanel, EventLog, GameHeader, GameHUD
 │       │   ├── hud/            # AnimatedClock, AnimatedEnergy, AnimatedMoney, Sidebar
-│       │   ├── location/       # ActivityCard, ActivityModal
+│       │   ├── location/       # ActivityCard, ActivityModal, BrowseResultsModal, CarCard, CarSelector
 │       │   └── map/            # LocationCard, LocationList
 │       └── screens/
 │           ├── MainMenu.tsx
@@ -133,19 +139,27 @@ shitbox/
 │           └── PlaceholderScreen.tsx
 │
 ├── data/                       # JSON CONFIG FILES
+│   ├── cars.json               # Car definitions (tiers 0-4, 11 cars incl. victory car)
 │   ├── economy.json            # Base economic values
 │   ├── map.json                # Location definitions, regions, travel costs
+│   ├── newspaper-templates.json # Headline and gig templates
 │   └── activities/
-│       ├── scrapyard.json
+│       ├── car_wash.json
+│       ├── garage.json         # Repair activities + tow
 │       ├── gas_station.json
-│       └── misc.json           # Universal activities (nap, sleep, etc.)
+│       ├── misc.json           # Universal activities (nap, sleep, etc.)
+│       ├── scrapyard.json
+│       └── workshop.json       # Engine replacement (DIY + paid)
 │
 ├── design/                     # UI DESIGN REFERENCE
 │   ├── brand-guide.md          # Brand & design guide for implementers
 │   ├── mockup-1-scrapyard.html # Location screen mockup
 │   ├── mockup-2-map.html       # Map screen mockup
 │   ├── mockup-3-pause.html     # Pause menu mockup
-│   └── mockup-4-activity.html  # Activity modal mockup
+│   ├── mockup-4-activity.html  # Activity modal mockup
+│   ├── mockup-5-mainmenu.html  # Main menu mockup
+│   ├── mockup-6-newspaper.html # Newspaper modal mockup
+│   └── mockup-7-car-cards.html # Car card mockup
 │
 ├── saves/                      # Player save files (gitignored)
 │
@@ -1748,8 +1762,10 @@ export const useGameStore = create<GameStore>()(
 
 ### 5.2 Selectors
 
+> **Note:** `src/store/selectors.ts` does not exist yet. Selection logic is currently inline where needed. The reference implementation below is aspirational — to be extracted as complexity grows.
+
 ```typescript
-// src/store/selectors.ts
+// src/store/selectors.ts (planned)
 
 import { GameState, OwnedCar } from '../engine/types';
 import { getCarDefinition } from '../engine/data';
@@ -1852,17 +1868,17 @@ export const selectPassiveIncome = (state: GameState): number => {
 
 ---
 
-### Phase 2: World & Basic Activities (Weeks 4-5) ← CURRENT
+### Phase 2: World & Basic Activities (Weeks 4-5) ✓
 **Goal**: Navigate locations, perform work
 
 - [x] Build map screen with clickable locations
 - [x] Create location menu system
-- [ ] Implement activity UI (select, confirm, see results)
+- [x] Implement activity UI (select, confirm, see results)
 - [x] Add scrapyard activities (labor, scavenge)
-- [ ] Add basic car wash job
-- [ ] Implement inventory (parts)
-- [ ] Build time-of-day visuals
-- [ ] Add newspaper system (basic)
+- [x] Add basic car wash job
+- [x] Implement inventory (parts)
+- [x] Build time-of-day visuals
+- [x] Add newspaper system (basic)
 
 **Data files needed**:
 - `activities/scrapyard.json` ✓
@@ -1872,17 +1888,17 @@ export const selectPassiveIncome = (state: GameState): number => {
 
 ---
 
-### Phase 3: Cars & Garage (Weeks 6-7)
+### Phase 3: Cars & Garage (Weeks 6-7) ✓
 **Goal**: Own, store, and maintain cars
 
-- [ ] Implement car data structure
-- [ ] Build car card component
-- [ ] Create garage system (storage, basic repairs)
-- [ ] Implement engine/body condition
-- [ ] Add repair activities
-- [ ] Create workshop (major repairs, engine replacement)
-- [ ] Build parts usage system
-- [ ] Add car degradation over use
+- [x] Implement car data structure
+- [x] Build car card component
+- [x] Create garage system (storage, basic repairs)
+- [x] Implement engine/body condition
+- [x] Add repair activities
+- [x] Create workshop (major repairs, engine replacement)
+- [x] Build parts usage system
+- [x] Add car degradation over use
 
 **Data files needed**:
 - `cars.json` (start with 10-15 cars)
@@ -1893,7 +1909,7 @@ export const selectPassiveIncome = (state: GameState): number => {
 
 ---
 
-### Phase 4: Negotiation (Weeks 8-10)
+### Phase 4: Negotiation (Weeks 8-10) ← CURRENT
 **Goal**: Buy and sell through negotiation
 
 - [ ] Implement NPC generation with traits

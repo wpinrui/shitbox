@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@store/index';
-import { LocationList } from '@ui/components/map';
+import { LocationList, TravelConfirmModal } from '@ui/components/map';
 import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal } from '@ui/components/location';
 import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
 import {
@@ -53,6 +53,8 @@ export function GameScreen({
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showNewspaper, setShowNewspaper] = useState(false);
   const [browseListings, setBrowseListings] = useState<CarListing[] | null>(null);
+  const [pendingTravel, setPendingTravel] = useState<LocationDefinition | null>(null);
+  const [travelLoading, setTravelLoading] = useState<string | null>(null);
 
   const newspaperPurchasedToday =
     gameState.newspaper.purchased &&
@@ -118,13 +120,32 @@ export function GameScreen({
   };
 
   // Watch for listings_shown events to open browse modal.
-  // Close the activity modal first so the progress bar doesn't linger behind.
+  // Delay opening until the activity modal's progress bar finishes (2800ms).
+  // Timer is stored in a ref so that the clearEvents() re-render doesn't cancel it.
+  const browseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (browseTimerRef.current) {
+        clearTimeout(browseTimerRef.current);
+        browseTimerRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const listingsEvent = pendingEvents.find((e) => e.type === 'listings_shown');
     if (listingsEvent?.data?.listings) {
-      setSelectedActivity(null);
-      setBrowseListings(listingsEvent.data.listings as CarListing[]);
       clearEvents();
+      const listings = listingsEvent.data.listings as CarListing[];
+      if (browseTimerRef.current) {
+        clearTimeout(browseTimerRef.current);
+      }
+      browseTimerRef.current = setTimeout(() => {
+        browseTimerRef.current = null;
+        setSelectedActivity(null);
+        setBrowseListings(listings);
+      }, 2800);
     }
   }, [pendingEvents, clearEvents, setSelectedActivity]);
 
@@ -169,23 +190,40 @@ export function GameScreen({
     setShowNewspaper(false);
   }, []);
 
-  const handleWalk = useCallback((location: LocationDefinition) => {
-    const result = walkTo(location.position);
-    if (result.success) {
-      addToast(`Walked to ${location.name}`, 'info');
-    } else if (result.error) {
-      addToast(result.error, 'error');
-    }
-  }, [walkTo, addToast]);
+  const handleLocationSelect = useCallback((location: LocationDefinition) => {
+    setPendingTravel(location);
+  }, []);
 
-  const handleDrive = useCallback((location: LocationDefinition) => {
-    const result = driveTo(location.position);
+  const handleTravelConfirm = useCallback((mode: 'walk' | 'drive') => {
+    if (!pendingTravel) return;
+    const location = pendingTravel;
+    setPendingTravel(null);
+
+    const result = mode === 'walk'
+      ? walkTo(location.position)
+      : driveTo(location.position);
+
     if (result.success) {
-      addToast(`Drove to ${location.name}`, 'info');
+      setTravelLoading(
+        mode === 'walk'
+          ? `Walking to ${location.name}...`
+          : `Driving to ${location.name}...`
+      );
     } else if (result.error) {
       addToast(result.error, 'error');
     }
-  }, [driveTo, addToast]);
+  }, [pendingTravel, walkTo, driveTo, addToast]);
+
+  // Travel loading → transition back to location tab
+  useEffect(() => {
+    if (travelLoading) {
+      const timer = setTimeout(() => {
+        setTravelLoading(null);
+        setTab('location');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [travelLoading, setTab]);
 
   const handleMenuClick = () => {
     setShowPauseMenu(true);
@@ -221,7 +259,7 @@ export function GameScreen({
   const energyPct = (gameState.player.energy / MAX_ENERGY) * 100;
 
   return (
-    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings ? ' game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -440,9 +478,7 @@ export function GameScreen({
               <LocationList
                 playerPosition={gameState.player.position}
                 playerFitness={gameState.player.stats.fitness}
-                hasCarHere={hasCarHere}
-                onWalk={handleWalk}
-                onDrive={handleDrive}
+                onSelect={handleLocationSelect}
               />
             )}
           </div>
@@ -477,6 +513,32 @@ export function GameScreen({
           currentDay={gameState.time.currentDay}
           onClose={() => setBrowseListings(null)}
         />
+      )}
+
+      {/* Travel confirmation */}
+      {pendingTravel && (
+        <TravelConfirmModal
+          location={pendingTravel}
+          playerPosition={gameState.player.position}
+          playerFitness={gameState.player.stats.fitness}
+          hasCarHere={hasCarHere}
+          onWalk={() => handleTravelConfirm('walk')}
+          onDrive={() => handleTravelConfirm('drive')}
+          onCancel={() => setPendingTravel(null)}
+        />
+      )}
+
+      {/* Travel loading transition */}
+      {travelLoading && (
+        <div className="travel-loading-overlay">
+          <div className="travel-loading">
+            <div className="travel-loading__title">{travelLoading}</div>
+            <div className="travel-loading__bar-track">
+              <div className="travel-loading__bar-fill" />
+            </div>
+            <div className="travel-loading__text">Traveling...</div>
+          </div>
+        </div>
       )}
 
       {/* Toast notifications */}

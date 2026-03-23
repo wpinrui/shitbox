@@ -58,9 +58,8 @@ export function ActivityModal({
     if (res && typeof res === 'object') {
       setResult(res as ActivityResult);
     }
-    triggerAudioEvent('activity_start');
     setPhase('progress');
-  }, [isVariableTime, hours, onExecute, triggerAudioEvent]);
+  }, [isVariableTime, hours, onExecute]);
 
   // Auto-execute for fixed-time activities on mount.
   // Guard with ref to prevent StrictMode double-execution.
@@ -72,7 +71,6 @@ export function ActivityModal({
       if (res && typeof res === 'object') {
         setResult(res as ActivityResult);
       }
-      triggerAudioEvent('activity_start');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
