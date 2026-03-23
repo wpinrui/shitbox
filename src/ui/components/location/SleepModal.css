@@ -1,0 +1,150 @@
+/* ==========================================================================
+   Sleep Modal — Voluntary + Crash Prompt
+   ========================================================================== */
+
+.sleep-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sleep-backdrop--crash {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.sleep-modal {
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 380px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.3s ease-out;
+}
+
+.sleep-modal__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.sleep-modal__title--crash {
+  color: var(--spend);
+}
+
+.sleep-modal__subtitle {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ── Voluntary sleep info rows ── */
+.sleep-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.sleep-modal__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+}
+
+.sleep-modal__row-label {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+.sleep-modal__row-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.sleep-modal__buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.sleep-modal__buttons > button {
+  flex: 1;
+}
+
+/* ── Crash prompt options ── */
+.sleep-modal__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sleep-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.sleep-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sleep-option__icon {
+  font-size: 1.3rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sleep-option__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sleep-option__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.sleep-option__detail {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}

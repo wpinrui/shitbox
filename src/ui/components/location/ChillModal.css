@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Chill Modal — Time Skip Presets
+   ========================================================================== */
+
+.chill-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chill-modal {
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 380px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.3s ease-out;
+}
+
+.chill-modal__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.chill-modal__subtitle {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.chill-modal__presets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.chill-preset {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.chill-preset:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chill-preset__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.chill-preset__detail {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+.chill-modal__cancel {
+  width: 100%;
+}

@@ -178,6 +178,11 @@
   color: var(--text-2);
 }
 
+.energy-bar__text--danger {
+  color: var(--spend);
+  font-weight: 600;
+}
+
 .food-warn {
   font-size: 0.8rem;
   color: var(--energy-color);
