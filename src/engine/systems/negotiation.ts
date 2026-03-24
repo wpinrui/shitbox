@@ -175,7 +175,7 @@ export function startNegotiation(
   const marketValue = carDef.marketValue[conditionRating];
 
   const npc = generateNpc(rng);
-  const { targetPrice, walkAwayPrice } = calculateNpcPricing(npc.traits, marketValue, rng);
+  const { targetPrice, walkAwayPrice } = calculateNpcPricing(npc.traits, listing.askingPrice, rng);
 
   // Reveal traits based on charisma
   const config = getEconomyConfig();
