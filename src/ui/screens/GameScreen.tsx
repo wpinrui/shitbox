@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList, TravelConfirmModal } from '@ui/components/map';
-import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal, SleepModal, ChillModal } from '@ui/components/location';
+import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal, SleepModal, ChillModal, NegotiationModal } from '@ui/components/location';
 import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
 import {
   getLocationActivities,
@@ -55,6 +55,11 @@ export function GameScreen({
   const crashPromptActive = useGameStore((state) => state.crashPromptActive);
   const sleep = useGameStore((state) => state.sleep);
   const chill = useGameStore((state) => state.chill);
+  const activeNegotiation = useGameStore((state) => state.activeNegotiation);
+  const startNegotiation = useGameStore((state) => state.startNegotiation);
+  const storeSubmitOffer = useGameStore((state) => state.submitOffer);
+  const acceptAtListPrice = useGameStore((state) => state.acceptAtListPrice);
+  const closeNegotiation = useGameStore((state) => state.closeNegotiation);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showSleepConfirm, setShowSleepConfirm] = useState(false);
@@ -303,7 +308,7 @@ export function GameScreen({
   const energyPct = Math.max(0, (gameState.player.energy / MAX_ENERGY) * 100);
 
   return (
-    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading || restLoading || showSleepConfirm || showChillModal || crashPromptActive ? ' game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading || restLoading || showSleepConfirm || showChillModal || crashPromptActive || activeNegotiation ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -587,7 +592,20 @@ export function GameScreen({
         <BrowseResultsModal
           listings={browseListings}
           currentDay={gameState.time.currentDay}
+          onNegotiate={(listingId) => {
+            setBrowseListings(null);
+            startNegotiation(listingId);
+          }}
           onClose={() => setBrowseListings(null)}
+        />
+      )}
+
+      {activeNegotiation && (
+        <NegotiationModal
+          negotiation={activeNegotiation}
+          onSubmitOffer={storeSubmitOffer}
+          onAcceptListPrice={acceptAtListPrice}
+          onWalkAway={closeNegotiation}
         />
       )}
 

@@ -248,3 +248,8 @@
   color: var(--text-1);
   text-shadow: var(--shadow-text);
 }
+
+.listing-card__negotiate {
+  margin-top: 10px;
+  width: 100%;
+}

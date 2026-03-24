@@ -200,6 +200,7 @@ export function startNegotiation(
     item: {
       type: 'car',
       id: listingId,
+      carId: listing.carId,
       marketValue,
     },
     history: [],

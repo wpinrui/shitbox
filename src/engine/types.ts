@@ -241,6 +241,7 @@ export interface NegotiationNpc {
 export interface NegotiationItem {
   type: 'car';
   id: string; // listing ID
+  carId: string;
   marketValue: number;
 }
 

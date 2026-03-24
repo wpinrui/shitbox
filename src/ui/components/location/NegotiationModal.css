@@ -1,0 +1,192 @@
+/* ==========================================================================
+   Negotiation Modal
+   ========================================================================== */
+
+.neg-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neg-modal {
+  background: var(--glass-1-bg);
+  backdrop-filter: blur(var(--glass-1-blur));
+  -webkit-backdrop-filter: blur(var(--glass-1-blur));
+  border: var(--glass-1-border);
+  border-radius: var(--glass-1-radius);
+  box-shadow: var(--glass-1-shadow);
+  width: 400px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: modalIn 0.3s ease-out;
+}
+
+/* Header */
+.neg-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.neg-modal__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__npc {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.neg-trait-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-2);
+  text-transform: capitalize;
+}
+
+/* Info rows */
+.neg-modal__info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+}
+
+.neg-modal__info-label {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__info-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+/* Price row */
+.neg-modal__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--glass-2-bg, rgba(255,255,255,0.06));
+  border: var(--glass-2-border, 1px solid rgba(255,255,255,0.12));
+  border-radius: var(--glass-1-radius);
+}
+
+.neg-modal__price-label {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-shadow: var(--shadow-text);
+}
+
+/* Dialogue */
+.neg-modal__dialogue {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  font-style: italic;
+  text-shadow: var(--shadow-text);
+  padding: 0 2px;
+  min-height: 1.4em;
+}
+
+/* Offer input row */
+.neg-modal__offer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.neg-modal__offer-prefix {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__offer-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--glass-3-bg);
+  border: var(--glass-3-border);
+  border-radius: var(--glass-3-radius);
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  /* Hide number input spinners */
+  -moz-appearance: textfield;
+}
+
+.neg-modal__offer-input::-webkit-outer-spin-button,
+.neg-modal__offer-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.neg-modal__offer-input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Result */
+.neg-modal__result {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--glass-3-radius);
+  text-shadow: var(--shadow-text);
+}
+
+.neg-modal__result--accepted {
+  color: var(--earn);
+  background: rgba(var(--earn-rgb, 100, 200, 100), 0.08);
+}
+
+.neg-modal__result--walked_away {
+  color: var(--spend);
+  background: rgba(var(--spend-rgb, 200, 80, 80), 0.08);
+}
+
+/* Buttons */
+.neg-modal__buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.neg-modal__buttons > button {
+  flex: 1;
+}
