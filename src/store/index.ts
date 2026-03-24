@@ -964,7 +964,7 @@ export const useGameStore = create<GameStore>()(
           },
         };
 
-        set({ gameState: newState, activeNegotiation: null });
+        set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
       },
 
       // Navigation
