@@ -24,7 +24,7 @@ export function NegotiationModal({
   const carName = carDef ? `${carDef.year} ${carDef.make} ${carDef.model}` : 'Vehicle';
 
   const lastRound = negotiation.history[negotiation.history.length - 1];
-  const lastCounterPrice = lastRound?.npcResponse.counterOffer?.price ?? negotiation.npc.targetPrice;
+  const lastCounterPrice = lastRound?.npcResponse.counterOffer?.price ?? negotiation.item.askingPrice;
   const lastDialogue = lastRound?.npcResponse.dialogue ?? `"What'll it be?"`;
   const isOver = negotiation.status !== 'active';
 

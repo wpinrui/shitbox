@@ -243,6 +243,7 @@ export interface NegotiationItem {
   id: string; // listing ID
   carId: string;
   marketValue: number;
+  askingPrice: number;
 }
 
 export interface NegotiationOffer {

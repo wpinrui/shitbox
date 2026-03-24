@@ -202,6 +202,7 @@ export function startNegotiation(
       id: listingId,
       carId: listing.carId,
       marketValue,
+      askingPrice: listing.askingPrice,
     },
     history: [],
     status: 'active',
@@ -329,7 +330,7 @@ export function acceptListPrice(
   return {
     ...negotiation,
     status: 'accepted',
-    acceptedPrice: negotiation.npc.targetPrice,
+    acceptedPrice: negotiation.item.askingPrice,
   };
 }
 
