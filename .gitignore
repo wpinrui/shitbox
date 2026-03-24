@@ -46,5 +46,8 @@ saves/
 *.tmp
 *.temp
 
+# Design proposals
+sleep-proposal.md
+
 # Assets (too large for git)
 src/assets/tilesets/
