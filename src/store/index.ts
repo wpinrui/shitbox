@@ -736,7 +736,7 @@ export const useGameStore = create<GameStore>()(
 
         const currentEnergy = gameState.player.energy;
         const toRecover = MAX_ENERGY - currentEnergy;
-        const sleepHours = Math.ceil(toRecover / rate);
+        const sleepHours = toRecover / rate;
 
         // Set energy to 100 first, then advance time with day processing
         let newState: GameState = {

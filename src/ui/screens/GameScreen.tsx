@@ -11,6 +11,7 @@ import {
   getConditionRating,
   getSleepContext,
   getChillPresets,
+  formatSleepDuration,
   MAX_ENERGY,
   STAT_ORDER,
   getTimeOfDay,
@@ -275,9 +276,9 @@ export function GameScreen({
   const handleSleep = useCallback((rate: number) => {
     setShowSleepConfirm(false);
     const energy = gameState.player.energy;
-    const hrs = Math.ceil((MAX_ENERGY - energy) / rate);
+    const exactHours = (MAX_ENERGY - energy) / rate;
     setRestLoading({
-      label: `Sleeping for ${hrs} hour${hrs !== 1 ? 's' : ''}...`,
+      label: `Sleeping for ${formatSleepDuration(exactHours)}...`,
       action: () => sleep(rate),
     });
   }, [sleep, gameState.player.energy]);

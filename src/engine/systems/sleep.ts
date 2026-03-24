@@ -67,7 +67,7 @@ export function getSleepOptions(state: GameState): SleepOption[] {
       id: 'home',
       label: 'Sleep at home',
       rate,
-      hours: Math.ceil(toRecover / rate),
+      hours: toRecover / rate,
     });
   }
 
@@ -78,7 +78,7 @@ export function getSleepOptions(state: GameState): SleepOption[] {
       id: 'car',
       label: 'Sleep in your car',
       rate,
-      hours: Math.ceil(toRecover / rate),
+      hours: toRecover / rate,
     });
   }
 
@@ -88,7 +88,7 @@ export function getSleepOptions(state: GameState): SleepOption[] {
     id: 'crash',
     label: 'Crash out',
     rate: crashRate,
-    hours: Math.ceil(toRecover / crashRate),
+    hours: toRecover / crashRate,
   });
 
   return options;
@@ -164,7 +164,7 @@ export function advanceTimeWithDayProcessing(
   const allEvents: GameEvent[] = [];
 
   while (remainingHours > 0) {
-    const hoursUntilMidnight = HOURS_PER_DAY - currentState.time.currentHour;
+    const hoursUntilMidnight = HOURS_PER_DAY - currentState.time.currentHour - currentState.time.currentMinute / 60;
 
     if (remainingHours >= hoursUntilMidnight && hoursUntilMidnight > 0) {
       // This chunk crosses midnight
@@ -257,4 +257,20 @@ function hoursUntil(currentHour: number, targetHour: number): number {
   let h = targetHour - currentHour;
   if (h <= 0) h += HOURS_PER_DAY;
   return h;
+}
+
+// ============================================================================
+// Duration Formatting
+// ============================================================================
+
+/**
+ * Format a fractional hour value as a human-readable duration string.
+ * e.g. 2.7 → "2 hrs 42 min", 3.0 → "3 hrs", 0.5 → "30 min"
+ */
+export function formatSleepDuration(hours: number): string {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  if (m === 0) return `${h} hr${h !== 1 ? 's' : ''}`;
+  if (h === 0) return `${m} min`;
+  return `${h} hr${h !== 1 ? 's' : ''} ${m} min`;
 }

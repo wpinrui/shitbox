@@ -24,11 +24,12 @@ export function advanceTime(
   currentTime: GameTime,
   hours: number
 ): TimeAdvanceResult {
-  let { currentDay, currentHour } = currentTime;
-  const { currentMinute } = currentTime;
+  let { currentDay } = currentTime;
 
-  // Add hours
-  currentHour += hours;
+  // Work in total minutes for precision (rounds fractional minutes)
+  const totalMinutes = currentTime.currentHour * 60 + currentTime.currentMinute + Math.round(hours * 60);
+  let currentHour = Math.floor(totalMinutes / 60);
+  const currentMinute = totalMinutes % 60;
 
   // Handle day overflow
   let daysAdvanced = 0;
@@ -41,7 +42,7 @@ export function advanceTime(
   return {
     newTime: {
       currentDay,
-      currentHour: Math.floor(currentHour),
+      currentHour,
       currentMinute,
     },
     newDayStarted: daysAdvanced > 0,

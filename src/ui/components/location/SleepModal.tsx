@@ -1,4 +1,5 @@
 import type { SleepOption } from '@engine/index';
+import { formatSleepDuration } from '@engine/index';
 import './SleepModal.css';
 
 interface SleepModalProps {
@@ -35,7 +36,7 @@ export function SleepModal({
             </div>
             <div className="sleep-modal__row">
               <span className="sleep-modal__row-label">Sleep duration</span>
-              <span className="sleep-modal__row-value">{bestHours} hr{bestHours !== 1 ? 's' : ''}</span>
+              <span className="sleep-modal__row-value">{formatSleepDuration(bestHours)}</span>
             </div>
             <div className="sleep-modal__row">
               <span className="sleep-modal__row-label">Wake up at</span>
@@ -72,7 +73,7 @@ export function SleepModal({
               <span className="sleep-option__info">
                 <span className="sleep-option__label">{opt.label}</span>
                 <span className="sleep-option__detail">
-                  {opt.rate} energy/hr &middot; {opt.hours} hr{opt.hours !== 1 ? 's' : ''}
+                  {opt.rate} energy/hr &middot; {formatSleepDuration(opt.hours)}
                 </span>
               </span>
             </button>

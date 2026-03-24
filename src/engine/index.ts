@@ -121,6 +121,7 @@ export {
   getSleepContext,
   getChillPresets,
   advanceTimeWithDayProcessing,
+  formatSleepDuration,
   type SleepOption,
   type SleepContext,
   type ChillPreset,
