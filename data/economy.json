@@ -84,6 +84,7 @@
   "statEffects": {
     "charisma": {
       "traitVisibilityPerPoint": 0.01,
+      "counterOfferShiftPerPoint": 0.01,
       "adResponseBonusPerPoint": 0.01,
       "earningsBonusPerPoint": 0.01
     },

@@ -173,6 +173,7 @@ export interface EconomyConfig {
   statEffects: {
     charisma: {
       traitVisibilityPerPoint: number;
+      counterOfferShiftPerPoint: number;
       adResponseBonusPerPoint: number;
       earningsBonusPerPoint: number;
     };
@@ -226,6 +227,28 @@ export interface NewspaperTemplates {
 }
 
 // ============================================================================
+// Trait Types
+// ============================================================================
+
+export interface TraitEffects {
+  acceptanceThresholdBonus?: number;
+  walkAwayChancePerRound?: number;
+  lowballInsultThreshold?: number;
+  walkAwayOnInsult?: number;
+  targetPriceMultiplier?: number;
+  walkAwayPriceMultiplier?: number;
+  targetPriceVariance?: number;
+}
+
+export interface TraitDefinition {
+  id: string;
+  name: string;
+  description: string;
+  incompatibleWith: string[];
+  effects: TraitEffects;
+}
+
+// ============================================================================
 // Data Cache
 // ============================================================================
 
@@ -236,6 +259,8 @@ const dataCache = {
   newspaperTemplates: null as NewspaperTemplates | null,
   carData: null as CarDataConfig | null,
   carById: new Map<string, CarDefinition>(),
+  traits: null as TraitDefinition[] | null,
+  traitById: new Map<string, TraitDefinition>(),
 };
 
 // ============================================================================
@@ -354,6 +379,7 @@ export async function loadActivityDefinitions(locationId: string): Promise<Activ
  */
 export async function loadCoreActivities(): Promise<void> {
   await loadActivityDefinitions('misc');
+  await loadTraitsData();
   const locationFiles = ['scrapyard', 'gas_station', 'car_wash', 'garage', 'workshop'];
   const results = await Promise.allSettled(
     locationFiles.map((id) => loadActivityDefinitions(id))
@@ -363,6 +389,22 @@ export async function loadCoreActivities(): Promise<void> {
       console.warn(`[data] Failed to load activity file "${locationFiles[i]}":`, result.reason);
     }
   });
+}
+
+/**
+ * Load NPC trait definitions from JSON.
+ */
+export async function loadTraitsData(): Promise<TraitDefinition[]> {
+  if (dataCache.traits) {
+    return dataCache.traits;
+  }
+
+  const data = await window.electronAPI.loadData('traits.json') as { traits: TraitDefinition[] };
+  dataCache.traits = data.traits;
+  for (const trait of data.traits) {
+    dataCache.traitById.set(trait.id, trait);
+  }
+  return dataCache.traits;
 }
 
 // ============================================================================
@@ -421,6 +463,26 @@ export function clearDataCache(): void {
   dataCache.newspaperTemplates = null;
   dataCache.carData = null;
   dataCache.carById.clear();
+  dataCache.traits = null;
+  dataCache.traitById.clear();
+}
+
+/**
+ * Get a trait definition by ID. Throws if traits not loaded or ID not found.
+ */
+export function getTraitDefinition(traitId: string): TraitDefinition {
+  const trait = dataCache.traitById.get(traitId);
+  if (!trait) {
+    throw new Error(`Trait "${traitId}" not found. Is traits data loaded?`);
+  }
+  return trait;
+}
+
+/**
+ * Get all loaded trait definitions.
+ */
+export function getAllTraits(): TraitDefinition[] {
+  return dataCache.traits ?? [];
 }
 
 /**

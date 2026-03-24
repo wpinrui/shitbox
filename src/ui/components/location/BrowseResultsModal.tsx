@@ -5,6 +5,7 @@ import './BrowseResultsModal.css';
 interface BrowseResultsModalProps {
   listings: CarListing[];
   currentDay: number;
+  onNegotiate: (listingId: string) => void;
   onClose: () => void;
 }
 
@@ -22,7 +23,7 @@ function badgeClass(rating: ConditionRating): string {
   return 'poor';
 }
 
-export function BrowseResultsModal({ listings, currentDay, onClose }: BrowseResultsModalProps) {
+export function BrowseResultsModal({ listings, currentDay, onNegotiate, onClose }: BrowseResultsModalProps) {
   return (
     <div className="browse-backdrop" onClick={onClose}>
       <div className="browse-modal" onClick={(e) => e.stopPropagation()}>
@@ -82,6 +83,12 @@ export function BrowseResultsModal({ listings, currentDay, onClose }: BrowseResu
                       <span className="listing-card__price">${listing.askingPrice}</span>
                     </div>
                   </div>
+                  <button
+                    className="btn-primary listing-card__negotiate"
+                    onClick={() => onNegotiate(listing.id)}
+                  >
+                    Negotiate
+                  </button>
                 </div>
               </div>
             );

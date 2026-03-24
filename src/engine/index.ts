@@ -40,6 +40,9 @@ export {
   getScrapPricePerKg,
   getConditionRating,
   isCarDataLoaded,
+  loadTraitsData,
+  getTraitDefinition,
+  getAllTraits,
   type ActivityDefinition,
   type EconomyConfig,
   type Prerequisite,
@@ -47,6 +50,8 @@ export {
   type StatGain,
   type GigTemplate,
   type NewspaperTemplates,
+  type TraitDefinition,
+  type TraitEffects,
 } from './data';
 
 // Map data
@@ -114,6 +119,15 @@ export {
 
 // Newspaper system
 export { generateNewspaper } from './systems/newspaper';
+
+// Negotiation system
+export {
+  generateNpc,
+  calculateNpcPricing,
+  startNegotiation,
+  submitOffer,
+  acceptListPrice,
+} from './systems/negotiation';
 
 // Sleep system
 export {

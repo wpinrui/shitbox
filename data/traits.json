@@ -1,0 +1,111 @@
+{
+  "traits": [
+    {
+      "id": "impatient",
+      "name": "Impatient",
+      "description": "Accepts faster, but walks away quickly if you stall",
+      "incompatibleWith": ["patient"],
+      "effects": {
+        "acceptanceThresholdBonus": 0.10,
+        "walkAwayChancePerRound": 0.20
+      }
+    },
+    {
+      "id": "patient",
+      "name": "Patient",
+      "description": "Willing to haggle forever, waits for their price",
+      "incompatibleWith": ["impatient", "impulsive"],
+      "effects": {
+        "acceptanceThresholdBonus": -0.15,
+        "walkAwayChancePerRound": 0
+      }
+    },
+    {
+      "id": "desperate",
+      "name": "Desperate",
+      "description": "Has urgent need, will accept worse deals",
+      "incompatibleWith": ["firm"],
+      "effects": {
+        "targetPriceMultiplier": -0.10,
+        "walkAwayPriceMultiplier": -0.15,
+        "acceptanceThresholdBonus": 0.20
+      }
+    },
+    {
+      "id": "firm",
+      "name": "Firm",
+      "description": "Knows what they want, narrow negotiation band",
+      "incompatibleWith": ["desperate", "naive"],
+      "effects": {
+        "targetPriceMultiplier": 0.05,
+        "walkAwayPriceMultiplier": 0.10,
+        "acceptanceThresholdBonus": -0.10,
+        "lowballInsultThreshold": 0.10
+      }
+    },
+    {
+      "id": "prideful",
+      "name": "Prideful",
+      "description": "Lowball offers insult them, deal dies fast",
+      "incompatibleWith": ["pragmatic"],
+      "effects": {
+        "lowballInsultThreshold": 0.20,
+        "walkAwayOnInsult": 0.70
+      }
+    },
+    {
+      "id": "pragmatic",
+      "name": "Pragmatic",
+      "description": "Doesn't take offers personally, pure numbers",
+      "incompatibleWith": ["prideful"],
+      "effects": {
+        "lowballInsultThreshold": -0.15,
+        "walkAwayOnInsult": 0
+      }
+    },
+    {
+      "id": "naive",
+      "name": "Naive",
+      "description": "Doesn't know true value, easily exploited",
+      "incompatibleWith": ["savvy", "firm"],
+      "effects": {
+        "targetPriceMultiplier": -0.15,
+        "walkAwayPriceMultiplier": -0.20,
+        "acceptanceThresholdBonus": 0.15
+      }
+    },
+    {
+      "id": "savvy",
+      "name": "Savvy",
+      "description": "Knows the market, hard to fool",
+      "incompatibleWith": ["naive"],
+      "effects": {
+        "targetPriceMultiplier": 0.05,
+        "walkAwayPriceMultiplier": 0.08,
+        "lowballInsultThreshold": 0.10,
+        "acceptanceThresholdBonus": -0.10
+      }
+    },
+    {
+      "id": "cautious",
+      "name": "Cautious",
+      "description": "Wants guarantees, slow to commit",
+      "incompatibleWith": ["impulsive"],
+      "effects": {
+        "acceptanceThresholdBonus": -0.15,
+        "walkAwayChancePerRound": 0.05
+      }
+    },
+    {
+      "id": "impulsive",
+      "name": "Impulsive",
+      "description": "Quick decisions, might overpay or undersell",
+      "incompatibleWith": ["patient", "cautious"],
+      "effects": {
+        "acceptanceThresholdBonus": 0.15,
+        "walkAwayChancePerRound": 0.05,
+        "targetPriceVariance": 0.10
+      }
+    }
+  ]
+}
