@@ -9,6 +9,7 @@ import {
   StateDelta,
   GameEvent,
   GridPosition,
+  NegotiationState,
   ENGINE_VERSION,
   MAX_ENERGY,
   RNG,
@@ -23,6 +24,9 @@ import {
   getLocation,
   getCarDefinition,
   advanceTimeWithDayProcessing,
+  startNegotiation as engineStartNegotiation,
+  submitOffer as engineSubmitOffer,
+  acceptListPrice,
   type ActivityParams,
   type ActivityDefinition,
   type GigListing,
@@ -58,6 +62,9 @@ interface GameStore {
   // Sleep/crash state
   crashPromptActive: boolean;
 
+  // Negotiation state
+  activeNegotiation: NegotiationState | null;
+
   // Audio state
   muted: boolean;
   audioEvent: AudioEvent | null;
@@ -82,6 +89,12 @@ interface GameStore {
   // Sleep & Chill
   sleep: (rate: number) => void;
   chill: (hours: number) => void;
+
+  // Negotiation
+  startNegotiation: (listingId: string) => void;
+  submitOffer: (price: number) => void;
+  acceptAtListPrice: () => void;
+  closeNegotiation: () => void;
 
   // Navigation
   setScreen: (screen: Screen) => void;
@@ -312,6 +325,7 @@ export const useGameStore = create<GameStore>()(
       toasts: [],
       isExecutingActivity: false,
       crashPromptActive: false,
+      activeNegotiation: null,
       muted: false,
       audioEvent: null,
 
@@ -826,6 +840,118 @@ export const useGameStore = create<GameStore>()(
           gameState: newState,
           pendingEvents: outcome.events,
         });
+      },
+
+      // Negotiation
+      startNegotiation: (listingId) => {
+        const { gameState } = get();
+        if (!gameState) return;
+
+        const actionCount = gameState.history.actions.length;
+        const rng = new RNG(gameState.meta.rngSeed + gameState.time.currentDay * 1000 + actionCount);
+        const negotiation = engineStartNegotiation(gameState, listingId, rng);
+        set({ activeNegotiation: negotiation });
+      },
+
+      submitOffer: (price) => {
+        const { gameState, activeNegotiation } = get();
+        if (!gameState || !activeNegotiation || activeNegotiation.status !== 'active') return;
+
+        const actionCount = gameState.history.actions.length;
+        const rng = new RNG(
+          gameState.meta.rngSeed + gameState.time.currentDay * 1000 + actionCount + activeNegotiation.history.length
+        );
+        const { negotiation } = engineSubmitOffer(
+          activeNegotiation,
+          { price },
+          gameState.player.stats.charisma,
+          rng
+        );
+        set({ activeNegotiation: negotiation });
+      },
+
+      acceptAtListPrice: () => {
+        const { activeNegotiation } = get();
+        if (!activeNegotiation || activeNegotiation.status !== 'active') return;
+        const accepted = acceptListPrice(activeNegotiation);
+        set({ activeNegotiation: accepted });
+        get().closeNegotiation();
+      },
+
+      closeNegotiation: () => {
+        const { gameState, activeNegotiation } = get();
+        if (!gameState || !activeNegotiation) {
+          set({ activeNegotiation: null });
+          return;
+        }
+
+        if (activeNegotiation.status !== 'accepted') {
+          set({ activeNegotiation: null });
+          return;
+        }
+
+        // Accepted — transfer car and deduct money
+        const listing = gameState.market.currentListings.find(
+          (l) => l.id === activeNegotiation.item.id
+        );
+        if (!listing) {
+          set({ activeNegotiation: null });
+          return;
+        }
+
+        const finalPrice = activeNegotiation.acceptedPrice ?? listing.askingPrice;
+        const actionCount = gameState.history.actions.length;
+        const rng = new RNG(gameState.meta.rngSeed + gameState.time.currentDay * 1000 + actionCount);
+
+        const carDef = getCarDefinition(listing.carId);
+        const newCar = {
+          instanceId: rng.uuid(),
+          carId: listing.carId,
+          engineCondition: listing.condition.engine,
+          bodyCondition: listing.condition.body,
+          fuel: 0,
+          fuelCapacity: carDef?.fuelCapacity ?? 40,
+          position: { ...gameState.player.position },
+          acquiredDay: gameState.time.currentDay,
+          acquiredPrice: finalPrice,
+        };
+
+        let newState: GameState = {
+          ...gameState,
+          player: {
+            ...gameState.player,
+            money: gameState.player.money - finalPrice,
+          },
+          inventory: {
+            ...gameState.inventory,
+            cars: [...gameState.inventory.cars, newCar],
+          },
+          market: {
+            ...gameState.market,
+            currentListings: gameState.market.currentListings.filter(
+              (l) => l.id !== listing.id
+            ),
+          },
+          history: {
+            ...gameState.history,
+            actions: [
+              ...gameState.history.actions.slice(-99),
+              {
+                timestamp: Date.now(),
+                day: gameState.time.currentDay,
+                action: 'negotiate_purchase',
+                params: { listingId: listing.id, price: finalPrice },
+                result: 'success' as const,
+              },
+            ],
+          },
+        };
+
+        // Advance time for the negotiation (1–2 hours)
+        const timeResult = advanceTime(newState.time, 1);
+        newState = { ...newState, time: timeResult.newTime };
+
+        set({ gameState: newState, activeNegotiation: null });
       },
 
       // Navigation
