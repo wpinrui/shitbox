@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import type { NegotiationState } from '@engine/types';
-import { getCarDefinition } from '@engine/index';
+import { getCarDefinition, getTraitDefinition } from '@engine/index';
 import './NegotiationModal.css';
 
 interface NegotiationModalProps {
   negotiation: NegotiationState;
+  playerMoney: number;
   onSubmitOffer: (price: number) => void;
   onAcceptListPrice: () => void;
   onWalkAway: () => void;
@@ -12,6 +13,7 @@ interface NegotiationModalProps {
 
 export function NegotiationModal({
   negotiation,
+  playerMoney,
   onSubmitOffer,
   onAcceptListPrice,
   onWalkAway,
@@ -49,7 +51,7 @@ export function NegotiationModal({
           {negotiation.npc.revealedTraits.length > 0 && (
             <div className="neg-modal__traits">
               {negotiation.npc.revealedTraits.map((traitId) => (
-                <span key={traitId} className="neg-trait-badge">{traitId}</span>
+                <span key={traitId} className="neg-trait-badge">{getTraitDefinition(traitId).name}</span>
               ))}
             </div>
           )}
@@ -110,7 +112,12 @@ export function NegotiationModal({
           {!isOver && (
             <>
               <button className="btn-secondary" onClick={onWalkAway}>Walk Away</button>
-              <button className="btn-secondary" onClick={onAcceptListPrice}>
+              <button
+                className="btn-secondary"
+                onClick={onAcceptListPrice}
+                disabled={playerMoney < lastCounterPrice}
+                title={playerMoney < lastCounterPrice ? "You can't afford this" : undefined}
+              >
                 Accept ${lastCounterPrice.toLocaleString()}
               </button>
             </>

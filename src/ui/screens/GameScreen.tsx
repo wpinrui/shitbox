@@ -603,6 +603,7 @@ export function GameScreen({
       {activeNegotiation && (
         <NegotiationModal
           negotiation={activeNegotiation}
+          playerMoney={gameState.player.money}
           onSubmitOffer={storeSubmitOffer}
           onAcceptListPrice={acceptAtListPrice}
           onWalkAway={closeNegotiation}

@@ -917,6 +917,15 @@ export const useGameStore = create<GameStore>()(
         }
 
         const finalPrice = activeNegotiation.acceptedPrice ?? listing.askingPrice;
+
+        if (newState.player.money < finalPrice) {
+          set({ gameState: newState, activeNegotiation: null, pendingEvents: [
+            ...timeOutcome.events,
+            { type: 'info' as const, message: "You can't afford this." },
+          ]});
+          return;
+        }
+
         const actionCount = newState.history.actions.length;
         const rng = new RNG(newState.meta.rngSeed + newState.time.currentDay * 1000 + actionCount);
 
