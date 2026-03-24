@@ -43,6 +43,9 @@ export type AudioEvent = 'activity_end' | 'travel';
 
 type GameTab = 'location' | 'map';
 
+// Debug mode — set to true to enable the in-game debug panel
+const DEBUG_MODE = true;
+
 interface GameStore {
   // State
   gameState: GameState | null;
@@ -68,6 +71,9 @@ interface GameStore {
   // Audio state
   muted: boolean;
   audioEvent: AudioEvent | null;
+
+  // Debug
+  debugMode: boolean;
 
   // Actions
   newGame: (playerName: string, statAllocation: StatAllocation) => void;
@@ -116,6 +122,9 @@ interface GameStore {
   // Error handling
   setError: (error: string | null) => void;
   clearError: () => void;
+
+  // Debug
+  debugSetMoney: (amount: number) => void;
 }
 
 type Screen = 'main_menu' | 'new_game' | 'load_game' | 'game' | 'game_over' | 'victory';
@@ -328,6 +337,7 @@ export const useGameStore = create<GameStore>()(
       activeNegotiation: null,
       muted: false,
       audioEvent: null,
+      debugMode: DEBUG_MODE,
 
       // Actions
       newGame: (playerName, statAllocation) => {
@@ -1001,6 +1011,13 @@ export const useGameStore = create<GameStore>()(
       toggleMute: () => set((state) => ({ muted: !state.muted })),
       triggerAudioEvent: (event) => set({ audioEvent: event }),
       clearAudioEvent: () => set({ audioEvent: null }),
+
+      // Debug
+      debugSetMoney: (amount) => {
+        const { gameState } = get();
+        if (!gameState) return;
+        set({ gameState: { ...gameState, player: { ...gameState.player, money: amount } } });
+      },
 
       // Error handling
       setError: (error) => set({ error }),
