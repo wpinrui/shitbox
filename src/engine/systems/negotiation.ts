@@ -77,7 +77,7 @@ export function generateNpc(rng: RNG): GeneratedNpc {
   const selected: TraitDefinition[] = [];
 
   // Shuffle and pick compatible traits
-  const shuffled = [...allTraits].sort(() => rng.random() - 0.5);
+  const shuffled = rng.shuffle([...allTraits]);
   for (const trait of shuffled) {
     if (selected.length >= traitCount) break;
     const conflicts = selected.some(
@@ -360,8 +360,8 @@ function generateCounterOffer(
   const concessionPct = 0.10 + rng.random() * 0.15;
   const newCounter = Math.round(lastCounter - gap * concessionPct);
 
-  // Never go below target
-  return Math.max(newCounter, targetPrice);
+  // Never go below walkaway price
+  return Math.max(newCounter, negotiation.npc.walkAwayPrice);
 }
 
 function pickDialogue(type: string, rng: RNG): string {

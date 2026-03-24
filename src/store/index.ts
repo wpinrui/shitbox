@@ -886,11 +886,24 @@ export const useGameStore = create<GameStore>()(
         }
 
         // Always advance 1h — negotiation costs time win or lose
-        const timeResult = advanceTime(gameState.time, 1);
-        let newState: GameState = { ...gameState, time: timeResult.newTime };
+        const timeOutcome = advanceTimeWithDayProcessing(gameState, 1);
+        let newState: GameState = timeOutcome.newState;
+
+        if (timeOutcome.isDead) {
+          set({
+            gameState: newState,
+            currentScreen: 'game_over',
+            activeNegotiation: null,
+            pendingEvents: [
+              ...timeOutcome.events,
+              { type: 'death' as const, message: timeOutcome.deathReason ?? 'You died.' },
+            ],
+          });
+          return;
+        }
 
         if (activeNegotiation.status !== 'accepted') {
-          set({ gameState: newState, activeNegotiation: null });
+          set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
           return;
         }
 
