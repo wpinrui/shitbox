@@ -224,17 +224,51 @@ export interface MarketTrend {
 }
 
 export interface NpcState {
-  activeNegotiations: NegotiationState[];
   renters: RenterContract[];
   employees: Employee[];
 }
 
+export interface NegotiationNpc {
+  id: string;
+  name: string;
+  traits: string[];
+  revealedTraits: string[];
+  targetPrice: number;
+  walkAwayPrice: number;
+  currentMood: number; // -1 to 1
+}
+
+export interface NegotiationItem {
+  type: 'car';
+  id: string; // listing ID
+  marketValue: number;
+}
+
+export interface NegotiationOffer {
+  price: number;
+}
+
+export interface NpcResponse {
+  type: 'counter' | 'accept' | 'walk_away';
+  counterOffer?: NegotiationOffer;
+  moodChange: number;
+  dialogue: string;
+}
+
+export interface NegotiationRound {
+  roundNumber: number;
+  playerOffer: NegotiationOffer;
+  npcResponse: NpcResponse;
+}
+
 export interface NegotiationState {
   id: string;
-  type: 'buy' | 'sell' | 'rent';
-  npcId: string;
-  itemId: string;
-  status: 'active' | 'accepted' | 'rejected' | 'walked_away';
+  type: 'buy';
+  npc: NegotiationNpc;
+  item: NegotiationItem;
+  history: NegotiationRound[];
+  status: 'active' | 'accepted' | 'walked_away';
+  acceptedPrice?: number;
 }
 
 export interface RenterContract {

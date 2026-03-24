@@ -120,6 +120,15 @@ export {
 // Newspaper system
 export { generateNewspaper } from './systems/newspaper';
 
+// Negotiation system
+export {
+  generateNpc,
+  calculateNpcPricing,
+  startNegotiation,
+  submitOffer,
+  acceptListPrice,
+} from './systems/negotiation';
+
 // Sleep system
 export {
   getSleepOptions,

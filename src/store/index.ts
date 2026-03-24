@@ -200,7 +200,6 @@ function createInitialGameState(
       marketTrends: [],
     },
     npcs: {
-      activeNegotiations: [],
       renters: [],
       employees: [],
     },
