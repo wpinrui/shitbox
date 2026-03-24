@@ -857,8 +857,12 @@ export const useGameStore = create<GameStore>()(
         const { gameState } = get();
         if (!gameState) return;
 
-        const actionCount = gameState.history.actions.length;
-        const rng = new RNG(gameState.meta.rngSeed + gameState.time.currentDay * 1000 + actionCount);
+        // Listing-based seed: same listing always produces the same NPC
+        let hash = 0;
+        for (let i = 0; i < listingId.length; i++) {
+          hash = ((hash << 5) - hash + listingId.charCodeAt(i)) | 0;
+        }
+        const rng = new RNG(gameState.meta.rngSeed + Math.abs(hash));
         const negotiation = engineStartNegotiation(gameState, listingId, rng);
         set({ activeNegotiation: negotiation });
       },
