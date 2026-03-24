@@ -115,10 +115,10 @@ export function NegotiationModal({
               <button
                 className="btn-secondary"
                 onClick={onAcceptListPrice}
-                disabled={playerMoney < lastCounterPrice}
-                title={playerMoney < lastCounterPrice ? "You can't afford this" : undefined}
+                disabled={playerMoney < negotiation.item.askingPrice}
+                title={playerMoney < negotiation.item.askingPrice ? "You can't afford this" : undefined}
               >
-                Accept ${lastCounterPrice.toLocaleString()}
+                Accept ${negotiation.item.askingPrice.toLocaleString()}
               </button>
             </>
           )}

@@ -108,13 +108,13 @@ export function generateNpc(rng: RNG): GeneratedNpc {
  */
 export function calculateNpcPricing(
   traitIds: string[],
-  marketValue: number,
+  anchorPrice: number,
   rng: RNG
 ): { targetPrice: number; walkAwayPrice: number } {
   const traits = traitIds.map((id) => getTraitDefinition(id));
 
-  // Base: target = market + 15% markup, walkaway = market - 20%
-  let targetMultiplier = 1.15;
+  // Base: target = asking price (1.0), walkaway = 80% of asking
+  let targetMultiplier = 1.0;
   let walkAwayMultiplier = 0.80;
 
   // Apply trait modifiers
@@ -136,8 +136,12 @@ export function calculateNpcPricing(
   const variance = (rng.random() * 0.10) - 0.05;
   targetMultiplier += variance;
 
-  const targetPrice = Math.round(marketValue * targetMultiplier);
-  const walkAwayPrice = Math.round(marketValue * walkAwayMultiplier);
+  const targetPrice = Math.round(anchorPrice * targetMultiplier);
+  // Clamp walkaway to max 90% of anchor — guarantees at least a 10% negotiation band
+  const walkAwayPrice = Math.min(
+    Math.round(anchorPrice * walkAwayMultiplier),
+    Math.round(anchorPrice * 0.90)
+  );
 
   // Sanity: walkaway must be less than target
   return {
@@ -340,7 +344,7 @@ export function acceptListPrice(
 
 /**
  * Generate a counter-offer price that moves partway toward target.
- * NPC concedes a bit each round but never goes below target.
+ * NPC concedes a bit each round but never goes below walkaway price.
  */
 function generateCounterOffer(
   negotiation: NegotiationState,
