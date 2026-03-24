@@ -917,6 +917,16 @@ export const useGameStore = create<GameStore>()(
         }
 
         if (activeNegotiation.status !== 'accepted') {
+          // Failed negotiation — remove the listing (one shot per car)
+          newState = {
+            ...newState,
+            market: {
+              ...newState.market,
+              currentListings: newState.market.currentListings.filter(
+                (l) => l.id !== activeNegotiation.item.id
+              ),
+            },
+          };
           set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
           return;
         }
