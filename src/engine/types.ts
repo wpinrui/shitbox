@@ -405,8 +405,7 @@ export type GameEventType =
   | 'car_repaired'
   | 'car_scrapped'
   | 'car_towed'
-  | 'engine_replaced'
-  | 'info';
+  | 'engine_replaced';
 
 export interface GameEvent {
   type: GameEventType;

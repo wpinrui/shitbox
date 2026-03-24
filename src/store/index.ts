@@ -881,12 +881,21 @@ export const useGameStore = create<GameStore>()(
           gameState.player.stats.charisma,
           rng
         );
+        // If the engine accepted but the player can't afford it, block
+        if (negotiation.status === 'accepted' && gameState.player.money < (negotiation.acceptedPrice ?? 0)) {
+          get().addToast("You can't afford this.", 'error');
+          return;
+        }
         set({ activeNegotiation: negotiation });
       },
 
       acceptAtListPrice: () => {
-        const { activeNegotiation } = get();
-        if (!activeNegotiation || activeNegotiation.status !== 'active') return;
+        const { gameState, activeNegotiation } = get();
+        if (!gameState || !activeNegotiation || activeNegotiation.status !== 'active') return;
+        if (gameState.player.money < activeNegotiation.item.askingPrice) {
+          get().addToast("You can't afford this.", 'error');
+          return;
+        }
         const accepted = acceptListPrice(activeNegotiation);
         set({ activeNegotiation: accepted });
         get().closeNegotiation();
@@ -943,10 +952,8 @@ export const useGameStore = create<GameStore>()(
         const finalPrice = activeNegotiation.acceptedPrice ?? listing.askingPrice;
 
         if (newState.player.money < finalPrice) {
-          set({ gameState: newState, activeNegotiation: null, pendingEvents: [
-            ...timeOutcome.events,
-            { type: 'info' as const, message: "You can't afford this." },
-          ]});
+          get().addToast("You can't afford this.", 'error');
+          set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
           return;
         }
 
