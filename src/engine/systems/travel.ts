@@ -110,20 +110,10 @@ export function getDrivingCost(
  * Check if the player can walk to a destination.
  */
 export function canWalk(
-  state: GameState,
-  to: GridPosition
+  _state: GameState,
+  _to: GridPosition
 ): { canTravel: boolean; reason?: string } {
-  const from = state.player.position;
-  const fitnessLevel = state.player.stats.fitness;
-  const cost = getWalkingCost(from, to, fitnessLevel);
-
-  if (state.player.energy < cost.energyCost) {
-    return {
-      canTravel: false,
-      reason: `Not enough energy. Need ${cost.energyCost}, have ${state.player.energy}`,
-    };
-  }
-
+  // Walking is always allowed — energy can go negative, triggering crash prompt
   return { canTravel: true };
 }
 

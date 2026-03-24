@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList, TravelConfirmModal } from '@ui/components/map';
-import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal } from '@ui/components/location';
+import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal, SleepModal, ChillModal } from '@ui/components/location';
 import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
 import {
   getLocationActivities,
@@ -9,6 +9,9 @@ import {
   canPerformActivity,
   getCarDefinition,
   getConditionRating,
+  getSleepContext,
+  getChillPresets,
+  formatSleepDuration,
   MAX_ENERGY,
   STAT_ORDER,
   getTimeOfDay,
@@ -49,12 +52,18 @@ export function GameScreen({
   const setSelectedCarInstanceId = useGameStore((state) => state.setSelectedCarInstanceId);
   const pendingEvents = useGameStore((state) => state.pendingEvents);
   const clearEvents = useGameStore((state) => state.clearEvents);
+  const crashPromptActive = useGameStore((state) => state.crashPromptActive);
+  const sleep = useGameStore((state) => state.sleep);
+  const chill = useGameStore((state) => state.chill);
 
   const [showPauseMenu, setShowPauseMenu] = useState(false);
+  const [showSleepConfirm, setShowSleepConfirm] = useState(false);
+  const [showChillModal, setShowChillModal] = useState(false);
   const [showNewspaper, setShowNewspaper] = useState(false);
   const [browseListings, setBrowseListings] = useState<CarListing[] | null>(null);
   const [pendingTravel, setPendingTravel] = useState<LocationDefinition | null>(null);
   const [travelLoading, setTravelLoading] = useState<string | null>(null);
+  const [restLoading, setRestLoading] = useState<{ label: string; action: () => void } | null>(null);
 
   const newspaperPurchasedToday =
     gameState.newspaper.purchased &&
@@ -74,7 +83,7 @@ export function GameScreen({
     ? getLocationActivities(currentLocation.id)
     : [];
 
-  // Universal activities (nap, sleep) — loaded from misc.json
+  // Universal activities (buy_newspaper) — loaded from misc.json
   const universalActivities = getLocationActivities('misc');
 
   const hasCarHere = gameState.inventory.cars.some(
@@ -225,6 +234,17 @@ export function GameScreen({
     }
   }, [travelLoading, setTab]);
 
+  // Rest loading (sleep/chill/crash) → execute action after progress bar
+  useEffect(() => {
+    if (restLoading) {
+      const timer = setTimeout(() => {
+        restLoading.action();
+        setRestLoading(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [restLoading]);
+
   const handleMenuClick = () => {
     setShowPauseMenu(true);
   };
@@ -247,6 +267,30 @@ export function GameScreen({
     setTab('map');
   };
 
+  // Sleep context — computed for both voluntary and crash UI
+  const sleepContext = getSleepContext(gameState);
+  const chillPresets = getChillPresets(gameState.time);
+  const canSleep = gameState.player.energy > 0;
+  const canChill = gameState.player.energy > 0;
+
+  const handleSleep = useCallback((rate: number) => {
+    setShowSleepConfirm(false);
+    const energy = gameState.player.energy;
+    const exactHours = (MAX_ENERGY - energy) / rate;
+    setRestLoading({
+      label: `Sleeping for ${formatSleepDuration(exactHours)}...`,
+      action: () => sleep(rate),
+    });
+  }, [sleep, gameState.player.energy]);
+
+  const handleChill = useCallback((hours: number) => {
+    setShowChillModal(false);
+    setRestLoading({
+      label: `Chilling for ${hours} hour${hours !== 1 ? 's' : ''}...`,
+      action: () => chill(hours),
+    });
+  }, [chill]);
+
   const timeOfDay = getTimeOfDay(gameState.time.currentHour);
 
   // Format clock
@@ -256,10 +300,10 @@ export function GameScreen({
   const displayHour = hour % 12 || 12;
   const clockStr = `${displayHour}:${String(minute).padStart(2, '0')} ${ampm}`;
 
-  const energyPct = (gameState.player.energy / MAX_ENERGY) * 100;
+  const energyPct = Math.max(0, (gameState.player.energy / MAX_ENERGY) * 100);
 
   return (
-    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading ? ' game-screen--modal-open' : ''}`}>
+    <div className={`game-screen game-screen--${timeOfDay}${showPauseMenu || selectedActivity || showNewspaper || browseListings || pendingTravel || travelLoading || restLoading || showSleepConfirm || showChillModal || crashPromptActive ? ' game-screen--modal-open' : ''}`}>
       {/* Background */}
       <div className="bg">
         <div
@@ -307,7 +351,9 @@ export function GameScreen({
                 <div className="energy-bar__track">
                   <div className="energy-bar__fill" style={{ width: `${energyPct}%` }} />
                 </div>
-                <span className="energy-bar__text">{round1(gameState.player.energy)}</span>
+                <span className={`energy-bar__text${gameState.player.energy <= 0 ? ' energy-bar__text--danger' : ''}`}>
+                  {gameState.player.energy <= 0 ? '0' : round1(gameState.player.energy)}
+                </span>
               </div>
               {gameState.player.daysWithoutFood > 0 && (
                 <div className="food-warn">🍔 !</div>
@@ -458,6 +504,36 @@ export function GameScreen({
                         </div>
                       )}
 
+                      {/* Sleep card — available when energy > 0 */}
+                      <div
+                        className={`card card--universal${!canSleep ? ' card--disabled' : ''}`}
+                        onClick={canSleep ? () => setShowSleepConfirm(true) : undefined}
+                        style={canSleep ? { cursor: 'pointer' } : undefined}
+                      >
+                        <div className="card__name">Sleep</div>
+                        <div className="card__desc">Rest and recover to full energy. Rate depends on your location.</div>
+                        <div className="card__divider" />
+                        <div className="card__cost">
+                          <span className="card__cost-icon card__cost-icon--energy">⚡</span>
+                          <span className="card__cost-text card__cost-text--earn">+{sleepContext.bestRate}/hr</span>
+                        </div>
+                      </div>
+
+                      {/* Chill card — available when energy > 0 */}
+                      <div
+                        className={`card card--universal${!canChill ? ' card--disabled' : ''}`}
+                        onClick={canChill ? () => setShowChillModal(true) : undefined}
+                        style={canChill ? { cursor: 'pointer' } : undefined}
+                      >
+                        <div className="card__name">Chill</div>
+                        <div className="card__desc">Kill time. No energy cost, no money cost.</div>
+                        <div className="card__divider" />
+                        <div className="card__cost">
+                          <span className="card__cost-icon card__cost-icon--time">⏱</span>
+                          <span className="card__cost-text card__cost-text--neutral">Skip time</span>
+                        </div>
+                      </div>
+
                       {/* Leave card — always present */}
                       <div className="card card--universal" onClick={handleLeave} style={{ cursor: 'pointer' }}>
                         <div className="card__name">Leave</div>
@@ -539,6 +615,53 @@ export function GameScreen({
             <div className="travel-loading__text">Traveling...</div>
           </div>
         </div>
+      )}
+
+      {/* Rest loading (sleep/chill/crash progress bar) */}
+      {restLoading && (
+        <div className="travel-loading-overlay">
+          <div className="travel-loading">
+            <div className="travel-loading__title">{restLoading.label}</div>
+            <div className="travel-loading__bar-track">
+              <div className="travel-loading__bar-fill" />
+            </div>
+            <div className="travel-loading__text">Resting...</div>
+          </div>
+        </div>
+      )}
+
+      {/* Voluntary sleep confirmation */}
+      {showSleepConfirm && !crashPromptActive && (
+        <SleepModal
+          mode="voluntary"
+          options={sleepContext.options}
+          bestLabel={sleepContext.bestLabel}
+          bestRate={sleepContext.bestRate}
+          bestHours={sleepContext.bestHours}
+          onSleep={handleSleep}
+          onCancel={() => setShowSleepConfirm(false)}
+        />
+      )}
+
+      {/* Chill modal */}
+      {showChillModal && !crashPromptActive && (
+        <ChillModal
+          presets={chillPresets}
+          onChill={handleChill}
+          onCancel={() => setShowChillModal(false)}
+        />
+      )}
+
+      {/* Crash prompt — mandatory, blocks all actions. Delayed until other modals close. */}
+      {crashPromptActive && !selectedActivity && !travelLoading && !restLoading && (
+        <SleepModal
+          mode="crash"
+          options={sleepContext.options}
+          bestLabel={sleepContext.bestLabel}
+          bestRate={sleepContext.bestRate}
+          bestHours={sleepContext.bestHours}
+          onSleep={handleSleep}
+        />
       )}
 
       {/* Toast notifications */}
