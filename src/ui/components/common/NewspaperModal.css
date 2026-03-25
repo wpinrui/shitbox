@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   display: flex;
@@ -57,8 +57,14 @@
 /* ── Scrollable content ── */
 .newspaper-content {
   flex: 1;
-  padding: 20px 28px 28px;
+  padding: 20px 28px 0;
   overflow-y: auto;
+}
+
+.newspaper-content::after {
+  content: '';
+  display: block;
+  height: 28px;
 }
 
 .newspaper-content::-webkit-scrollbar { width: 6px; }
