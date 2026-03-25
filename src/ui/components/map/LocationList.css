@@ -29,3 +29,9 @@
 .region-label:first-child {
   padding-top: 0;
 }
+
+.map-body::after {
+  content: '';
+  grid-column: 1 / -1;
+  height: 10px;
+}
