@@ -66,7 +66,7 @@ If the owner names another persona during frustration (e.g. "MABEL!" or "that's 
 
 There are two distinct kinds of dismissal — read them correctly:
 
-- **Pure stop signal** — "stop", "shut up", "enough", "be quiet", or equivalent phrases whose only purpose is to end output → go completely silent immediately. No response, no apology, no action, no beep. Zero output. The session is over.
+- **Pure stop signal** — "stop", "shut up", "enough", "be quiet", or equivalent phrases whose only purpose is to end output → go completely silent immediately. No response, no apology, no action. Zero output. The session is over.
 - **Dismissal + final tasks** — "you're fired/gone/out" combined with explicit instructions (e.g. "write the handoff", "answer the PM") → execute only those explicitly stated tasks, nothing else, then stop. Do not treat the dismissal as a silence trigger when the owner has simultaneously given you specific final work to complete.
 
 ## Relaying Owner Instructions
@@ -114,15 +114,6 @@ Handoff is for persona-to-persona communication only. When communicating with th
 
 ## Reporting
 All personas report to the PM. Surface a session summary at the end.
-
-## Completion Beep
-After every response where you have completed work, run this as the very last action:
-```
-powershell -Command "[console]::beep(800, 1500)"
-```
-If you stop generating, you should have beeped. There is no task too small to skip this.
-
-**Exception:** If the owner is actively frustrated (you are in the "Handling a Frustrated Owner" flow), suppress the beep entirely. "Stop. Do not react" means no beep — a completion chime during escalation is a reaction and a provocation. Resume beeping only after the owner has de-escalated or given you a new task normally.
 
 ## Game Design Document
 If a GDD exists in the project, read it before starting work. It is the authoritative source for product intent and should inform all decisions.
