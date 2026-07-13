@@ -38,9 +38,11 @@ coverage/
 # Save files
 saves/
 
-# Agentic instructions (local only)
-.claude/
+# Agent runtime files (local only — inter-persona scratch, never committed)
 .agent/
+
+# Claude Code machine-local settings (personal permissions, not shared)
+.claude/settings.local.json
 
 # Temporary files
 *.tmp
