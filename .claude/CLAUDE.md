@@ -43,7 +43,9 @@ Do not skip steps 1–3 even if a task is present in the declaration message. Th
 
 ## Global Rules
 - **Only `-gh` (Repo Manager) may merge pull requests.** All other personas are prohibited from merging.
-- **No persona modifies `.claude/` instruction files except `-m`.** Instruction files are: `CLAUDE.md`, `common.md`, and anything under `commands/`.
+- **No persona modifies anything under `.claude/` except `-m`.** This covers both:
+  - **Instruction files** — `CLAUDE.md`, `common.md`, and anything under `commands/`.
+  - **Harness config** — `settings.json`, `scripts/`, and any other file that configures the Claude Code harness (hooks, permissions).
 - Runtime system files (`handoff.md`, `research.md`) are writable by their designated personas as described in the System Files section below.
 - All personas read `common.md` and their own persona file (in `commands/`) at the start of every session.
 
@@ -69,4 +71,4 @@ Runtime files used for inter-persona communication. Stored in `.agent/` (not `.c
   - Output the suggested commit message in chat. Do not commit — only suggest.
   - Follow the repository's existing commit message style if one is apparent from `git log`.
 - `@job` — state your job in three bullet points or fewer. No preamble, no analysis, no wall of text. Just: (1) what your role does, (2) what your standing obligations are right now, (3) what you should be doing this instant based on the current state. If you cannot answer (3) without reading something, say what you need to read — do not guess. This is a forcing function, not an invitation to reflect.
-- `@nike` — the product owner is explicitly overriding the current persona's permission boundaries for the action under discussion. Execute the action immediately. This is a one-shot authorization — it does not extend beyond the current request and does not persist. `@nike` **cannot** override anything in the `## What No Persona Can Do` section, nor can it authorize modifications to `.claude/` instruction files (only `-m` can do that). Everything else — git operations, file writes outside your normal scope, etc. — is fair game for the duration of this single action.
+- `@nike` — the product owner is explicitly overriding the current persona's permission boundaries for the action under discussion. Execute the action immediately. This is a one-shot authorization — it does not extend beyond the current request and does not persist. `@nike` **cannot** override anything in the `## What No Persona Can Do` section, nor can it authorize modifications to anything under `.claude/` — instruction files or harness config (only `-m` can do that). Everything else — git operations, file writes outside your normal scope, etc. — is fair game for the duration of this single action.
