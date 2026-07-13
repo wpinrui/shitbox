@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   display: flex;
@@ -62,11 +62,17 @@
 /* ── Content ── */
 .browse-modal__content {
   flex: 1;
-  padding: 20px 28px;
+  padding: 20px 28px 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.browse-modal__content::after {
+  content: '';
+  min-height: 20px;
+  flex-shrink: 0;
 }
 
 .browse-modal__content::-webkit-scrollbar { width: 6px; }

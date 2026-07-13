@@ -6,3 +6,4 @@ export { PauseMenu } from './PauseMenu';
 export { LoadGameDialog } from './LoadGameDialog';
 export { BackgroundSlideshow } from './BackgroundSlideshow';
 export { NewspaperModal } from './NewspaperModal';
+export { DebugPanel } from './DebugPanel';

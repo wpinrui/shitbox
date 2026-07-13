@@ -43,6 +43,9 @@ export type AudioEvent = 'activity_end' | 'travel';
 
 type GameTab = 'location' | 'map';
 
+// Debug mode — set to true to enable the in-game debug panel
+const DEBUG_MODE = true;
+
 interface GameStore {
   // State
   gameState: GameState | null;
@@ -68,6 +71,9 @@ interface GameStore {
   // Audio state
   muted: boolean;
   audioEvent: AudioEvent | null;
+
+  // Debug
+  debugMode: boolean;
 
   // Actions
   newGame: (playerName: string, statAllocation: StatAllocation) => void;
@@ -116,6 +122,9 @@ interface GameStore {
   // Error handling
   setError: (error: string | null) => void;
   clearError: () => void;
+
+  // Debug
+  debugSetMoney: (amount: number) => void;
 }
 
 type Screen = 'main_menu' | 'new_game' | 'load_game' | 'game' | 'game_over' | 'victory';
@@ -328,6 +337,7 @@ export const useGameStore = create<GameStore>()(
       activeNegotiation: null,
       muted: false,
       audioEvent: null,
+      debugMode: DEBUG_MODE,
 
       // Actions
       newGame: (playerName, statAllocation) => {
@@ -847,8 +857,12 @@ export const useGameStore = create<GameStore>()(
         const { gameState } = get();
         if (!gameState) return;
 
-        const actionCount = gameState.history.actions.length;
-        const rng = new RNG(gameState.meta.rngSeed + gameState.time.currentDay * 1000 + actionCount);
+        // Listing-based seed: same listing always produces the same NPC
+        let hash = 0;
+        for (let i = 0; i < listingId.length; i++) {
+          hash = ((hash << 5) - hash + listingId.charCodeAt(i)) | 0;
+        }
+        const rng = new RNG(gameState.meta.rngSeed + Math.abs(hash));
         const negotiation = engineStartNegotiation(gameState, listingId, rng);
         set({ activeNegotiation: negotiation });
       },
@@ -867,12 +881,21 @@ export const useGameStore = create<GameStore>()(
           gameState.player.stats.charisma,
           rng
         );
+        // If the engine accepted but the player can't afford it, block
+        if (negotiation.status === 'accepted' && gameState.player.money < (negotiation.acceptedPrice ?? 0)) {
+          get().addToast("You can't afford this.", 'error');
+          return;
+        }
         set({ activeNegotiation: negotiation });
       },
 
       acceptAtListPrice: () => {
-        const { activeNegotiation } = get();
-        if (!activeNegotiation || activeNegotiation.status !== 'active') return;
+        const { gameState, activeNegotiation } = get();
+        if (!gameState || !activeNegotiation || activeNegotiation.status !== 'active') return;
+        if (gameState.player.money < activeNegotiation.item.askingPrice) {
+          get().addToast("You can't afford this.", 'error');
+          return;
+        }
         const accepted = acceptListPrice(activeNegotiation);
         set({ activeNegotiation: accepted });
         get().closeNegotiation();
@@ -903,6 +926,16 @@ export const useGameStore = create<GameStore>()(
         }
 
         if (activeNegotiation.status !== 'accepted') {
+          // Failed negotiation — remove the listing (one shot per car)
+          newState = {
+            ...newState,
+            market: {
+              ...newState.market,
+              currentListings: newState.market.currentListings.filter(
+                (l) => l.id !== activeNegotiation.item.id
+              ),
+            },
+          };
           set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
           return;
         }
@@ -917,6 +950,13 @@ export const useGameStore = create<GameStore>()(
         }
 
         const finalPrice = activeNegotiation.acceptedPrice ?? listing.askingPrice;
+
+        if (newState.player.money < finalPrice) {
+          get().addToast("You can't afford this.", 'error');
+          set({ gameState: newState, activeNegotiation: null, pendingEvents: timeOutcome.events });
+          return;
+        }
+
         const actionCount = newState.history.actions.length;
         const rng = new RNG(newState.meta.rngSeed + newState.time.currentDay * 1000 + actionCount);
 
@@ -992,6 +1032,13 @@ export const useGameStore = create<GameStore>()(
       toggleMute: () => set((state) => ({ muted: !state.muted })),
       triggerAudioEvent: (event) => set({ audioEvent: event }),
       clearAudioEvent: () => set({ audioEvent: null }),
+
+      // Debug
+      debugSetMoney: (amount) => {
+        const { gameState } = get();
+        if (!gameState) return;
+        set({ gameState: { ...gameState, player: { ...gameState.player, money: amount } } });
+      },
 
       // Error handling
       setError: (error) => set({ error }),
