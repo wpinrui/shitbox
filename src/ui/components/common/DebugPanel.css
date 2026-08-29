@@ -1,0 +1,53 @@
+.debug-panel {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #ff0;
+}
+
+.debug-panel__label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.debug-panel__input {
+  width: 80px;
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  -moz-appearance: textfield;
+}
+
+.debug-panel__input::-webkit-outer-spin-button,
+.debug-panel__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.debug-panel__btn {
+  padding: 3px 8px;
+  background: rgba(255, 255, 0, 0.15);
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  border-radius: 3px;
+  color: #ff0;
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.debug-panel__btn:hover {
+  background: rgba(255, 255, 0, 0.25);
+}

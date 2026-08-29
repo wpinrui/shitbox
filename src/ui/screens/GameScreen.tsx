@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@store/index';
 import { LocationList, TravelConfirmModal } from '@ui/components/map';
 import { ActivityCard, ActivityModal, CarCard, CarSelector, BrowseResultsModal, SleepModal, ChillModal, NegotiationModal } from '@ui/components/location';
-import { PauseMenu, ToastContainer, NewspaperModal } from '@ui/components/common';
+import { PauseMenu, ToastContainer, NewspaperModal, DebugPanel } from '@ui/components/common';
 import {
   getLocationActivities,
   getLocationAtPosition,
@@ -603,6 +603,7 @@ export function GameScreen({
       {activeNegotiation && (
         <NegotiationModal
           negotiation={activeNegotiation}
+          playerMoney={gameState.player.money}
           onSubmitOffer={storeSubmitOffer}
           onAcceptListPrice={acceptAtListPrice}
           onWalkAway={closeNegotiation}
@@ -684,6 +685,8 @@ export function GameScreen({
 
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
+
+      <DebugPanel />
 
       {/* Pause menu */}
       {showPauseMenu && (

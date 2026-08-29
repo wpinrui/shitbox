@@ -10,7 +10,6 @@
   box-shadow: var(--glass-2-shadow);
   cursor: pointer;
   transition: all 0.2s ease;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -52,6 +51,7 @@
   background-position: center;
   position: relative;
   flex-shrink: 0;
+  border-radius: var(--glass-2-radius) var(--glass-2-radius) 0 0;
 }
 
 .loc__photo::after {
@@ -59,6 +59,7 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);
+  border-radius: inherit;
 }
 
 /* Body */
